@@ -1,0 +1,11 @@
+{
+  "name": "react-achievements",
+  "version": "1.0.0",
+  "description": "This package allows users to transpose a React game engine over their React apps",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
