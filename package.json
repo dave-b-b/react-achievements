@@ -1,11 +1,36 @@
 {
   "name": "react-achievements",
-  "version": "1.0.0",
-  "description": "This package allows users to transpose a React game engine over their React apps",
-  "main": "index.js",
+  "version": "1.0.3",
+  "description": "This package allows users to transpose a React achievements engine over their React apps",
+  "keywords": [
+    "react",
+    "badge",
+    "achievement"
+  ],
+  "main": "dist/cjs.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rollup -c",
+    "deploy": "npm run build && npm publish"
   },
   "author": "David Brown",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^26.0.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "rollup": "^4.19.0",
+    "rollup-plugin-typescript2": "^0.36.0",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.14.12",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "react": "^18.3.1",
+    "react-confetti": "^6.1.0",
+    "react-use": "^17.5.1"
+  }
 }
