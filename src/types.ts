@@ -1,4 +1,6 @@
-export type MetricValue = number | boolean | string | any;
+export type MetricValueItem = number | boolean | string | any;
+
+export type MetricValue = MetricValueItem[];
 
 export interface Metrics {
     [key: string]: MetricValue;
