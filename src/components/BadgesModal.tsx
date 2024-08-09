@@ -45,7 +45,6 @@ const BadgesModal: React.FC<BadgesModalProps> = ({ show, achievements, onClose }
                         <div key={achievement.id} style={{ margin: '10px', textAlign: 'center' }}>
                             <img src={achievement.icon} alt={achievement.title} style={{ width: '50px', height: '50px' }} />
                             <h4>{achievement.title}</h4>
-                            <p>{achievement.description}</p>
                         </div>
                     ))}
                 </div>
