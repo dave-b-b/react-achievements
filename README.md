@@ -153,8 +153,9 @@ badgesButtonPosition (optional): Position of the badges button. Options: 'top-le
 6. showBadgesModal: Function to manually show the badges modal.
 
 Customization
+
 You can customize the appearance of the achievement modal, badges modal, and badges button by modifying their respective components in the package.
-License
-MIT
-Copy
+
+License MIT
+
 This README provides a comprehensive overview of how to use the react-achievements package, including setup, usage examples, features, and API details. You may want to adjust or expand certain sections based on the specific implementation details or additional features of your package.
