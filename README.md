@@ -48,7 +48,11 @@ const user = {
 
 ### Create an achievement configuration
 Create a file (e.g., achievementConfig.js) to define your achievements:
+(It is important that your icons be located in the public folder of your project)
 ```javascript
+import image1 from './public/path/to/image1.png';
+import image2 from './public/path/to/image2.png';
+
 const achievementConfig = {
   transactions: [
     {
@@ -57,7 +61,7 @@ const achievementConfig = {
         id: 'first_transaction',
         title: 'First Transaction',
         description: 'Completed your first transaction',
-        icon: '/path/to/icon.png'
+        icon: image1
       }
     },
     {
@@ -66,7 +70,7 @@ const achievementConfig = {
           id: 'thousand_dollars',
           title: 'Big Spender',
           description: 'Spent a total of $1000', 
-          icon: '/path/to/icon.png'
+          icon: image2
       }
     },
   ],

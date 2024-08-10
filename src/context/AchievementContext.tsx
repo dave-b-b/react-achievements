@@ -41,30 +41,40 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         }, {} as Metrics);
     };
 
-    const getAchievements = () =>{
-        const achievements =  Object.values(config).flatMap(conditions =>
-            conditions.filter(c => achievedAchievements.includes(c.data.id)).map(c => c.data)
-        )
-        console.log(achievements);
-        return achievements;
-    }
+    const checkInitialAchievements = (initialMetrics: Metrics): string[] => {
+        const initialAchievements: string[] = [];
+        Object.entries(config).forEach(([metricKey, conditions]) => {
+            const metricValue = initialMetrics[metricKey];
+            conditions.forEach(condition => {
+                if (condition.check(metricValue)) {
+                    initialAchievements.push(condition.data.id);
+                }
+            });
+        });
+        return initialAchievements;
+    };
 
     const [metrics, setMetrics] = useState<Metrics>(() => {
         const savedMetrics = localStorage.getItem(`${storageKey}-metrics`);
         if (savedMetrics) {
             return JSON.parse(savedMetrics);
         }
-        const state = extractMetrics(initialState);
-        // localStorage.setItem(`${storageKey}-metrics`, JSON.stringify(state));
-        return state;
+        return extractMetrics(initialState);
     });
 
     const [achievedAchievements, setAchievedAchievements] = useState<string[]>(() => {
         const saved = localStorage.getItem(`${storageKey}-achievements`);
-        return saved ? JSON.parse(saved) : [];
+        if (saved) {
+            return JSON.parse(saved);
+        }
+        const initialMetrics = extractMetrics(initialState);
+        const initialAchievements = checkInitialAchievements(initialMetrics);
+        localStorage.setItem(`${storageKey}-achievements`, JSON.stringify(initialAchievements));
+        return initialAchievements;
     });
 
-    const [newAchievement, setNewAchievement] = useState<AchievementData | null>(null);
+    const [achievementQueue, setAchievementQueue] = useState<AchievementData[]>([]);
+    const [currentAchievement, setCurrentAchievement] = useState<AchievementData | null>(null);
     const [showBadges, setShowBadges] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
 
@@ -88,7 +98,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
             const updatedAchievements = [...achievedAchievements, ...newAchievements.map(a => a.id)];
             setAchievedAchievements(updatedAchievements);
             localStorage.setItem(`${storageKey}-achievements`, JSON.stringify(updatedAchievements));
-            setNewAchievement(newAchievements[0]);
+            setAchievementQueue(prevQueue => [...prevQueue, ...newAchievements]);
             setShowConfetti(true);
         }
     }, [config, metrics, achievedAchievements, storageKey]);
@@ -97,8 +107,21 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         checkAchievements();
     }, [checkAchievements]);
 
+    useEffect(() => {
+        if (achievementQueue.length > 0 && !currentAchievement) {
+            setCurrentAchievement(achievementQueue[0]);
+            setAchievementQueue(prevQueue => prevQueue.slice(1));
+        }
+    }, [achievementQueue, currentAchievement]);
+
     const showBadgesModal = () => {
         setShowBadges(true);
+    };
+
+    const getAchievements = (achievedIds: string[]) => {
+        return Object.values(config).flatMap(conditions =>
+            conditions.filter(c => achievedIds.includes(c.data.id)).map(c => c.data)
+        );
     };
 
     const contextValue: AchievementContextProps = {
@@ -118,20 +141,22 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         <AchievementContext.Provider value={contextValue}>
             {children}
             <AchievementModal
-                show={!!newAchievement}
-                achievement={newAchievement}
+                show={!!currentAchievement}
+                achievement={currentAchievement}
                 onClose={() => {
-                    setNewAchievement(null);
-                    setShowConfetti(false);
+                    setCurrentAchievement(null);
+                    if (achievementQueue.length === 0) {
+                        setShowConfetti(false);
+                    }
                 }}
             />
             <BadgesModal
                 show={showBadges}
-                achievements={getAchievements()}
+                achievements={getAchievements(achievedAchievements)}
                 onClose={() => setShowBadges(false)}
             />
             <BadgesButton onClick={showBadgesModal} position={badgesButtonPosition} />
-            <ConfettiWrapper show={showConfetti} />
+            <ConfettiWrapper show={showConfetti || achievementQueue.length > 0} />
         </AchievementContext.Provider>
     );
 };
