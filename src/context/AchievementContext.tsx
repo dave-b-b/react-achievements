@@ -41,19 +41,6 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         }, {} as Metrics);
     };
 
-    const checkInitialAchievements = (initialMetrics: Metrics): string[] => {
-        const initialAchievements: string[] = [];
-        Object.entries(config).forEach(([metricKey, conditions]) => {
-            const metricValue = initialMetrics[metricKey];
-            conditions.forEach(condition => {
-                if (condition.check(metricValue)) {
-                    initialAchievements.push(condition.data.id);
-                }
-            });
-        });
-        return initialAchievements;
-    };
-
     const [metrics, setMetrics] = useState<Metrics>(() => {
         const savedMetrics = localStorage.getItem(`${storageKey}-metrics`);
         if (savedMetrics) {
@@ -64,23 +51,13 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 
     const [achievedAchievements, setAchievedAchievements] = useState<string[]>(() => {
         const saved = localStorage.getItem(`${storageKey}-achievements`);
-        if (saved) {
-            return JSON.parse(saved);
-        }
-        const initialMetrics = extractMetrics(initialState);
-        const initialAchievements = checkInitialAchievements(initialMetrics);
-        localStorage.setItem(`${storageKey}-achievements`, JSON.stringify(initialAchievements));
-        return initialAchievements;
+        return saved ? JSON.parse(saved) : [];
     });
 
     const [achievementQueue, setAchievementQueue] = useState<AchievementData[]>([]);
     const [currentAchievement, setCurrentAchievement] = useState<AchievementData | null>(null);
     const [showBadges, setShowBadges] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
-
-    useEffect(() => {
-        localStorage.setItem(`${storageKey}-metrics`, JSON.stringify(metrics));
-    }, [metrics, storageKey]);
 
     const checkAchievements = useCallback(() => {
         const newAchievements: AchievementData[] = [];
@@ -105,7 +82,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 
     useEffect(() => {
         checkAchievements();
-    }, [checkAchievements]);
+    }, [metrics, checkAchievements]);
 
     useEffect(() => {
         if (achievementQueue.length > 0 && !currentAchievement) {
@@ -129,6 +106,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         setMetrics: (newMetrics) => {
             setMetrics(prevMetrics => {
                 const updatedMetrics = typeof newMetrics === 'function' ? newMetrics(prevMetrics) : newMetrics;
+                localStorage.setItem(`${storageKey}-metrics`, JSON.stringify(updatedMetrics));
                 return updatedMetrics;
             });
         },
