@@ -127,7 +127,10 @@ Achievements are automatically checked and unlocked when metrics change.
 A modal pops up when an achievement is unlocked.
 
 ### Persistent Achievements: 
-Achieved achievements are stored in local storage.
+Achieved achievements are stored in local storage. We have not implemented a feature for this to be permanently stored in a database. But we will.
+Achievements are stored in local storage as:
+1. Key: 'react-achievements-achievements' (This is an array of all the achievements that have been unlocked)
+2. Key: 'react-achievements-metrics' (This is an object of all the metrics that have been updated)
 
 ### Achievement Gallery: 
 Users can view all their unlocked achievements.
