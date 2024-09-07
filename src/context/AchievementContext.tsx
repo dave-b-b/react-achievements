@@ -8,7 +8,7 @@ import ConfettiWrapper from '../components/ConfettiWrapper';
 interface AchievementContextProps {
     metrics: Metrics;
     setMetrics: (metrics: Metrics | ((prevMetrics: Metrics) => Metrics)) => void;
-    achievedAchievements: string[];
+    unlockedAchievements: string[];
     checkAchievements: () => void;
     showBadgesModal: () => void;
 }
@@ -49,8 +49,13 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         return extractMetrics(initialState);
     });
 
-    const [achievedAchievements, setAchievedAchievements] = useState<string[]>(() => {
-        const saved = localStorage.getItem(`${storageKey}-achievements`);
+    const [unlockedAchievements, setUnlockedAchievements] = useState<string[]>(() => {
+        const saved = localStorage.getItem(`${storageKey}-unlocked-achievements`);
+        return saved ? JSON.parse(saved) : [];
+    });
+
+    const [newlyUnlockedAchievements, setNewlyUnlockedAchievements] = useState<string[]>(() => {
+        const saved = localStorage.getItem(`${storageKey}-newly-unlocked-achievements`);
         return saved ? JSON.parse(saved) : [];
     });
 
@@ -65,20 +70,24 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         Object.entries(config).forEach(([metricKey, conditions]) => {
             const metricValue = metrics[metricKey];
             conditions.forEach(condition => {
-                if (condition.check(metricValue) && !achievedAchievements.includes(condition.data.id)) {
+                if (condition.check(metricValue) && !unlockedAchievements.includes(condition.data.id)) {
                     newAchievements.push(condition.data);
                 }
             });
         });
 
         if (newAchievements.length > 0) {
-            const updatedAchievements = [...achievedAchievements, ...newAchievements.map(a => a.id)];
-            setAchievedAchievements(updatedAchievements);
-            localStorage.setItem(`${storageKey}-achievements`, JSON.stringify(updatedAchievements));
+            const newlyUnlockedIds = newAchievements.map(a => a.id);
+            setUnlockedAchievements(prev => [...prev, ...newlyUnlockedIds]);
+            setNewlyUnlockedAchievements(prev => [...prev, ...newlyUnlockedIds]);
+
+            localStorage.setItem(`${storageKey}-unlocked-achievements`, JSON.stringify([...unlockedAchievements, ...newlyUnlockedIds]));
+            localStorage.setItem(`${storageKey}-newly-unlocked-achievements`, JSON.stringify([...newlyUnlockedAchievements, ...newlyUnlockedIds]));
+
             setAchievementQueue(prevQueue => [...prevQueue, ...newAchievements]);
             setShowConfetti(true);
         }
-    }, [config, metrics, achievedAchievements, storageKey]);
+    }, [config, metrics, unlockedAchievements, newlyUnlockedAchievements, storageKey]);
 
     useEffect(() => {
         checkAchievements();
@@ -86,10 +95,17 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 
     useEffect(() => {
         if (achievementQueue.length > 0 && !currentAchievement) {
-            setCurrentAchievement(achievementQueue[0]);
+            const nextAchievement = achievementQueue[0];
+            setCurrentAchievement(nextAchievement);
             setAchievementQueue(prevQueue => prevQueue.slice(1));
+
+            setNewlyUnlockedAchievements(prev => {
+                const updated = prev.filter(id => id !== nextAchievement.id);
+                localStorage.setItem(`${storageKey}-newly-unlocked-achievements`, JSON.stringify(updated));
+                return updated;
+            });
         }
-    }, [achievementQueue, currentAchievement]);
+    }, [achievementQueue, currentAchievement, storageKey]);
 
     const showBadgesModal = () => {
         setShowBadges(true);
@@ -110,10 +126,18 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
                 return updatedMetrics;
             });
         },
-        achievedAchievements,
+        unlockedAchievements,
         checkAchievements,
         showBadgesModal
     };
+
+    useEffect(() => {
+        if (newlyUnlockedAchievements.length > 0) {
+            const achievementsToShow = getAchievements(newlyUnlockedAchievements);
+            setAchievementQueue(achievementsToShow);
+            setShowConfetti(true);
+        }
+    }, []); // Run this effect only on component mount
 
     return (
         <AchievementContext.Provider value={contextValue}>
@@ -123,14 +147,14 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
                 achievement={currentAchievement}
                 onClose={() => {
                     setCurrentAchievement(null);
-                    if (achievementQueue.length === 0) {
+                    if (achievementQueue.length === 0 && newlyUnlockedAchievements.length === 0) {
                         setShowConfetti(false);
                     }
                 }}
             />
             <BadgesModal
                 show={showBadges}
-                achievements={getAchievements(achievedAchievements)}
+                achievements={getAchievements(unlockedAchievements)}
                 onClose={() => setShowBadges(false)}
             />
             <BadgesButton onClick={showBadgesModal} position={badgesButtonPosition} />
