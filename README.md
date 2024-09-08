@@ -4,11 +4,11 @@ A flexible and customizable achievement system for React applications.
 
 ## Installation
 
-The first thing you need to do is install react-achievements:
+Install react-achievements using npm or yarn:
 
 `npm install react-achievements`
 
-or if you're using yarn:
+
 `yarn add react-achievements`
 
 ## Usage
@@ -17,7 +17,7 @@ or if you're using yarn:
 
 Wrap your app or a part of your app with the AchievementProvider:
 
-```
+```javscript
 import { AchievementProvider } from 'react-achievements';
 import achievementConfig from './achievementConfig';
 
@@ -30,135 +30,132 @@ function App() {
 }
 ```
 
-The object that you pass to the initialState prop should have keys that match the metrics defined in your achievement configuration. For example, if your achievement configuration defines a 'transactions' metric, your initialState object should look like this:
-```typescript
-const user = {
+The `initialState` prop should contain the current state of your metrics. For example:
+
+```javascript
+const initialState = {
     transactions: [
-        {
-            id: 1,
-            amount: 100
-        }, 
-      {
-          id: 2,
-          amount: 200
-      }
+        { id: 1, amount: 100 },
+        { id: 2, amount: 200 }
     ]
-}
+};
 ```
 
 ### Create an achievement configuration
-Create a file (e.g., achievementConfig.js) to define your achievements:
-(It is important that your icons be located in the public folder of your project)
+
+Create a file (e.g., `achievementConfig.js`) to define your achievements:
+
+
 ```javascript
+
+
 import image1 from './public/path/to/image1.png';
 import image2 from './public/path/to/image2.png';
 
 const achievementConfig = {
-  transactions: [
+transactions: [
     {
-      check: (value) => value.length >= 1,
-      data: {
-        id: 'first_transaction',
-        title: 'First Transaction',
-        description: 'Completed your first transaction',
-        icon: image1
-      }
+        check: (value) => value.length >= 1,
+        data: {
+            id: 'first_transaction',
+            title: 'First Transaction',
+            description: 'Completed your first transaction',
+            icon: image1
+        }
     },
     {
-      check: (value) => values.reduce((sum, val) => sum + (typeof val === 'number' ? val : 0), 0) >= 100,
-      data: {
-          id: 'thousand_dollars',
-          title: 'Big Spender',
-          description: 'Spent a total of $1000', 
-          icon: image2
-      }
+        check: (value) => value.reduce((sum, transaction) => sum + transaction.amount, 0) >= 1000,
+        data: {
+            id: 'thousand_dollars',
+            title: 'Big Spender',
+            description: 'Spent a total of $1000',
+            icon: image2
+        }
     },
-  ],
-  // Add more metrics and achievements as needed
+    ],
+// Add more metrics and achievements as needed, but keys (in this case transactions) must match with those in initialState variable
 };
+```
 
 export default achievementConfig;
-```
 
-### Update the location of the badges button
-You can specify the position of the badges button by passing
-badgesButtonPosition to the AchievementProvider:
+Note: Ensure your icons are located in the public folder of your project.
+
+### Customize the badges button location
+
 ```javascript
-<AchievementProvider config={achievementConfig} badgesButtonPosition="bottom-right">
+<AchievementProvider
+    config={achievementConfig}
+    badgesButtonPosition="bottom-right"
+>
+    {/* Your app components */}
+</AchievementProvider>
 ```
+Specify the position of the badges button:
+Possible values for `badgesButtonPosition` are:
+- 'top-left'
+- 'top-right'
+- 'bottom-left'
+- 'bottom-right'
 
-The possible values for badgesButtonPosition are 
-- `'top-left'`
-- `'top-right'`
-- `'bottom-left'`
-- `'bottom-right'`
 
-###  Use the useAchievement hook
-In your components, use the useAchievement hook to update metrics and trigger achievement checks:
+
+### Use the useAchievement hook
+
+In your components, use the `useAchievement` hook to update metrics and trigger achievement checks:
+
 ```javascript
 import { useAchievement } from 'react-achievements';
 
 function TransactionComponent() {
-  const { setMetrics } = useAchievement();
-
-  const handleNewTransaction = () => {
-    // Your transaction logic here
-    setMetrics(prevMetrics => ({
-      ...prevMetrics,
-      transactions: (prevMetrics.transactions || 0) + 1
+    const { setMetrics } = useAchievement();
+    
+    const handleNewTransaction = (amount) => {
+        setMetrics(prevMetrics => (
+            {
+            ...prevMetrics,
+            transactions: [
+    ...prevMetrics.transactions,
+    { id: Date.now(), amount }
+    ]
     }));
-  };
+};
 
-  return (
-    <button onClick={handleNewTransaction}>New Transaction</button>
-  );
+    return (
+        <button onClick={() => handleNewTransaction(100)}>New Transaction</button>
+    );
 }
 ```
-
 ## Features
 
-### Flexible Achievement System: 
-Define custom metrics and achievement conditions.
-
-### Automatic Achievement Tracking: 
-Achievements are automatically checked and unlocked when metrics change.
-
-### Achievement Notifications: 
-A modal pops up when an achievement is unlocked.
-
-### Persistent Achievements: 
-Achieved achievements are stored in local storage. We have not implemented a feature for this to be permanently stored in a database. But we will.
-Achievements are stored in local storage as:
-1. Key: 'react-achievements-achievements' (This is an array of all the achievements that have been unlocked)
-2. Key: 'react-achievements-metrics' (This is an object of all the metrics that have been updated)
-
-### Achievement Gallery: 
-Users can view all their unlocked achievements.
-
-### Customizable UI: 
-The achievement modal and badges button can be styled to fit your app's design.
-Confetti Effect: A celebratory confetti effect is displayed when an achievement is unlocked.
+- Flexible Achievement System: Define custom metrics and achievement conditions.
+- Automatic Achievement Tracking: Achievements are automatically checked and unlocked when metrics change.
+- Achievement Notifications: A modal pops up when an achievement is unlocked.
+- Persistent Achievements: Unlocked achievements and metrics are stored in local storage.
+- Achievement Gallery: Users can view all their unlocked achievements.
+- Confetti Effect: A celebratory confetti effect is displayed when an achievement is unlocked.
 
 ## API
+
 ### AchievementProvider
+
 #### Props:
+- `config`: An object defining your metrics and achievements.
+- `initialState`: The initial state of your metrics.
+- `storageKey` (optional): A string to use as the key for localStorage. Default: 'react-achievements'
+- `badgesButtonPosition` (optional): Position of the badges button. Default: 'top-right'
+- `styles` (optional): Custom styles for the achievement components.
 
-1. config: An object defining your metrics and achievements.
-storageKey (optional): A string to use as the key for localStorage. Default: 'react-achievements'
-badgesButtonPosition (optional): Position of the badges button. Options: 'top-left', 'top-right', 'bottom-left', 'bottom-right'. Default: 'top-right'
+### useAchievement Hook
 
-2. useAchievement Hook Returns an object with:
+Returns an object with:
+- `setMetrics`: Function to update the metrics.
+- `metrics`: Current metrics object.
+- `unlockedAchievements`: Array of unlocked achievement IDs.
+- `showBadgesModal`: Function to manually show the badges modal.
 
-3. setMetrics: Function to update the metrics.
+## License
 
-4. metrics: Current metrics object. 
-5. achievedAchievements: Array of achieved achievement IDs. 
-6. showBadgesModal: Function to manually show the badges modal.
+MIT
 
-Customization
-
-You can customize the appearance of the achievement modal, badges modal, and badges button by modifying their respective components in the package.
-
-License MIT
-
-This README provides a comprehensive overview of how to use the react-achievements package, including setup, usage examples, features, and API details. You may want to adjust or expand certain sections based on the specific implementation details or additional features of your package.
+This package provides a comprehensive achievement system for React applications. It's designed to be flexible, customizable, and easy to integrate into existing projects.

@@ -1,11 +1,3 @@
-export type MetricValueItem = number | boolean | string | any;
-
-export type MetricValue = MetricValueItem[];
-
-export interface Metrics {
-    [key: string]: MetricValue;
-}
-
 export interface AchievementData {
     id: string;
     title: string;
@@ -13,11 +5,17 @@ export interface AchievementData {
     icon: string;
 }
 
+export type MetricValue = number | string | boolean | Date;
+
+export interface Metrics {
+    [key: string]: MetricValue[];
+}
+
 export interface AchievementCondition {
-    check: (metricValue: MetricValue) => boolean;
+    check: (value: MetricValue[]) => boolean;
     data: AchievementData;
 }
 
 export interface AchievementConfig {
-    [metricKey: string]: AchievementCondition[];
+    [key: string]: AchievementCondition[];
 }
