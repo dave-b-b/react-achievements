@@ -1,4 +1,32 @@
-export const defaultStyles = {
+import React from 'react';
+
+interface ModalStyles {
+    overlay: React.CSSProperties;
+    content: React.CSSProperties;
+    title: React.CSSProperties;
+    icon: React.CSSProperties;
+    description: React.CSSProperties;
+    button: React.CSSProperties;
+}
+
+interface BadgesModalStyles {
+    overlay: React.CSSProperties;
+    content: React.CSSProperties;
+    title: React.CSSProperties;
+    badgeContainer: React.CSSProperties;
+    badge: React.CSSProperties;
+    badgeIcon: React.CSSProperties;
+    badgeTitle: React.CSSProperties;
+    button: React.CSSProperties;
+}
+
+export interface Styles {
+    achievementModal: ModalStyles;
+    badgesModal: BadgesModalStyles;
+    badgesButton: React.CSSProperties;
+}
+
+export const defaultStyles: Styles = {
     achievementModal: {
         overlay: {
             position: 'fixed',
@@ -108,5 +136,3 @@ export const defaultStyles = {
         zIndex: 1000,
     },
 };
-
-export type Styles = typeof defaultStyles;
