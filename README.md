@@ -206,6 +206,7 @@ export default Game;
 - `styles` (optional): Custom styles for the achievement components.
 
 <h3 align="center">🪝 useAchievement Hook</h3>
+
 #### Returns an object with:
 
 - `setMetrics`: Function to update the metrics.
@@ -214,7 +215,9 @@ export default Game;
 - `showBadgesModal`: Function to manually show the badges modal.
 
 <h2 align="center">🎨 Customization</h2>
+
 React-Achievements allows for extensive customization of its appearance. You can override the default styles by passing a `styles` prop to the `AchievementProvider`:
+
 ```jsx
 const customStyles = {
   achievementModal: {
