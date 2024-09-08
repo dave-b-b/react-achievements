@@ -13,7 +13,7 @@ const AchievementModal: React.FC<AchievementModalProps> = ({ isOpen, achievement
     if (!isOpen || !achievement) return null;
 
     return (
-        <div style={styles.overlay}>
+        <div style={styles.overlay as React.CSSProperties}>
             <div style={styles.content}>
                 <h2 style={styles.title}>Achievement Unlocked!</h2>
                 <img src={achievement.icon} alt={achievement.title} style={styles.icon} />

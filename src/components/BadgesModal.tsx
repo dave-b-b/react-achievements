@@ -13,7 +13,7 @@ const BadgesModal: React.FC<BadgesModalProps> = ({ isOpen, achievements, onClose
     if (!isOpen) return null;
 
     return (
-        <div style={styles.overlay}>
+        <div style={styles.overlay as React.CSSProperties}>
             <div style={styles.content}>
                 <h2 style={styles.title}>Your Achievements</h2>
                 <div style={styles.badgeContainer}>
