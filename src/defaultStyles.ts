@@ -1,29 +1,29 @@
-import React from 'react';
+type StyleObject = { [key: string]: string | number };
 
 interface ModalStyles {
-    overlay: React.CSSProperties;
-    content: React.CSSProperties;
-    title: React.CSSProperties;
-    icon: React.CSSProperties;
-    description: React.CSSProperties;
-    button: React.CSSProperties;
+    overlay: StyleObject;
+    content: StyleObject;
+    title: StyleObject;
+    icon: StyleObject;
+    description: StyleObject;
+    button: StyleObject;
 }
 
 interface BadgesModalStyles {
-    overlay: React.CSSProperties;
-    content: React.CSSProperties;
-    title: React.CSSProperties;
-    badgeContainer: React.CSSProperties;
-    badge: React.CSSProperties;
-    badgeIcon: React.CSSProperties;
-    badgeTitle: React.CSSProperties;
-    button: React.CSSProperties;
+    overlay: StyleObject;
+    content: StyleObject;
+    title: StyleObject;
+    badgeContainer: StyleObject;
+    badge: StyleObject;
+    badgeIcon: StyleObject;
+    badgeTitle: StyleObject;
+    button: StyleObject;
 }
 
 export interface Styles {
     achievementModal: ModalStyles;
     badgesModal: BadgesModalStyles;
-    badgesButton: React.CSSProperties;
+    badgesButton: StyleObject;
 }
 
 export const defaultStyles: Styles = {
