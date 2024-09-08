@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import { Metrics, AchievementConfig, AchievementData, MetricValue } from '../types';
+import { defaultStyles, Styles } from '../defaultStyles';
 import AchievementModal from '../components/AchievementModal';
 import BadgesModal from '../components/BadgesModal';
 import BadgesButton from '../components/BadgesButton';
@@ -19,6 +20,7 @@ interface AchievementProviderProps {
     initialState?: Record<string, MetricValue>;
     storageKey?: string;
     badgesButtonPosition?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+    styles?: Partial<Styles>;
 }
 
 const AchievementContext = createContext<AchievementContextProps | undefined>(undefined);
@@ -28,25 +30,14 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
                                                                             config,
                                                                             initialState = {},
                                                                             storageKey = 'react-achievements',
-                                                                            badgesButtonPosition = 'top-right'
+                                                                            badgesButtonPosition = 'top-right',
+                                                                            styles = {},
                                                                         }) => {
-    const extractMetrics = (state: Record<string, MetricValue>): Metrics => {
-        return Object.keys(config).reduce((acc, key) => {
-            if (key in state) {
-                acc[key] = state[key];
-            } else {
-                acc[key] = [];
-            }
-            return acc;
-        }, {} as Metrics);
-    };
+    const mergedStyles = React.useMemo(() => mergeDeep(defaultStyles, styles), [styles]);
 
     const [metrics, setMetrics] = useState<Metrics>(() => {
         const savedMetrics = localStorage.getItem(`${storageKey}-metrics`);
-        if (savedMetrics) {
-            return JSON.parse(savedMetrics);
-        }
-        return extractMetrics(initialState);
+        return savedMetrics ? JSON.parse(savedMetrics) : initialState;
     });
 
     const [unlockedAchievements, setUnlockedAchievements] = useState<string[]>(() => {
@@ -78,16 +69,20 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 
         if (newAchievements.length > 0) {
             const newlyUnlockedIds = newAchievements.map(a => a.id);
-            setUnlockedAchievements(prev => [...prev, ...newlyUnlockedIds]);
-            setNewlyUnlockedAchievements(prev => [...prev, ...newlyUnlockedIds]);
-
-            localStorage.setItem(`${storageKey}-unlocked-achievements`, JSON.stringify([...unlockedAchievements, ...newlyUnlockedIds]));
-            localStorage.setItem(`${storageKey}-newly-unlocked-achievements`, JSON.stringify([...newlyUnlockedAchievements, ...newlyUnlockedIds]));
-
+            setUnlockedAchievements(prev => {
+                const updated = [...prev, ...newlyUnlockedIds];
+                localStorage.setItem(`${storageKey}-unlocked-achievements`, JSON.stringify(updated));
+                return updated;
+            });
+            setNewlyUnlockedAchievements(prev => {
+                const updated = [...prev, ...newlyUnlockedIds];
+                localStorage.setItem(`${storageKey}-newly-unlocked-achievements`, JSON.stringify(updated));
+                return updated;
+            });
             setAchievementQueue(prevQueue => [...prevQueue, ...newAchievements]);
             setShowConfetti(true);
         }
-    }, [config, metrics, unlockedAchievements, newlyUnlockedAchievements, storageKey]);
+    }, [config, metrics, unlockedAchievements, storageKey]);
 
     useEffect(() => {
         checkAchievements();
@@ -107,9 +102,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         }
     }, [achievementQueue, currentAchievement, storageKey]);
 
-    const showBadgesModal = () => {
-        setShowBadges(true);
-    };
+    const showBadgesModal = () => setShowBadges(true);
 
     const getAchievements = (achievedIds: string[]) => {
         return Object.values(config).flatMap(conditions =>
@@ -131,19 +124,11 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         showBadgesModal
     };
 
-    useEffect(() => {
-        if (newlyUnlockedAchievements.length > 0) {
-            const achievementsToShow = getAchievements(newlyUnlockedAchievements);
-            setAchievementQueue(achievementsToShow);
-            setShowConfetti(true);
-        }
-    }, []); // Run this effect only on component mount
-
     return (
         <AchievementContext.Provider value={contextValue}>
             {children}
             <AchievementModal
-                show={!!currentAchievement}
+                isOpen={!!currentAchievement}
                 achievement={currentAchievement}
                 onClose={() => {
                     setCurrentAchievement(null);
@@ -151,13 +136,19 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
                         setShowConfetti(false);
                     }
                 }}
+                styles={mergedStyles.achievementModal}
             />
             <BadgesModal
-                show={showBadges}
+                isOpen={showBadges}
                 achievements={getAchievements(unlockedAchievements)}
                 onClose={() => setShowBadges(false)}
+                styles={mergedStyles.badgesModal}
             />
-            <BadgesButton onClick={showBadgesModal} position={badgesButtonPosition} />
+            <BadgesButton
+                onClick={showBadgesModal}
+                position={badgesButtonPosition}
+                styles={mergedStyles.badgesButton}
+            />
             <ConfettiWrapper show={showConfetti || achievementQueue.length > 0} />
         </AchievementContext.Provider>
     );
@@ -170,3 +161,25 @@ export const useAchievement = () => {
     }
     return context;
 };
+
+// Helper function to deep merge objects
+function mergeDeep(target: any, source: any) {
+    const output = Object.assign({}, target);
+    if (isObject(target) && isObject(source)) {
+        Object.keys(source).forEach(key => {
+            if (isObject(source[key])) {
+                if (!(key in target))
+                    Object.assign(output, { [key]: source[key] });
+                else
+                    output[key] = mergeDeep(target[key], source[key]);
+            } else {
+                Object.assign(output, { [key]: source[key] });
+            }
+        });
+    }
+    return output;
+}
+
+function isObject(item: any) {
+    return (item && typeof item === 'object' && !Array.isArray(item));
+}

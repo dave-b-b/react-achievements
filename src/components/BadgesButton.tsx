@@ -1,26 +1,20 @@
 import React from 'react';
+import { Styles } from '../defaultStyles';
 
 interface BadgesButtonProps {
     onClick: () => void;
     position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+    styles: Styles['badgesButton'];
 }
 
-const BadgesButton: React.FC<BadgesButtonProps> = ({ onClick, position }) => {
-    const buttonStyle: React.CSSProperties = {
-        position: 'fixed',
+const BadgesButton: React.FC<BadgesButtonProps> = ({ onClick, position, styles }) => {
+    const positionStyle = {
         [position.split('-')[0]]: '20px',
         [position.split('-')[1]]: '20px',
-        padding: '10px 20px',
-        backgroundColor: '#007bff',
-        color: '#fff',
-        border: 'none',
-        borderRadius: '5px',
-        cursor: 'pointer',
-        zIndex: 998,
     };
 
     return (
-        <button style={buttonStyle} onClick={onClick}>
+        <button onClick={onClick} style={{ ...styles, ...positionStyle }}>
             View Achievements
         </button>
     );
