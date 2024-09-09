@@ -1,6 +1,6 @@
 {
   "name": "react-achievements",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "This package allows users to transpose a React achievements engine over their React apps",
   "keywords": [
     "react",
