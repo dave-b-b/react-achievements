@@ -1,4 +1,3 @@
-Certainly! I'll provide you with a revised version of the README that removes the artifacts-related content. Here's the updated version without the artifacts:
 <h1 align="center">🏆 React-Achievements 🏆</h1>
 
 
