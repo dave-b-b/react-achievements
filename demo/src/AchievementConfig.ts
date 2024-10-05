@@ -1,25 +1,36 @@
-import levelUpIcon from "./assets/achievements/grapes.svg";
+import explorer from "./assets/achievements/explorer.webp";
+import warrior from "./assets/achievements/warrior.webp";
+import seasoned_warrior from "./assets/achievements/seaoned_warrior.webp";
 
 const achievementConfig = {
   level: [
     {
-      check: (value) => value >= 10,
+      check: (value: number) => value >= 5,
       data: {
-        id: "level_10",
+        id: "level_5",
         title: "Novice Adventurer",
-        description: "Reached level 10",
-        icon: levelUpIcon,
+        description: "Reached level 5",
+        icon: explorer,
       },
     },
     {
-      check: (value) => value >= 50,
+      check: (value: number) => value >= 10,
       data: {
-        id: "level_50",
-        title: "Seasoned Warrior",
-        description: "Reached level 50",
-        icon: levelUpIcon,
+        id: "level_10",
+        title: "Warrior",
+        description: "Reached level 10",
+        icon: warrior,
       },
     },
+    {
+      check: (value: number) => value >= 15,
+      data: {
+        id: "level_15",
+        title: "Seasoned Warrior",
+        description: "Reached level 15",
+        icon: seasoned_warrior,
+      },
+    }
   ],
 };
 

@@ -3,6 +3,10 @@
 
 A flexible and customizable achievement system for React applications, perfect for adding gamification elements to your projects.
 
+[![React Achievements](https://img.youtube.com/vi/BWdtiE53S-8/maxresdefault.jpg)](https://youtu.be/BWdtiE53S-8)
+
+
+
 <h2 align="center">🚀 Installation</h2>
 
 Install `react-achievements` using npm or yarn:
@@ -191,6 +195,7 @@ export default Game;
 - Persistent Achievements: Unlocked achievements and metrics are stored in local storage, allowing players to keep their progress.
 - Achievement Gallery: Players can view all their unlocked achievements, encouraging completionism.
 - Confetti Effect: A celebratory confetti effect is displayed when an achievement is unlocked, adding to the excitement.
+- Local Storage: Achievements are stored locally on the device
 
 <h2 align="center">🔧 API</h2>
 
