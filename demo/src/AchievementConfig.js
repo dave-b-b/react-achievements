@@ -5,7 +5,7 @@ import seasoned_warrior from "./assets/achievements/seaoned_warrior.webp";
 const achievementConfig = {
   level: [
     {
-      check: (value: number) => value >= 5,
+      check: (value) => value >= 5,
       data: {
         id: "level_5",
         title: "Novice Adventurer",
@@ -14,7 +14,7 @@ const achievementConfig = {
       },
     },
     {
-      check: (value: number) => value >= 10,
+      check: (value) => value >= 10,
       data: {
         id: "level_10",
         title: "Warrior",
@@ -23,7 +23,7 @@ const achievementConfig = {
       },
     },
     {
-      check: (value: number) => value >= 15,
+      check: (value) => value >= 15,
       data: {
         id: "level_15",
         title: "Seasoned Warrior",
