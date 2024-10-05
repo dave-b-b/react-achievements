@@ -3,7 +3,7 @@
 
 A flexible and customizable achievement system for React applications, perfect for adding gamification elements to your projects.
 
-[![React Achievements](https://img.youtube.com/vi/BWdtiE53S-8/maxresdefault.jpg)](https://youtu.be/BWdtiE53S-8)
+[![React Achievements Demo](https://github.com/dave-b-b/react-achievements/blob/main/images/demo.gif?raw=true)
 
 If you want to test the package, you can try it out here:
 
