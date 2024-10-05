@@ -374,7 +374,7 @@ badgesButton: {
 
 The achievements are stored in local storage. In order to reset the package in your app, you need to delete the key-value pairs in local storage:
 
-![Key-Value pair delete image]("https://github.com/user-attachments/assets/3d012ac6-89a5-41ab-965c-edc34003eb86")
+![Key-Value pair delete image](./images/delete_local_storage.png)
 
 
 <h2 align="center">📄 License</h2>
