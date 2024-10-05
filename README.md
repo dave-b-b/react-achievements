@@ -5,6 +5,9 @@ A flexible and customizable achievement system for React applications, perfect f
 
 [![React Achievements](https://img.youtube.com/vi/BWdtiE53S-8/maxresdefault.jpg)](https://youtu.be/BWdtiE53S-8)
 
+If you want to test the package, you can try it out here:
+
+https://stackblitz.com/edit/vitejs-vite-sccdux
 
 
 <h2 align="center">🚀 Installation</h2>
@@ -69,42 +72,42 @@ import questMasterIcon from './icons/quest-master.png';
 const achievementConfig = {
   level: [
     {
-      check: (value) => value >= 10,
+      check: (value) => value >= 1,
       data: {
-        id: 'level_10',
+        id: 'level_1',
         title: 'Novice Adventurer',
-        description: 'Reached level 10',
+        description: 'Reached level 1',
         icon: levelUpIcon
       }
     },
     {
-      check: (value) => value >= 50,
+      check: (value) => value >= 5,
       data: {
-        id: 'level_50',
+        id: 'level_5',
         title: 'Seasoned Warrior',
-        description: 'Reached level 50',
+        description: 'Reached level 5',
         icon: levelUpIcon
       }
     }
   ],
   monstersDefeated: [
     {
-      check: (value) => value >= 100,
+      check: (value) => value >= 10,
       data: {
         id: 'monster_slayer',
         title: 'Monster Slayer',
-        description: 'Defeated 100 monsters',
+        description: 'Defeated 10 monsters',
         icon: monsterSlayerIcon
       }
     }
   ],
   questsCompleted: [
     {
-      check: (value) => value >= 50,
+      check: (value) => value >= 1,
       data: {
         id: 'quest_master',
         title: 'Quest Master',
-        description: 'Completed 50 quests',
+        description: 'Completed 1 quest',
         icon: questMasterIcon
       }
     }
@@ -367,7 +370,12 @@ badgesButton: {
 
 ```
 
-This allows you to match the achievement system's look and feel to your game or application's theme.
+<h2 align="center">Resetting React Achievements</h2>
+
+The achievements are stored in local storage. In order to reset the package in your app, you need to delete the key-value pairs in local storage:
+
+![Key-Value pair delete image]("https://github.com/user-attachments/assets/3d012ac6-89a5-41ab-965c-edc34003eb86")
+
 
 <h2 align="center">📄 License</h2>
 MIT
