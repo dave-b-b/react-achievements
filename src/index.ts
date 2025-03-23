@@ -1,13 +1,13 @@
 import { AchievementProvider, useAchievement } from './context/AchievementContext';
-import { Metrics, AchievementConfig, AchievementData, AchievementCondition } from './types';
+import { AchievementMetrics, AchievementConfiguration, AchievementDetails, AchievementUnlockCondition } from './types';
 import ConfettiWrapper from './components/ConfettiWrapper';
 
 export {
     AchievementProvider,
     useAchievement,
-    Metrics,
-    AchievementConfig,
-    AchievementData,
-    AchievementCondition,
+    AchievementMetrics,
+    AchievementConfiguration,
+    AchievementDetails,
+    AchievementUnlockCondition,
     ConfettiWrapper
 };

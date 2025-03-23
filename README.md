@@ -1,6 +1,5 @@
 <h1 align="center">🏆 React-Achievements 🏆</h1>
 
-
 A flexible and customizable achievement system for React applications, perfect for adding gamification elements to your projects.
 
 ![React Achievements Demo](https://github.com/dave-b-b/react-achievements/blob/main/images/demo.gif?raw=true)
@@ -8,7 +7,6 @@ A flexible and customizable achievement system for React applications, perfect f
 If you want to test the package, you can try it out here:
 
 https://stackblitz.com/edit/vitejs-vite-sccdux
-
 
 <h2 align="center">🚀 Installation</h2>
 
@@ -35,24 +33,27 @@ First, wrap your app or a part of your app with the AchievementProvider:
 ```jsx
 import React from 'react';
 import { AchievementProvider } from 'react-achievements';
-import achievementConfig from './achievementConfig';
-import Game from './Game';
+import Game from './Game'; // Your main game component
+import achievementConfig from './achievementConfig'; // Your achievement configuration
 
 const initialState = {
   level: 1,
   experience: 0,
   monstersDefeated: 0,
-  questsCompleted: 0
+  questsCompleted: 0,
+  // Add any other initial metrics here
 };
 
 function App() {
   return (
     <AchievementProvider 
-      config={achievementConfig} 
-      initialState={initialState}
-      badgesButtonPosition="top-right"
+      config={achievementConfig} // Required: your achievement configuration
+      initialState={initialState} // Required: initial game metrics
+      storageKey="my-game-achievements" // Optional: customize local storage key
+      badgesButtonPosition="top-right" // Optional: customize badges button position
+      // Optional: add custom styles and icons here
     >
-      <Game />
+      <Game /> 
     </AchievementProvider>
   );
 }
@@ -65,57 +66,64 @@ export default App;
 Create a file (e.g., achievementConfig.js) to define your achievements:
 
 ```javascript
+// achievementConfig.js
 import levelUpIcon from './icons/level-up.png';
 import monsterSlayerIcon from './icons/monster-slayer.png';
 import questMasterIcon from './icons/quest-master.png';
 
 const achievementConfig = {
-  level: [
-    {
-      check: (value) => value >= 1,
-      data: {
-        id: 'level_1',
-        title: 'Novice Adventurer',
-        description: 'Reached level 1',
-        icon: levelUpIcon
-      }
-    },
-    {
-      check: (value) => value >= 5,
-      data: {
-        id: 'level_5',
-        title: 'Seasoned Warrior',
-        description: 'Reached level 5',
-        icon: levelUpIcon
-      }
-    }
-  ],
-  monstersDefeated: [
-    {
-      check: (value) => value >= 10,
-      data: {
-        id: 'monster_slayer',
-        title: 'Monster Slayer',
-        description: 'Defeated 10 monsters',
-        icon: monsterSlayerIcon
-      }
-    }
-  ],
-  questsCompleted: [
-    {
-      check: (value) => value >= 1,
-      data: {
-        id: 'quest_master',
-        title: 'Quest Master',
-        description: 'Completed 1 quest',
-        icon: questMasterIcon
-      }
-    }
-  ]
+    level: [
+        {
+            isConditionMet: (value) => value >= 1,
+            achievementDetails: {
+                achievementId: 'level_1',
+                achievementTitle: 'Novice Adventurer',
+                achievementDescription: 'Reached level 1',
+                achievementIconKey: 'levelUpIcon', // Use keys to reference your icons
+            },
+        },
+        {
+            isConditionMet: (value) => value >= 5,
+            achievementDetails: {
+                achievementId: 'level_5',
+                achievementTitle: 'Seasoned Warrior',
+                achievementDescription: 'Reached level 5',
+                achievementIconKey: 'levelUpIcon',
+            },
+        },
+    ],
+    monstersDefeated: [
+        {
+            isConditionMet: (value) => value >= 10,
+            achievementDetails: {
+                achievementId: 'monster_slayer',
+                achievementTitle: 'Monster Slayer',
+                achievementDescription: 'Defeated 10 monsters',
+                achievementIconKey: 'monsterSlayerIcon',
+            },
+        },
+    ],
+    questsCompleted: [
+        {
+            isConditionMet: (value) => value >= 1,
+            achievementDetails: {
+                achievementId: 'quest_master',
+                achievementTitle: 'Quest Master',
+                achievementDescription: 'Completed 1 quest',
+                achievementIconKey: 'questMasterIcon',
+            },
+        },
+    ],
 };
 
 export default achievementConfig;
 ```
+
+Key points:
+
+- `isConditionMet`: A function that determines if an achievement should be unlocked.
+- `achievementDetails`: An object containing the details of the achievement.
+- `achievementIconKey`: A string used to reference the icon in the `AchievementProvider`'s icons prop (if you're using custom icons).
 
 <h3 align="center">🎣 Use the useAchievement hook</h3>
 
@@ -125,66 +133,58 @@ import React, { useState } from 'react';
 import { useAchievement } from 'react-achievements';
 
 function Game() {
-  const { setMetrics, metrics } = useAchievement();
-  const [currentQuest, setCurrentQuest] = useState(null);
+    const { setMetrics, metrics } = useAchievement();
+    const [currentQuest, setCurrentQuest] = useState(null);
 
-  const defeatMonster = () => {
-    setMetrics(prevMetrics => {
-      const newExperience = prevMetrics.experience + 10;
-      const newLevel = Math.floor(newExperience / 100) + 1;
-      return {
-        ...prevMetrics,
-        monstersDefeated: prevMetrics.monstersDefeated + 1,
-        experience: newExperience,
-        level: newLevel > prevMetrics.level ? newLevel : prevMetrics.level
-      };
-    });
-  };
+    const defeatMonster = () => {
+        setMetrics((prevMetrics) => ({
+            ...prevMetrics,
+            monstersDefeated: prevMetrics.monstersDefeated + 1,
+            experience: prevMetrics.experience + 10,
+            level: Math.floor((prevMetrics.experience + 10) / 100) + 1, // Calculate new level
+        }));
+    };
 
-  const completeQuest = () => {
-    setMetrics(prevMetrics => {
-      const newExperience = prevMetrics.experience + 50;
-      const newLevel = Math.floor(newExperience / 100) + 1;
-      return {
-        ...prevMetrics,
-        questsCompleted: prevMetrics.questsCompleted + 1,
-        experience: newExperience,
-        level: newLevel > prevMetrics.level ? newLevel : prevMetrics.level
-      };
-    });
-    setCurrentQuest(null);
-  };
+    const completeQuest = () => {
+        setMetrics((prevMetrics) => ({
+            ...prevMetrics,
+            questsCompleted: prevMetrics.questsCompleted + 1,
+            experience: prevMetrics.experience + 50,
+            level: Math.floor((prevMetrics.experience + 50) / 100) + 1, // Calculate new level
+        }));
+        setCurrentQuest(null);
+    };
 
-  const startQuest = () => {
-    setCurrentQuest("Defeat the Dragon");
-  };
+    const startQuest = () => {
+        setCurrentQuest("Defeat the Dragon");
+    };
 
-  return (
-    <div>
-      <h1>My RPG Game</h1>
-      <p>Level: {metrics.level}</p>
-      <p>Experience: {metrics.experience}</p>
-      <p>Monsters Defeated: {metrics.monstersDefeated}</p>
-      <p>Quests Completed: {metrics.questsCompleted}</p>
-      
-      <div>
-        <h2>Battle Arena</h2>
-        <button onClick={defeatMonster}>Fight a Monster</button>
-      </div>
+    return (
+        <div>
+            <h1>My RPG Game</h1>
+            <p>Level: {metrics.level}</p>
+            <p>Experience: {metrics.experience}</p>
+            <p>Monsters Defeated: {metrics.monstersDefeated}</p>
+            <p>Quests Completed: {metrics.questsCompleted}</p>
 
-      <div>
-        <h2>Quest Board</h2>
-        {currentQuest ? (
-          <>
-            <p>Current Quest: {currentQuest}</p>
-            <button onClick={completeQuest}>Complete Quest</button>
-          </>
-        ) : (
-          <button onClick={startQuest}>Start a New Quest</button>
-        )}
-      </div>
-    </div>
-  );
+            <div>
+                <h2>Battle Arena</h2>
+                <button onClick={defeatMonster}>Fight a Monster</button>
+            </div>
+
+            <div>
+                <h2>Quest Board</h2>
+                {currentQuest ? (
+                    <>
+                        <p>Current Quest: {currentQuest}</p>
+                        <button onClick={completeQuest}>Complete Quest</button>
+                    </>
+                ) : (
+                    <button onClick={startQuest}>Start a New Quest</button>
+                )}
+            </div>
+        </div>
+    );
 }
 
 export default Game;

@@ -1,21 +1,25 @@
-export interface AchievementData {
-    id: string;
-    title: string;
-    description: string;
-    icon: string;
+export interface AchievementDetails {
+    achievementId: string;
+    achievementTitle: string;
+    achievementDescription: string;
+    achievementIconKey: string;
 }
 
-export type MetricValue = number | string | boolean | Date;
+export type AchievementIconRecord = Record<string, string>;
 
-export interface Metrics {
-    [key: string]: MetricValue[];
+export type InitialAchievementMetrics = Record<string, number | boolean>;
+
+export type AchievementMetricValue = number | string | boolean | Date;
+
+export interface AchievementMetrics {
+    [metricName: string]: AchievementMetricValue[];
 }
 
-export interface AchievementCondition {
-    check: (value: MetricValue[]) => boolean;
-    data: AchievementData;
+export interface AchievementUnlockCondition<T extends AchievementMetricValue = AchievementMetricValue> {
+    isConditionMet: (metricValue: T) => boolean;
+    achievementDetails: AchievementDetails;
 }
 
-export interface AchievementConfig {
-    [key: string]: AchievementCondition[];
+export interface AchievementConfiguration {
+    [metricName: string]: AchievementUnlockCondition[];
 }

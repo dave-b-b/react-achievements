@@ -1,24 +1,53 @@
 import React from 'react';
-import { AchievementData } from '../types';
+import { AchievementDetails, AchievementIconRecord } from '../types';
 import { Styles } from '../defaultStyles';
+import { defaultAchievementIcons } from '../assets/defaultIcons';
 
 interface AchievementModalProps {
     isOpen: boolean;
-    achievement: AchievementData | null;
+    achievement: AchievementDetails | null;
     onClose: () => void;
     styles: Styles['achievementModal'];
+    icons?: Record<string, string>;
 }
 
-const AchievementModal: React.FC<AchievementModalProps> = ({ isOpen, achievement, onClose, styles }) => {
+const AchievementModal: React.FC<AchievementModalProps> = ({ isOpen, achievement, onClose, styles, icons = {} }) => {
     if (!isOpen || !achievement) return null;
 
+    const mergedIcons: AchievementIconRecord = { ...defaultAchievementIcons, ...icons };
+    const iconToDisplay = mergedIcons[achievement.achievementIconKey] || mergedIcons.default;
+
     return (
-        <div style={styles.overlay as React.CSSProperties}>
-            <div style={styles.content}>
+        <div style={{
+            ...styles.overlay,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'fixed', // Ensure it covers the screen
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Optional semi-transparent background
+        }}>
+            <div style={{
+                ...styles.content,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center', // Center content horizontally
+                justifyContent: 'center', // Center content vertically
+                padding: '20px',
+                borderRadius: '8px',
+                backgroundColor: 'white', // Or your modal background color
+            }}>
                 <h2 style={styles.title}>Achievement Unlocked!</h2>
-                <img src={achievement.icon} alt={achievement.title} style={styles.icon} />
-                <h3 style={styles.title}>{achievement.title}</h3>
-                <p style={styles.description}>{achievement.description}</p>
+                {iconToDisplay.startsWith('http') || iconToDisplay.startsWith('data:image') ? (
+                    <img src={iconToDisplay} alt={achievement.achievementTitle} style={styles.icon} />
+                ) : (
+                    <p style={{ fontSize: '3em' }}>{iconToDisplay}</p>
+                )}
+                <h3 style={styles.title}>{achievement.achievementTitle}</h3>
+                <p style={styles.description}>{achievement.achievementDescription}</p>
                 <button onClick={onClose} style={styles.button}>Okay</button>
             </div>
         </div>
