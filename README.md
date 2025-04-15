@@ -13,13 +13,13 @@ https://stackblitz.com/edit/vitejs-vite-sccdux
 Install `react-achievements` using npm or yarn:
 
 ```bash
-npm install react react-dom react-redux @reduxjs/toolkit react-achievements
+npm install react react-dom @reduxjs/toolkit react-achievements
 ```
 
 or
 
 ```bash
-yarn add react react-dom react-redux @reduxjs/toolkit react-achievements
+yarn add react react-dom @reduxjs/toolkit react-achievements
 ```
 
 <h2 align="center">🎮 Usage</h2>

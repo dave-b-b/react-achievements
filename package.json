@@ -1,6 +1,6 @@
 {
   "name": "react-achievements",
-  "version": "2.0.2",
+  "version": "2.0.4",
   "description": "This package allows users to transpose a React achievements engine over their React apps",
   "keywords": [
     "react",
@@ -50,8 +50,7 @@
     "react-redux": "^8.0.0 || ^9.0.0",
     "@reduxjs/toolkit": "^1.0.0",
     "react-confetti": "^6.0.0",
-    "react-use": "^17.0.0",
-    "redux": "^5.0.1"
+    "react-use": "^17.0.0"
   },
   "dependencies": {
   }
