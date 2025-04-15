@@ -1,15 +1,14 @@
-import React, { useEffect, useCallback, ReactNode } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../redux/store';
-import { initialize, setMetrics, unlockAchievement } from '../redux/achievementSlice';
-import { addNotification, clearNotifications } from '../redux/notificationSlice'; // Add clearNotification import
+import { initialize, setMetrics, unlockAchievement, resetAchievements } from '../redux/achievementSlice';
+import { addNotification, clearNotifications } from '../redux/notificationSlice';
 import {
-    AchievementMetrics,
-    AchievementConfiguration,
     AchievementDetails,
     AchievementMetricValue,
-    InitialAchievementMetrics,
     AchievementUnlockCondition,
+    AchievementProviderProps,
+    AchievementMetrics as AchievementMetricsType,
 } from '../types';
 import { defaultStyles, Styles } from '../defaultStyles';
 import AchievementModal from '../components/AchievementModal';
@@ -18,15 +17,21 @@ import BadgesButton from '../components/BadgesButton';
 import ConfettiWrapper from '../components/ConfettiWrapper';
 import { defaultAchievementIcons } from '../assets/defaultIcons';
 
-interface AchievementProviderProps {
-    children: ReactNode;
-    config: AchievementConfiguration;
-    initialState?: InitialAchievementMetrics;
-    storageKey?: string;
-    badgesButtonPosition?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-    styles?: Partial<Styles>;
-    icons?: Record<string, string>;
+export interface AchievementContextType {
+    updateMetrics: (newMetrics: AchievementMetricsType | ((prevMetrics: AchievementMetricsType) => AchievementMetricsType)) => void;
+    unlockedAchievements: string[];
+    resetStorage: () => void;
 }
+
+export const AchievementContext = React.createContext<AchievementContextType | undefined>(undefined);
+
+export const useAchievementContext = () => {
+    const context = React.useContext(AchievementContext);
+    if (!context) {
+        throw new Error('useAchievementContext must be used within an AchievementProvider');
+    }
+    return context;
+};
 
 export const AchievementProvider: React.FC<AchievementProviderProps> = ({
                                                                             children,
@@ -36,10 +41,10 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
                                                                             badgesButtonPosition = 'top-right',
                                                                             styles = {},
                                                                             icons = {},
-                                                                        }) => {
+                                                                        }: AchievementProviderProps) => {
     const dispatch: AppDispatch = useDispatch();
     const metrics = useSelector((state: RootState) => state.achievements.metrics);
-    const unlockedAchievements = useSelector((state: RootState) => state.achievements.unlockedAchievements);
+    const unlockedAchievementIds = useSelector((state: RootState) => state.achievements.unlockedAchievements);
     const notifications = useSelector((state: RootState) => state.notifications.notifications);
     const mergedStyles = React.useMemo(() => mergeDeep(defaultStyles, styles), [styles]);
 
@@ -49,6 +54,18 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 
     const mergedIcons = React.useMemo(() => ({ ...defaultAchievementIcons, ...icons }), [icons]);
 
+    const updateMetrics = useCallback(
+        (newMetrics: AchievementMetricsType | ((prevMetrics: AchievementMetricsType) => AchievementMetricsType)) => {
+            dispatch(setMetrics(typeof newMetrics === 'function' ? newMetrics(metrics) : newMetrics));
+        },
+        [dispatch, metrics]
+    );
+
+    const resetStorage = useCallback(() => {
+        localStorage.removeItem(storageKey);
+        dispatch(resetAchievements()); // Dispatch action to reset Redux state
+    }, [dispatch, storageKey]);
+
     useEffect(() => {
         dispatch(initialize({ config, initialState, storageKey }));
     }, [dispatch, config, initialState, storageKey]);
@@ -56,22 +73,22 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     const checkAchievements = useCallback(() => {
         const newAchievements: AchievementDetails[] = [];
 
-        console.log("checkAchievements - unlockedAchievements:", unlockedAchievements);
-
-        if (!unlockedAchievements) {
-            console.error("unlockedAchievements is undefined!");
+        if (!unlockedAchievementIds) {
+            console.error('unlockedAchievements is undefined!');
             return;
         }
 
         Object.entries(config).forEach(([metricName, conditions]) => {
             const metricValues = metrics[metricName];
 
-            if (!metricValues) return;
+            if (!metricValues) {
+                return;
+            }
 
-            conditions.forEach((condition: AchievementUnlockCondition) => {
+            conditions.forEach((condition) => {
                 if (
                     metricValues.some((value: AchievementMetricValue) => condition.isConditionMet(value)) &&
-                    !unlockedAchievements.includes(condition.achievementDetails.achievementId)
+                    !unlockedAchievementIds.includes(condition.achievementDetails.achievementId)
                 ) {
                     newAchievements.push(condition.achievementDetails);
                 }
@@ -79,13 +96,13 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         });
 
         if (newAchievements.length > 0) {
-            newAchievements.forEach(achievement => {
+            newAchievements.forEach((achievement) => {
                 dispatch(unlockAchievement(achievement.achievementId));
                 dispatch(addNotification(achievement));
             });
             setShowConfetti(true);
         }
-    }, [config, metrics, unlockedAchievements, dispatch]);
+    }, [config, metrics, unlockedAchievementIds, dispatch]);
 
     useEffect(() => {
         checkAchievements();
@@ -99,21 +116,28 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 
     const showBadgesModal = () => setShowBadges(true);
 
-    const getAchievements = (achievedIds: string[]) => {
-        return Object.values(config).flatMap(conditions =>
-            conditions.filter((c: AchievementUnlockCondition) => achievedIds.includes(c.achievementDetails.achievementId)).map(c => c.achievementDetails)
-        );
-    };
+    const getAchievements = useCallback(
+        (achievedIds: string[]) => {
+            return Object.values(config).flatMap((conditions) =>
+                conditions
+                    .filter((c) => achievedIds.includes(c.achievementDetails.achievementId))
+                    .map((c) => c.achievementDetails)
+            );
+        },
+        [config]
+    );
+
+    const unlockedAchievementsDetails = getAchievements(unlockedAchievementIds);
 
     return (
-        <>
+        <AchievementContext.Provider value={{ updateMetrics, unlockedAchievements: unlockedAchievementIds, resetStorage }}>
             {children}
             <AchievementModal
                 isOpen={!!currentAchievement}
                 achievement={currentAchievement}
                 onClose={() => {
                     setCurrentAchievement(null);
-                    if(currentAchievement){
+                    if (currentAchievement) {
                         dispatch(clearNotifications());
                     }
                 }}
@@ -122,7 +146,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
             />
             <BadgesModal
                 isOpen={showBadges}
-                achievements={getAchievements(unlockedAchievements)}
+                achievements={unlockedAchievementsDetails}
                 onClose={() => setShowBadges(false)}
                 styles={mergedStyles.badgesModal}
                 icons={mergedIcons}
@@ -131,30 +155,31 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
                 onClick={showBadgesModal}
                 position={badgesButtonPosition}
                 styles={mergedStyles.badgesButton}
-                unlockedAchievements={getAchievements(unlockedAchievements)}
+                unlockedAchievements={unlockedAchievementsDetails}
             />
             <ConfettiWrapper show={showConfetti || notifications.length > 0} />
-        </>
+        </AchievementContext.Provider>
     );
 };
 
-function mergeDeep(target: any, source: any) {
-    const output = Object.assign({}, target);
+function isObject(item: any) {
+    return item && typeof item === 'object' && !Array.isArray(item);
+}
+
+export function mergeDeep(target: any, source: any) {
+    const output = { ...target };
     if (isObject(target) && isObject(source)) {
-        Object.keys(source).forEach(key => {
+        Object.keys(source).forEach((key) => {
             if (isObject(source[key])) {
-                if (!(key in target))
-                    Object.assign(output, { [key]: source[key] });
-                else
+                if (!(key in target)) {
+                    output[key] = source[key];
+                } else {
                     output[key] = mergeDeep(target[key], source[key]);
+                }
             } else {
-                Object.assign(output, { [key]: source[key] });
+                output[key] = source[key];
             }
         });
     }
     return output;
-}
-
-function isObject(item: any) {
-    return item && typeof item === 'object' && !Array.isArray(item);
 }

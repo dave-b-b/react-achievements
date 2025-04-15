@@ -15,7 +15,7 @@ const AchievementModal: React.FC<AchievementModalProps> = ({ isOpen, achievement
     if (!isOpen || !achievement) return null;
 
     const mergedIcons: AchievementIconRecord = { ...defaultAchievementIcons, ...icons };
-    const iconToDisplay = mergedIcons[achievement.achievementIconKey] || mergedIcons.default;
+    const iconToDisplay = achievement?.achievementIconKey ? (mergedIcons[achievement.achievementIconKey] || mergedIcons.default) : mergedIcons.default;
 
     return (
         <div style={{

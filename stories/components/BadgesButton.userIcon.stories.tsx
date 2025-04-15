@@ -1,8 +1,10 @@
+// src/stories/components/BadgesButton.userIcon.stories.tsx
 import React from 'react';
 import { StoryFn, Meta } from '@storybook/react';
-import BadgesButton from '../../components/BadgesButton';
-import { AchievementDetails } from '../../types';
-import { defaultStyles } from '../../defaultStyles';
+import BadgesButton from '../../src/components/BadgesButton';
+import { AchievementDetails } from '../../src/types';
+import { defaultStyles } from '../../src/defaultStyles';
+import MenuIcon from '@mui/icons-material/Menu';
 
 export default {
     title: 'Components/BadgesButton',
@@ -13,10 +15,11 @@ const Template: StoryFn<{
     onClick: () => void;
     position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
     unlockedAchievements: AchievementDetails[];
+    icon: React.ReactNode;
 }> = (args) => <BadgesButton {...args} styles={defaultStyles.badgesButton} />;
 
-export const WithWords = Template.bind({});
-WithWords.args = {
+export const WithUserIcon = Template.bind({});
+WithUserIcon.args = {
     onClick: () => alert('Button Clicked!'),
     position: 'top-right',
     unlockedAchievements: [
@@ -26,11 +29,6 @@ WithWords.args = {
             achievementDescription: 'Description 1',
             achievementIconKey: 'default',
         },
-        {
-            achievementId: 'test2',
-            achievementTitle: 'Test Achievement 2',
-            achievementDescription: 'Description 2',
-            achievementIconKey: 'default',
-        },
     ],
+    icon: <MenuIcon />,
 };

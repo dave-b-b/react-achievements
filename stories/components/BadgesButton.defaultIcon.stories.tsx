@@ -1,10 +1,10 @@
 // src/stories/components/BadgesButton.defaultIcon.stories.tsx
 import React from 'react';
 import { StoryFn, Meta } from '@storybook/react';
-import BadgesButton from '../../components/BadgesButton';
-import { AchievementDetails } from '../../types';
-import { defaultAchievementIcons } from '../../assets/defaultIcons'
-import {defaultStyles} from "../../defaultStyles";
+import BadgesButton from '../../src/components/BadgesButton';
+import { AchievementDetails } from '../../src/types';
+import { defaultAchievementIcons } from '../../src/assets/defaultIcons'
+import {defaultStyles} from "../../src/defaultStyles";
 
 export default {
     title: 'Components/BadgesButton',

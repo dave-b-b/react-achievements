@@ -48,7 +48,7 @@ function App() {
   return (
     <AchievementProvider 
       config={achievementConfig} // Required: your achievement configuration
-      initialState={initialState} // Required: initial game metrics
+      initialState={initialState} // Required: initial game metrics. This can be loaded from your server
       storageKey="my-game-achievements" // Optional: customize local storage key
       badgesButtonPosition="top-right" // Optional: customize badges button position
       // Optional: add custom styles and icons here
@@ -79,7 +79,7 @@ const achievementConfig = {
                 achievementId: 'level_1',
                 achievementTitle: 'Novice Adventurer',
                 achievementDescription: 'Reached level 1',
-                achievementIconKey: 'levelUpIcon', // Use keys to reference your icons
+                achievementIconKey: 'levelUpIcon', 
             },
         },
         {
@@ -123,7 +123,7 @@ Key points:
 
 - `isConditionMet`: A function that determines if an achievement should be unlocked.
 - `achievementDetails`: An object containing the details of the achievement.
-- `achievementIconKey`: A string used to reference the icon in the `AchievementProvider`'s icons prop (if you're using custom icons).
+- `achievementIconKey`: A string used to reference the icon in the `AchievementProvider`'s icons prop. A list of icons are already provided by the library.
 
 <h3 align="center">🎣 Use the useAchievement hook</h3>
 
@@ -193,12 +193,15 @@ export default Game;
 <h2 align="center">✨ Features</h2>
 
 - Flexible Achievement System: Define custom metrics and achievement conditions for your game or app.
+- Built with TypeScript: Provides strong typing and improved developer experience.
+- Redux-Powered State Management: Leverages Redux for predictable and scalable state management of achievements and metrics.
 - Automatic Achievement Tracking: Achievements are automatically checked and unlocked when metrics change.
 - Achievement Notifications: A modal pops up when an achievement is unlocked, perfect for rewarding players.
 - Persistent Achievements: Unlocked achievements and metrics are stored in local storage, allowing players to keep their progress.
 - Achievement Gallery: Players can view all their unlocked achievements, encouraging completionism.
 - Confetti Effect: A celebratory confetti effect is displayed when an achievement is unlocked, adding to the excitement.
-- Local Storage: Achievements are stored locally on the device
+- Local Storage: Achievements are stored locally on the device.
+- **Programmatic Reset:** Includes a `resetStorage` function accessible via the `useAchievementContext` hook to easily reset all achievement data.
 
 <h2 align="center">🔧 API</h2>
 
@@ -216,10 +219,9 @@ export default Game;
 
 #### Returns an object with:
 
-- `setMetrics`: Function to update the metrics.
-- `metrics`: Current metrics object.
-- `unlockedAchievements`: Array of unlocked achievement IDs.
-- `showBadgesModal`: Function to manually show the badges modal.
+- `updateMetrics`: Function to update the metrics. Accepts either a new metrics object or a function that receives the previous metrics and returns the new metrics.
+- `unlockedAchievements`: Array of unlocked achievement IDs. (Note: Access the actual Redux state using `useSelector`).
+- `resetStorage`: Function to clear all achievement data from local storage and reset the Redux state.
 
 <h2 align="center">🎨 Customization</h2>
 
@@ -228,25 +230,13 @@ React-Achievements allows for extensive customization of its appearance. You can
 ```jsx
 const customStyles = {
   achievementModal: {
-    overlay: {
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
-    },
-    content: {
-      backgroundColor: '#2a2a2a',
-      color: '#ffffff',
-    },
-    title: {
-      color: '#ffd700',
-    },
-    button: {
-      backgroundColor: '#4CAF50',
-    },
+    // Custom styles for the achievement modal below
   },
   badgesModal: {
-    // Custom styles for the badges modal
+    // Custom styles for the badges modal below
   },
   badgesButton: {
-    // Custom styles for the badges button
+    // Custom styles for the badges button below
   },
 };
 
@@ -263,7 +253,7 @@ function App() {
 }
 ```
 
-### achievementModal
+### achievementModal (to be passed in as a customStyle above)
 
 Customizes the modal that appears when an achievement is unlocked.
 
@@ -311,7 +301,7 @@ achievementModal: {
 }
 ```
 
-### badgesModal
+### badgesModal (to be passed in as a customStyle above)
 
 ```
 badgesModal: {
@@ -352,7 +342,7 @@ badgesModal: {
 ```
 
 
-### badgesButton
+### badgesButton (to be passed in as a customStyle above)
 
 ```
 badgesButton: {
@@ -372,10 +362,25 @@ badgesButton: {
 
 <h2 align="center">Resetting React Achievements</h2>
 
-The achievements are stored in local storage. In order to reset the package in your app, you need to delete the key-value pairs in local storage:
+The achievements and metrics are managed by Redux and persisted in local storage. You have two primary ways to reset the achievement system:
 
-![Key-Value pair delete image](https://github.com/dave-b-b/react-achievements/blob/main/images/delete_local_storage.png?raw=true)
+1.  **Programmatic Reset:** Use the `resetStorage` function provided by the `useAchievementContext` hook within your components:
 
+```jsx
+    import React from 'react';
+    import { useAchievementContext } from 'react-achievements';
+
+    function ResetButton() {
+      const { resetStorage } = useAchievementContext();
+
+      const handleReset = () => {
+        resetStorage();
+        console.log('Achievements and progress reset!');
+      };
+
+      return <button onClick={handleReset}>Reset Achievements</button>;
+    }
+```
 
 <h2 align="center">📄 License</h2>
 MIT

@@ -1,47 +1,71 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {AchievementConfig, Metrics, AchievementData, MetricValue, AppAchievementState} from '../types';
+import {
+    AchievementConfiguration,
+    InitialAchievementMetrics,
+    AchievementMetrics,
+} from '../types';
 
 export interface AchievementState {
-    metrics: Metrics;
+    config: AchievementConfiguration;
+    metrics: AchievementMetrics;
     unlockedAchievements: string[];
-    config: AchievementConfig;
-    initialState: AppAchievementState;
-    storageKey: string;
+    storageKey: string | null;
 }
 
 const initialState: AchievementState = {
+    config: {},
     metrics: {},
     unlockedAchievements: [],
-    config: {},
-    initialState: {},
-    storageKey: 'react-achievements',
+    storageKey: null,
 };
 
-const achievementSlice = createSlice({
+export const achievementSlice = createSlice({
     name: 'achievements',
     initialState,
     reducers: {
-        initialize: (state, action: PayloadAction<{ config: AchievementConfig; initialState: AppAchievementState; storageKey: string }>) => {
+        initialize: (state, action: PayloadAction<{ config: AchievementConfiguration; initialState?: InitialAchievementMetrics; storageKey: string }>) => {
             state.config = action.payload.config;
-            state.initialState = action.payload.initialState;
             state.storageKey = action.payload.storageKey;
-            const savedMetrics = localStorage.getItem(`${state.storageKey}-metrics`);
-            state.metrics = savedMetrics ? JSON.parse(savedMetrics) : action.payload.initialState;
-            const savedAchievements = localStorage.getItem(`${state.storageKey}-unlocked-achievements`);
-            state.unlockedAchievements = savedAchievements ? JSON.parse(savedAchievements) : [];
+            const storedState = action.payload.storageKey ? localStorage.getItem(action.payload.storageKey) : null;
+            if (storedState) {
+                try {
+                    const parsedState = JSON.parse(storedState);
+                    state.metrics = parsedState.achievements?.metrics || {};
+                    state.unlockedAchievements = parsedState.achievements?.unlockedAchievements || [];
+                } catch (error) {
+                    console.error('Error parsing stored achievement state:', error);
+                    state.metrics = action.payload.initialState ? Object.keys(action.payload.initialState).reduce((acc, key) => ({ ...acc, [key]: Array.isArray(action.payload.initialState![key]) ? action.payload.initialState![key] : [action.payload.initialState![key]] }), {}) : {};
+                    state.unlockedAchievements = [];
+                }
+            } else {
+                state.metrics = action.payload.initialState ? Object.keys(action.payload.initialState).reduce((acc, key) => ({ ...acc, [key]: Array.isArray(action.payload.initialState![key]) ? action.payload.initialState![key] : [action.payload.initialState![key]] }), {}) : {};
+                state.unlockedAchievements = [];
+            }
         },
-        setMetrics: (state, action: PayloadAction<Metrics>) => {
+        setMetrics: (state, action: PayloadAction<AchievementMetrics>) => {
             state.metrics = action.payload;
-            localStorage.setItem(`${state.storageKey}-metrics`, JSON.stringify(action.payload));
+            if (state.storageKey) {
+                localStorage.setItem(state.storageKey, JSON.stringify({ achievements: { metrics: state.metrics, unlockedAchievements: state.unlockedAchievements } }));
+            }
         },
         unlockAchievement: (state, action: PayloadAction<string>) => {
             if (!state.unlockedAchievements.includes(action.payload)) {
                 state.unlockedAchievements.push(action.payload);
-                localStorage.setItem(`${state.storageKey}-unlocked-achievements`, JSON.stringify(state.unlockedAchievements));
+                if (state.storageKey) {
+                    localStorage.setItem(state.storageKey, JSON.stringify({ achievements: { metrics: state.metrics, unlockedAchievements: state.unlockedAchievements } }));
+                }
+            }
+        },
+        resetAchievements: (state) => {
+            state.metrics = {};
+            state.unlockedAchievements = [];
+            if (state.storageKey) {
+                localStorage.removeItem(state.storageKey);
             }
         },
     },
 });
 
-export const { initialize, setMetrics, unlockAchievement } = achievementSlice.actions;
+export const { initialize, setMetrics, unlockAchievement, resetAchievements } = achievementSlice.actions;
+
 export default achievementSlice.reducer;

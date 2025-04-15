@@ -1,6 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
-import achievementReducer, { AchievementState } from '../redux/achievementSlice';
-import notificationReducer, { NotificationState } from '../redux/notificationSlice';
+import achievementReducer from '../redux/achievementSlice';
+import notificationReducer from '../redux/notificationSlice';
+import { AchievementState } from './achievementSlice';
+import { NotificationState } from './notificationSlice';
 
 export interface RootState {
     achievements: AchievementState;
