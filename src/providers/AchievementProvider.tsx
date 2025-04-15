@@ -63,7 +63,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 
     const resetStorage = useCallback(() => {
         localStorage.removeItem(storageKey);
-        dispatch(resetAchievements()); // Dispatch action to reset Redux state
+        dispatch(resetAchievements());
     }, [dispatch, storageKey]);
 
     useEffect(() => {
