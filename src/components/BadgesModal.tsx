@@ -21,8 +21,10 @@ const BadgesModal: React.FC<BadgesModalProps> = ({ isOpen, achievements, onClose
                 <div style={styles.badgeContainer}>
                     {achievements.map((achievement) => {
                         const mergedIcons: AchievementIconRecord = { ...defaultAchievementIcons, ...icons };
-                        const iconToDisplay = mergedIcons[achievement.achievementIconKey] || mergedIcons.default;
-
+                        let iconToDisplay: string | undefined = mergedIcons.default;
+                        if (achievement.achievementIconKey && mergedIcons[achievement.achievementIconKey]) {
+                            iconToDisplay = mergedIcons[achievement.achievementIconKey];
+                        }
                         return (
                             <div key={achievement.achievementId} style={styles.badge}>
                                 {/* Render icon based on type (Unicode or image path) */}
