@@ -1,15 +1,17 @@
 import React from 'react';
-import { AchievementData } from '../types';
+import {AchievementDetails, AchievementIconRecord} from '../types';
 import { Styles } from '../defaultStyles';
+import { defaultAchievementIcons } from '../assets/defaultIcons'; // Import default icons
 
 interface BadgesModalProps {
     isOpen: boolean;
-    achievements: AchievementData[];
+    achievements: AchievementDetails[];
     onClose: () => void;
     styles: Styles['badgesModal'];
+    icons?: Record<string, string>; // Optional user-specified icons
 }
 
-const BadgesModal: React.FC<BadgesModalProps> = ({ isOpen, achievements, onClose, styles }) => {
+const BadgesModal: React.FC<BadgesModalProps> = ({ isOpen, achievements, onClose, styles, icons = {} }) => {
     if (!isOpen) return null;
 
     return (
@@ -17,12 +19,22 @@ const BadgesModal: React.FC<BadgesModalProps> = ({ isOpen, achievements, onClose
             <div style={styles.content}>
                 <h2 style={styles.title}>Your Achievements</h2>
                 <div style={styles.badgeContainer}>
-                    {achievements.map((achievement) => (
-                        <div key={achievement.id} style={styles.badge}>
-                            <img src={achievement.icon} alt={achievement.title} style={styles.badgeIcon} />
-                            <span style={styles.badgeTitle}>{achievement.title}</span>
-                        </div>
-                    ))}
+                    {achievements.map((achievement) => {
+                        const mergedIcons: AchievementIconRecord = { ...defaultAchievementIcons, ...icons };
+                        const iconToDisplay = mergedIcons[achievement.achievementIconKey] || mergedIcons.default;
+
+                        return (
+                            <div key={achievement.achievementId} style={styles.badge}>
+                                {/* Render icon based on type (Unicode or image path) */}
+                                {iconToDisplay.startsWith('http') || iconToDisplay.startsWith('data:image') ? (
+                                    <img src={iconToDisplay} alt={achievement.achievementTitle} style={styles.badgeIcon} />
+                                ) : (
+                                    <p style={{ fontSize: '2em' }}>{iconToDisplay}</p> // Render Unicode as large text
+                                )}
+                                <span style={styles.badgeTitle}>{achievement.achievementTitle}</span>
+                            </div>
+                        );
+                    })}
                 </div>
                 <button onClick={onClose} style={styles.button}>Close</button>
             </div>
