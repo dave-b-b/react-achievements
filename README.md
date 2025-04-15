@@ -13,13 +13,13 @@ https://stackblitz.com/edit/vitejs-vite-sccdux
 Install `react-achievements` using npm or yarn:
 
 ```bash
-npm install react-achievements
+npm install react react-dom react-redux @reduxjs/toolkit react-achievements
 ```
 
 or
 
 ```bash
-yarn add react-achievements
+yarn add react react-dom react-redux @reduxjs/toolkit react-achievements
 ```
 
 <h2 align="center">🎮 Usage</h2>
@@ -32,33 +32,63 @@ First, wrap your app or a part of your app with the AchievementProvider:
 
 ```jsx
 import React from 'react';
+import { Provider } from 'react-redux';
+import store from './store'; // Import the Redux store you will create
 import { AchievementProvider } from 'react-achievements';
 import Game from './Game'; // Your main game component
 import achievementConfig from './achievementConfig'; // Your achievement configuration
 
 const initialState = {
-  level: 1,
-  experience: 0,
-  monstersDefeated: 0,
-  questsCompleted: 0,
-  // Add any other initial metrics here
+    level: 1,
+    experience: 0,
+    monstersDefeated: 0,
+    questsCompleted: 0,
+    // Add any other initial metrics here
 };
 
 function App() {
-  return (
-    <AchievementProvider 
-      config={achievementConfig} // Required: your achievement configuration
-      initialState={initialState} // Required: initial game metrics. This can be loaded from your server
-      storageKey="my-game-achievements" // Optional: customize local storage key
-      badgesButtonPosition="top-right" // Optional: customize badges button position
-      // Optional: add custom styles and icons here
-    >
-      <Game /> 
-    </AchievementProvider>
-  );
+    return (
+        <Provider store={store}>
+            <AchievementProvider
+                config={achievementConfig} // Required: your achievement configuration
+                initialState={initialState} // Required: initial game metrics. This can be loaded from your server
+                storageKey="my-game-achievements" // Optional: customize local storage key
+                badgesButtonPosition="top-right" // Optional: customize badges button position
+                // Optional: add custom styles and icons here
+            >
+                <Game />
+            </AchievementProvider>
+        </Provider>
+    );
 }
 
 export default App;
+```
+
+<h3 align="center">🛠 Set up the Store</h3>
+
+You need to create a store for you state
+
+```tsx
+// src/store.ts
+// src/store.js
+
+import { configureStore } from '@reduxjs/toolkit';
+import achievementReducer from 'react-achievements/redux/achievementSlice';
+import notificationReducer from 'react-achievements/redux/notificationSlice';
+
+const store = configureStore({
+  reducer: {
+    achievements: achievementReducer,
+    notifications: notificationReducer,
+  },
+});
+
+// If you are using JavaScript, you don't need to explicitly export RootState and AppDispatch types.
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+
+export default store;
 ```
 
 <h3 align="center">📝 Create an achievement configuration</h3>
