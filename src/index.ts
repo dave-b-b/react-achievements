@@ -3,6 +3,7 @@ import { AchievementMetrics, AchievementConfiguration, AchievementDetails, Achie
 import ConfettiWrapper from './components/ConfettiWrapper';
 import achievementReducer from './redux/achievementSlice';
 import notificationReducer from './redux/notificationSlice'
+import { useAchievementState } from './hooks/useAchievementState';
 
 export {
     AchievementProvider,
@@ -14,4 +15,5 @@ export {
     ConfettiWrapper,
     achievementReducer,
     notificationReducer,
+    useAchievementState,
 };

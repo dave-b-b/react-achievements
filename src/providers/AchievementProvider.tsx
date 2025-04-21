@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../redux/store';
-import { initialize, setMetrics, unlockAchievement, resetAchievements } from '../redux/achievementSlice';
+import { initialize, setMetrics, unlockAchievement, resetAchievements, markAchievementAsAwarded } from '../redux/achievementSlice';
 import { addNotification, clearNotifications } from '../redux/notificationSlice';
 import {
     AchievementDetails,
@@ -45,6 +45,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     const dispatch: AppDispatch = useDispatch();
     const metrics = useSelector((state: RootState) => state.achievements.metrics);
     const unlockedAchievementIds = useSelector((state: RootState) => state.achievements.unlockedAchievements);
+    const previouslyAwardedAchievementIds = useSelector((state: RootState) => state.achievements.previouslyAwardedAchievements);
     const notifications = useSelector((state: RootState) => state.notifications.notifications);
     const mergedStyles = React.useMemo(() => mergeDeep(defaultStyles, styles), [styles]);
 
@@ -71,38 +72,48 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     }, [dispatch, config, initialState, storageKey]);
 
     const checkAchievements = useCallback(() => {
-        const newAchievements: AchievementDetails[] = [];
+        const newAchievementsToAward: AchievementDetails[] = [];
 
         if (!unlockedAchievementIds) {
             console.error('unlockedAchievements is undefined!');
             return;
         }
 
-        Object.entries(config).forEach(([metricName, conditions]) => {
-            const metricValues = metrics[metricName];
+        Object.entries(config)
+            .forEach(([metricName, conditions]) => {
+                const metricValues = metrics[metricName];
 
-            if (!metricValues) {
-                return;
-            }
-
-            conditions.forEach((condition) => {
-                if (
-                    metricValues.some((value: AchievementMetricValue) => condition.isConditionMet(value)) &&
-                    !unlockedAchievementIds.includes(condition.achievementDetails.achievementId)
-                ) {
-                    newAchievements.push(condition.achievementDetails);
+                if (!metricValues) {
+                    return;
                 }
-            });
-        });
 
-        if (newAchievements.length > 0) {
-            newAchievements.forEach((achievement) => {
-                dispatch(unlockAchievement(achievement.achievementId));
+                conditions
+                    .filter(condition => !previouslyAwardedAchievementIds.includes(condition.achievementDetails.achievementId))
+                    .forEach((condition) => {
+                        if (
+                            metricValues.some((value: AchievementMetricValue) => condition.isConditionMet(value)) &&
+                            !unlockedAchievementIds.includes(condition.achievementDetails.achievementId)
+                        ) {
+                            dispatch(unlockAchievement(condition.achievementDetails.achievementId));
+                            newAchievementsToAward.push(condition.achievementDetails);
+                        } else if (
+                            metricValues.some((value: AchievementMetricValue) => condition.isConditionMet(value)) &&
+                            unlockedAchievementIds.includes(condition.achievementDetails.achievementId) &&
+                            !previouslyAwardedAchievementIds.includes(condition.achievementDetails.achievementId)
+                        ) {
+                            newAchievementsToAward.push(condition.achievementDetails);
+                        }
+                    });
+            });
+
+        if (newAchievementsToAward.length > 0) {
+            newAchievementsToAward.forEach((achievement) => {
                 dispatch(addNotification(achievement));
+                dispatch(markAchievementAsAwarded(achievement.achievementId));
             });
             setShowConfetti(true);
         }
-    }, [config, metrics, unlockedAchievementIds, dispatch]);
+    }, [config, metrics, unlockedAchievementIds, previouslyAwardedAchievementIds, dispatch]);
 
     useEffect(() => {
         checkAchievements();
@@ -128,6 +139,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     );
 
     const unlockedAchievementsDetails = getAchievements(unlockedAchievementIds);
+    const previouslyAwardedAchievementsDetails = getAchievements(previouslyAwardedAchievementIds);
 
     return (
         <AchievementContext.Provider value={{ updateMetrics, unlockedAchievements: unlockedAchievementIds, resetStorage }}>
@@ -146,7 +158,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
             />
             <BadgesModal
                 isOpen={showBadges}
-                achievements={unlockedAchievementsDetails}
+                achievements={previouslyAwardedAchievementsDetails}
                 onClose={() => setShowBadges(false)}
                 styles={mergedStyles.badgesModal}
                 icons={mergedIcons}
@@ -155,7 +167,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
                 onClick={showBadgesModal}
                 position={badgesButtonPosition}
                 styles={mergedStyles.badgesButton}
-                unlockedAchievements={unlockedAchievementsDetails}
+                unlockedAchievements={previouslyAwardedAchievementsDetails}
             />
             <ConfettiWrapper show={showConfetti || notifications.length > 0} />
         </AchievementContext.Provider>
