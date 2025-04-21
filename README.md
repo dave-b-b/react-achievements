@@ -43,6 +43,7 @@ const initialState = {
     experience: 0,
     monstersDefeated: 0,
     questsCompleted: 0,
+    previouslyAwardedAchievements: ['first_step'], // Optional: Load previously awarded achievements
     // Add any other initial metrics here
 };
 
@@ -51,7 +52,7 @@ function App() {
         <Provider store={store}>
             <AchievementProvider
                 config={achievementConfig} // Required: your achievement configuration
-                initialState={initialState} // Required: initial game metrics. This can be loaded from your server
+                initialState={initialState} // Required: initial game metrics and optionally previously awarded achievements. This can be loaded from your server
                 storageKey="my-game-achievements" // Optional: customize local storage key
                 badgesButtonPosition="top-right" // Optional: customize badges button position
                 // Optional: add custom styles and icons here
@@ -231,6 +232,7 @@ export default Game;
 - Achievement Gallery: Players can view all their unlocked achievements, encouraging completionism.
 - Confetti Effect: A celebratory confetti effect is displayed when an achievement is unlocked, adding to the excitement.
 - Local Storage: Achievements are stored locally on the device.
+- **Loading Previous Awards:** The AchievementProvider accepts an optional previouslyAwardedAchievements array in its initialState prop, allowing you to load achievements that the user has already earned.
 - **Programmatic Reset:** Includes a `resetStorage` function accessible via the `useAchievementContext` hook to easily reset all achievement data.
 
 <h2 align="center">🔧 API</h2>
@@ -240,7 +242,7 @@ export default Game;
 #### Props:
 
 - `config`: An object defining your metrics and achievements.
-- `initialState`: The initial state of your metrics.
+- `initialState`: The initial state of your metrics. Can also include an optional previouslyAwardedAchievements array of achievement IDs.
 - `storageKey` (optional): A string to use as the key for localStorage. Default: 'react-achievements'
 - `badgesButtonPosition` (optional): Position of the badges button. Default: 'top-right'
 - `styles` (optional): Custom styles for the achievement components.
@@ -252,6 +254,56 @@ export default Game;
 - `updateMetrics`: Function to update the metrics. Accepts either a new metrics object or a function that receives the previous metrics and returns the new metrics.
 - `unlockedAchievements`: Array of unlocked achievement IDs. (Note: Access the actual Redux state using `useSelector`).
 - `resetStorage`: Function to clear all achievement data from local storage and reset the Redux state.
+
+<h3 align="center">🪝 useAchievementState Hook</h3>
+<h4 align="center">Returns an object containing the current achievement state, useful for saving to a server or other persistent storage.
+</h4>
+
+
+#### Returns an object with:
+
+- `metrics`: The current achievement metrics object.
+- `previouslyAwardedAchievements`: An array of achievement IDs that have been previously awarded to the user.
+
+**Example Usage:**
+
+```jsx
+import React from 'react';
+import { useAchievementState } from 'react-achievements';
+
+const SyncAchievementsButton = () => {
+    const { metrics, previouslyAwardedAchievements } = useAchievementState();
+
+    const handleSaveToServer = async () => {
+        const achievementData = {
+            metrics,
+            previouslyAwardedAchievements,
+        };
+        try {
+            const response = await fetch('/api/save-achievements', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(achievementData),
+            });
+            if (response.ok) {
+                console.log('Achievement data saved successfully!');
+            } else {
+                console.error('Failed to save achievement data.');
+            }
+        } catch (error) {
+            console.error('Error saving achievement data:', error);
+        }
+    };
+
+    return (
+        <button onClick={handleSaveToServer}>Save Achievements to Server</button>
+    );
+};
+
+export default SyncAchievementsButton;
+```
 
 <h2 align="center">🎨 Customization</h2>
 
@@ -410,6 +462,53 @@ The achievements and metrics are managed by Redux and persisted in local storage
 
       return <button onClick={handleReset}>Reset Achievements</button>;
     }
+```
+
+<h2 align="center">💾 Saving and Loading Progress</h2>
+
+<h4 align="center">To persist user achievement progress across sessions or devices, you'll typically want to save the `metrics` and `previouslyAwardedAchievements` from your Redux store to your server. You can use the `useAchievementState` hook to access this data and trigger the save operation, for example, when the user logs out:
+</h4>
+
+```jsx
+import React from 'react';
+import { useAchievementState } from 'react-achievements/hooks/useAchievementState';
+
+const LogoutButtonWithSave = ({ onLogout }) => {
+    const { metrics, previouslyAwardedAchievements } = useAchievementState();
+
+    const handleLogoutAndSave = async () => {
+        const achievementData = {
+            metrics,
+            previouslyAwardedAchievements,
+        };
+        try {
+            const response = await fetch('/api/save-achievements', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Include any necessary authentication headers
+                },
+                body: JSON.stringify(achievementData),
+            });
+            if (response.ok) {
+                console.log('Achievement data saved successfully before logout!');
+            } else {
+                console.error('Failed to save achievement data before logout.');
+            }
+        } catch (error) {
+            console.error('Error saving achievement data:', error);
+        } finally {
+            // Proceed with the logout action regardless of save success
+            onLogout();
+        }
+    };
+
+    return (
+        <button onClick={handleLogoutAndSave}>Logout</button>
+    );
+};
+
+export default LogoutButtonWithSave;
 ```
 
 <h2 align="center">🏆Available Icons🏆</h2>

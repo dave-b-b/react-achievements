@@ -1,3 +1,5 @@
+import {Styles} from "./defaultStyles";
+
 export type AchievementMetricValue = number | string | boolean | Date;
 
 export interface AchievementDetails {
@@ -19,10 +21,10 @@ export type AchievementMetrics = Record<string, AchievementMetricValue[]>;
 export interface AchievementProviderProps {
     children: React.ReactNode;
     config: AchievementConfiguration;
-    initialState?: InitialAchievementMetrics;
+    initialState?: InitialAchievementMetrics & { previouslyAwardedAchievements?: string[] }; // Add optional previouslyAwardedAchievements
     storageKey?: string;
     badgesButtonPosition?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-    styles?: Partial<import('./defaultStyles').Styles>;
+    styles?: Partial<Styles>;
     icons?: Record<string, string>;
 }
 
