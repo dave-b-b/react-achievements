@@ -32,3 +32,13 @@ export interface AchievementUnlockCondition<T extends AchievementMetricValue> {
     isConditionMet: (value: T) => boolean;
     achievementDetails: AchievementDetails;
 }
+
+export interface SerializedAchievementUnlockCondition {
+    achievementDetails: AchievementDetails;
+    conditionType: 'number' | 'string' | 'boolean' | 'date';
+    conditionValue: any;
+}
+
+export interface SerializedAchievementConfiguration {
+    [metricName: string]: SerializedAchievementUnlockCondition[];
+}

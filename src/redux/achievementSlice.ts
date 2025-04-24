@@ -4,10 +4,14 @@ import {
     AchievementConfiguration,
     InitialAchievementMetrics,
     AchievementMetrics,
+    AchievementDetails,
+    SerializedAchievementConfiguration,
 } from '../types';
 
+
+
 export interface AchievementState {
-    config: AchievementConfiguration;
+    config: SerializedAchievementConfiguration;
     metrics: AchievementMetrics;
     unlockedAchievements: string[];
     previouslyAwardedAchievements: string[];
@@ -26,7 +30,8 @@ export const achievementSlice = createSlice({
     name: 'achievements',
     initialState,
     reducers: {
-        initialize: (state, action: PayloadAction<{ config: AchievementConfiguration; initialState?: InitialAchievementMetrics & { previouslyAwardedAchievements?: string[] }; storageKey: string }>) => {
+        initialize: (state, action: PayloadAction<{ config: SerializedAchievementConfiguration; initialState?: InitialAchievementMetrics & { previouslyAwardedAchievements?: string[] }; storageKey: string }>) => {
+
             state.config = action.payload.config;
             state.storageKey = action.payload.storageKey;
             const storedState = action.payload.storageKey ? localStorage.getItem(action.payload.storageKey) : null;
