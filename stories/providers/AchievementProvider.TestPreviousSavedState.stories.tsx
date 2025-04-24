@@ -46,18 +46,30 @@ const TestComponent = () => {
     const [pointCount, setPointCount] = useState<number>(0);
 
     const handleButtonClick = () => {
-        setClickCount((prevCount) => prevCount + 1);
-        updateMetrics({ clicks: [clickCount + 1] });
+        const newClickCount = clickCount + 1;
+        setClickCount(newClickCount);
+        updateMetrics({ 
+            ...metrics,
+            clicks: [newClickCount] 
+        });
     };
 
     const handleView = () => {
-        setViewCount((prevCount) => prevCount + 1);
-        updateMetrics({ views: [viewCount + 1] });
+        const newViewCount = viewCount + 1;
+        setViewCount(newViewCount);
+        updateMetrics({ 
+            ...metrics,
+            views: [newViewCount] 
+        });
     };
 
     const handlePointGain = () => {
-        setPointCount((prevCount) => prevCount + 50);
-        updateMetrics({ points: [pointCount + 50] });
+        const newPointCount = pointCount + 50;
+        setPointCount(newPointCount);
+        updateMetrics({ 
+            ...metrics,
+            points: [newPointCount] 
+        });
     };
 
     useEffect(() => {
@@ -120,7 +132,7 @@ TestPreviousSavedState.args = {
     },
     initialState: {
         clicks: 2,
-        views: 1,
+        views: 4,
         points: 50,
         previouslyAwardedAchievements: ['view_watcher_bronze'], // 'view_watcher_bronze' should not trigger again
     },
