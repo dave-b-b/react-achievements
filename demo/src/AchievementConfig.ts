@@ -1,34 +1,30 @@
-import explorer from "./assets/achievements/explorer.webp";
-import warrior from "./assets/achievements/warrior.webp";
-import seasoned_warrior from "./assets/achievements/seaoned_warrior.webp";
-
 const achievementConfig = {
   level: [
     {
-      check: (value: number) => value >= 5,
-      data: {
-        id: "level_5",
-        title: "Novice Adventurer",
-        description: "Reached level 5",
-        icon: explorer,
+      value: 5,
+      achievementDetails: {
+        achievementId: "level_5",
+        achievementTitle: "Novice Adventurer",
+        achievementDescription: "Reached level 5",
+        achievementIconKey: "trophy",
       },
     },
     {
-      check: (value: number) => value >= 10,
-      data: {
-        id: "level_10",
-        title: "Warrior",
-        description: "Reached level 10",
-        icon: warrior,
+      value: 10,
+      achievementDetails: {
+        achievementId: "level_10",
+        achievementTitle: "Warrior",
+        achievementDescription: "Reached level 10",
+        achievementIconKey: "sword",
       },
     },
     {
-      check: (value: number) => value >= 15,
-      data: {
-        id: "level_15",
-        title: "Seasoned Warrior",
-        description: "Reached level 15",
-        icon: seasoned_warrior,
+      value: 15,
+      achievementDetails: {
+        achievementId: "level_15",
+        achievementTitle: "Seasoned Warrior",
+        achievementDescription: "Reached level 15",
+        achievementIconKey: "star",
       },
     }
   ],

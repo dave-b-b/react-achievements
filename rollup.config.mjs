@@ -2,8 +2,8 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from 'rollup-plugin-typescript2';
 import replace from '@rollup/plugin-replace';
+import postcss from 'rollup-plugin-postcss';
 
-// Add the replace plugin to handle `this` issues in libraries like @reduxjs/toolkit
 export default {
     input: 'src/index.ts',
     output: [
@@ -20,6 +20,11 @@ export default {
         replace({
             preventAssignment: true,
             'this': 'undefined',
+        }),
+        postcss({
+            extract: false,
+            inject: true,
+            modules: false
         }),
         resolve(),
         commonjs(),

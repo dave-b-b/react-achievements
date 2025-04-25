@@ -1,19 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AchievementDetails } from '../types';
 
-export interface NotificationState {
-    notifications: AchievementDetails[];
+interface NotificationState {
+    notifications: string[];
 }
 
 const initialState: NotificationState = {
     notifications: [],
 };
 
-const notificationSlice = createSlice({
+export const notificationSlice = createSlice({
     name: 'notifications',
     initialState,
     reducers: {
-        addNotification: (state, action: PayloadAction<AchievementDetails>) => {
+        addNotification: (state, action: PayloadAction<string>) => {
             state.notifications.push(action.payload);
         },
         clearNotifications: (state) => {
@@ -23,4 +22,5 @@ const notificationSlice = createSlice({
 });
 
 export const { addNotification, clearNotifications } = notificationSlice.actions;
+
 export default notificationSlice.reducer;

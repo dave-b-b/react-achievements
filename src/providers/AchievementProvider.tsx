@@ -1,19 +1,17 @@
-import React, { useEffect, useCallback, useState, useMemo } from 'react';
+import React, { useEffect, useCallback, useState, useMemo, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../redux/store';
-import { initialize, setMetrics, unlockAchievement, resetAchievements, markAchievementAsAwarded } from '../redux/achievementSlice';
-import { addNotification, clearNotifications } from '../redux/notificationSlice';
+import { initialize, setMetrics, resetAchievements, unlockAchievement, clearNotifications } from '../redux/achievementSlice';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
     AchievementDetails,
     AchievementMetricValue,
-    SerializedAchievementUnlockCondition,
-    SerializedAchievementConfiguration,
+    AchievementConfiguration,
     AchievementProviderProps,
     AchievementMetrics,
-    AchievementConfiguration,
-    AchievementUnlockCondition,
+    AchievementState
 } from '../types';
-import AchievementModal from '../components/AchievementModal';
 import BadgesButton from '../components/BadgesButton';
 import BadgesModal from '../components/BadgesModal';
 import ConfettiWrapper from '../components/ConfettiWrapper';
@@ -35,6 +33,26 @@ export const useAchievementContext = () => {
     return context;
 };
 
+// Helper function to serialize dates for Redux actions
+const serializeMetrics = (metrics: AchievementMetrics): AchievementMetrics => {
+    return Object.entries(metrics).reduce((acc, [key, values]) => ({
+        ...acc,
+        [key]: values.map(value => value instanceof Date ? value.toISOString() : value)
+    }), {} as AchievementMetrics);
+};
+
+// Helper function to parse potential date strings
+const deserializeValue = (value: string | number | boolean): AchievementMetricValue => {
+    if (typeof value === 'string') {
+        // Try to parse ISO date string
+        const date = new Date(value);
+        if (!isNaN(date.getTime()) && value === date.toISOString()) {
+            return date;
+        }
+    }
+    return value;
+};
+
 const AchievementProvider: React.FC<AchievementProviderProps> = ({
     children,
     config,
@@ -45,171 +63,134 @@ const AchievementProvider: React.FC<AchievementProviderProps> = ({
     icons = {},
 }) => {
     const dispatch: AppDispatch = useDispatch();
+    const configRef = useRef(config);
     const metrics = useSelector((state: RootState) => state.achievements.metrics);
     const unlockedAchievementIds = useSelector((state: RootState) => state.achievements.unlockedAchievements);
-    const previouslyAwardedAchievements = useSelector((state: RootState) => state.achievements.previouslyAwardedAchievements);
-    const notifications = useSelector((state: RootState) => state.notifications.notifications);
-    const [currentAchievement, setCurrentAchievement] = useState<AchievementDetails | null>(null);
+    const pendingNotifications = useSelector((state: RootState) => state.achievements.pendingNotifications);
     const [showBadges, setShowBadges] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
 
-    const serializeConfig = (config: AchievementConfiguration): SerializedAchievementConfiguration => {
-        const serializedConfig: SerializedAchievementConfiguration = {};
-        Object.entries(config).forEach(([metricName, conditions]) => {
-            serializedConfig[metricName] = (conditions as AchievementUnlockCondition<AchievementMetricValue>[]).map((condition: AchievementUnlockCondition<AchievementMetricValue>) => {
-                // Analyze the isConditionMet function to determine type and value
-                const funcString = condition.isConditionMet.toString();
-                let conditionType: 'number' | 'string' | 'boolean' | 'date';
-                let conditionValue: any;
-
-                if (funcString.includes('typeof value === "number"') || funcString.includes('typeof value === \'number\'')) {
-                    conditionType = 'number';
-                    const matches = funcString.match(/value\s*>=?\s*(\d+)/);
-                    conditionValue = matches ? parseInt(matches[1]) : 0;
-                } else if (funcString.includes('typeof value === "string"') || funcString.includes('typeof value === \'string\'')) {
-                    conditionType = 'string';
-                    const matches = funcString.match(/value\s*===?\s*['"](.+)['"]/);
-                    conditionValue = matches ? matches[1] : '';
-                } else if (funcString.includes('typeof value === "boolean"') || funcString.includes('typeof value === \'boolean\'')) {
-                    conditionType = 'boolean';
-                    conditionValue = funcString.includes('=== true');
-                } else if (funcString.includes('instanceof Date')) {
-                    conditionType = 'date';
-                    const matches = funcString.match(/new Date\(['"](.+)['"]\)/);
-                    conditionValue = matches ? matches[1] : new Date().toISOString();
-                } else {
-                    // Default to number type if we can't determine the type
-                    conditionType = 'number';
-                    conditionValue = 1;
-                }
-
-                return {
-                    achievementDetails: condition.achievementDetails,
-                    conditionType,
-                    conditionValue,
-                };
-            });
-        });
-        return serializedConfig;
-    };
-
-    const serializedConfig = useMemo(() => serializeConfig(config), [config]);
+    // Update config ref when it changes
+    useEffect(() => {
+        configRef.current = config;
+    }, [config]);
 
     const checkAchievements = useCallback(() => {
-        const newAchievements: AchievementDetails[] = [];
-        Object.entries(serializedConfig).forEach(([metricName, conditions]) => {
+        Object.entries(configRef.current).forEach(([metricName, conditions]) => {
             const metricValues = metrics[metricName];
             if (!metricValues) return;
+
+            const latestValue = deserializeValue(metricValues[metricValues.length - 1]);
+            const state: AchievementState = {
+                metrics: Object.entries(metrics).reduce((acc, [key, values]) => ({
+                    ...acc,
+                    [key]: values.map(deserializeValue)
+                }), {}),
+                unlockedAchievements: unlockedAchievementIds
+            };
+
             conditions.forEach((condition) => {
-                const isConditionMet = (value: AchievementMetricValue) => {
-                    switch (condition.conditionType) {
-                        case 'number':
-                            return typeof value === 'number' && value >= condition.conditionValue;
-                        case 'string':
-                            return typeof value === 'string' && value === condition.conditionValue;
-                        case 'boolean':
-                            return typeof value === 'boolean' && value === condition.conditionValue;
-                        case 'date':
-                            return value instanceof Date && 
-                                value.getTime() >= new Date(condition.conditionValue).getTime();
-                        default:
-                            return false;
-                    }
-                };
                 if (
-                    metricValues.some((value: AchievementMetricValue) => isConditionMet(value)) &&
-                    !unlockedAchievementIds.includes(condition.achievementDetails.achievementId) &&
-                    !previouslyAwardedAchievements.includes(condition.achievementDetails.achievementId)
+                    condition.isConditionMet(latestValue, state) &&
+                    !unlockedAchievementIds.includes(condition.achievementDetails.achievementId)
                 ) {
-                    newAchievements.push(condition.achievementDetails);
+                    dispatch(unlockAchievement(condition.achievementDetails));
+                    setShowConfetti(true);
                 }
             });
         });
-        if (newAchievements.length > 0) {
-            newAchievements.forEach((achievement) => {
-                dispatch(unlockAchievement(achievement.achievementId));
-                dispatch(markAchievementAsAwarded(achievement.achievementId));
-                dispatch(addNotification(achievement));
-            });
-            setShowConfetti(true);
-        }
-    }, [serializedConfig, metrics, unlockedAchievementIds, previouslyAwardedAchievements, dispatch]);
+    }, [metrics, unlockedAchievementIds, dispatch]);
 
+    // Handle notifications
+    useEffect(() => {
+        if (pendingNotifications.length > 0) {
+            pendingNotifications.forEach((notification) => {
+                toast.success(
+                    <div>
+                        <h4 style={{ margin: '0 0 8px 0' }}>Achievement Unlocked! 🎉</h4>
+                        <strong>{notification.achievementTitle}</strong>
+                        <p style={{ margin: '4px 0 0 0' }}>{notification.achievementDescription}</p>
+                        {notification.achievementIconKey && icons[notification.achievementIconKey] && (
+                            <div style={{ fontSize: '24px', marginTop: '8px' }}>
+                                {icons[notification.achievementIconKey]}
+                            </div>
+                        )}
+                    </div>,
+                    {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                    }
+                );
+            });
+            dispatch(clearNotifications());
+        }
+    }, [pendingNotifications, dispatch, icons]);
+
+    // Reset confetti after delay
+    useEffect(() => {
+        if (showConfetti) {
+            const timer = setTimeout(() => setShowConfetti(false), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [showConfetti]);
+
+    // Check for achievements when metrics change
     useEffect(() => {
         checkAchievements();
     }, [metrics, checkAchievements]);
 
-    useEffect(() => {
-        if (notifications.length > 0 && !currentAchievement) {
-            setCurrentAchievement(notifications[0]);
-        }
-    }, [notifications, currentAchievement]);
-
-    const showBadgesModal = () => setShowBadges(true);
-
+    // Initialize on mount, but don't store config in Redux
     useEffect(() => {
         dispatch(initialize({
-            config: serializedConfig,
             initialState,
             storageKey,
         }));
-    }, [dispatch, serializedConfig, initialState, storageKey]);
+    }, [dispatch, initialState, storageKey]);
+
+    // Convert achievement IDs to details using config from ref
+    const achievementDetails = useMemo(() => {
+        return unlockedAchievementIds
+            .map(id => {
+                const achievement = Object.values(configRef.current)
+                    .flat()
+                    .find(condition => condition.achievementDetails.achievementId === id);
+                return achievement?.achievementDetails;
+            })
+            .filter((a): a is AchievementDetails => !!a);
+    }, [unlockedAchievementIds]);
 
     return (
-        <AchievementContext.Provider
-            value={{
-                updateMetrics: (newMetrics) => {
-                    if (typeof newMetrics === 'function') {
-                        const currentMetrics = metrics;
-                        const updatedMetrics = newMetrics(currentMetrics);
-                        dispatch(setMetrics(updatedMetrics));
-                    } else {
-                        dispatch(setMetrics(newMetrics));
-                    }
-                },
-                unlockedAchievements: unlockedAchievementIds,
-                resetStorage: () => {
-                    localStorage.removeItem(storageKey);
-                    dispatch(resetAchievements());
-                },
-            }}
-        >
+        <AchievementContext.Provider value={{
+            updateMetrics: (newMetrics) => {
+                if (typeof newMetrics === 'function') {
+                    const updatedMetrics = newMetrics(metrics);
+                    dispatch(setMetrics(serializeMetrics(updatedMetrics)));
+                } else {
+                    dispatch(setMetrics(serializeMetrics(newMetrics)));
+                }
+            },
+            unlockedAchievements: unlockedAchievementIds,
+            resetStorage: () => {
+                localStorage.removeItem(storageKey);
+                dispatch(resetAchievements());
+            },
+        }}>
             {children}
+            <ToastContainer />
             <ConfettiWrapper show={showConfetti} />
-            <AchievementModal
-                isOpen={!!currentAchievement}
-                achievement={currentAchievement}
-                onClose={() => {
-                    setCurrentAchievement(null);
-                    dispatch(clearNotifications());
-                    setShowConfetti(false);
-                }}
-                styles={styles.achievementModal || defaultStyles.achievementModal}
-                icons={icons}
-            />
             <BadgesButton
-                onClick={showBadgesModal}
+                onClick={() => setShowBadges(true)}
                 position={badgesButtonPosition}
                 styles={styles.badgesButton || defaultStyles.badgesButton}
-                unlockedAchievements={[...unlockedAchievementIds, ...previouslyAwardedAchievements]
-                    .filter((id, index, self) => self.indexOf(id) === index) // Remove duplicates
-                    .map(id => {
-                        const achievement = Object.values(serializedConfig)
-                            .flat()
-                            .find(condition => condition.achievementDetails.achievementId === id);
-                        return achievement?.achievementDetails;
-                    }).filter((a): a is AchievementDetails => !!a)}
+                unlockedAchievements={achievementDetails}
             />
             <BadgesModal
                 isOpen={showBadges}
-                achievements={[...unlockedAchievementIds, ...previouslyAwardedAchievements]
-                    .filter((id, index, self) => self.indexOf(id) === index) // Remove duplicates
-                    .map(id => {
-                        const achievement = Object.values(serializedConfig)
-                            .flat()
-                            .find(condition => condition.achievementDetails.achievementId === id);
-                        return achievement?.achievementDetails;
-                    }).filter((a): a is AchievementDetails => !!a)}
+                achievements={achievementDetails}
                 onClose={() => setShowBadges(false)}
                 styles={styles.badgesModal || defaultStyles.badgesModal}
                 icons={icons}

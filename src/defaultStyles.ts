@@ -1,14 +1,5 @@
 type StyleObject = { [key: string]: string | number };
 
-interface ModalStyles {
-    overlay: StyleObject;
-    content: StyleObject;
-    title: StyleObject;
-    icon: StyleObject;
-    description: StyleObject;
-    button: StyleObject;
-}
-
 interface BadgesModalStyles {
     overlay: StyleObject;
     content: StyleObject;
@@ -21,54 +12,11 @@ interface BadgesModalStyles {
 }
 
 export interface Styles {
-    achievementModal: ModalStyles;
     badgesModal: BadgesModalStyles;
     badgesButton: StyleObject;
 }
 
 export const defaultStyles: Styles = {
-    achievementModal: {
-        overlay: {
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        content: {
-            backgroundColor: '#ffffff',
-            borderRadius: '8px',
-            padding: '20px',
-            maxWidth: '400px',
-            width: '100%',
-        },
-        title: {
-            fontSize: '24px',
-            fontWeight: 'bold',
-            marginBottom: '10px',
-        },
-        icon: {
-            width: '50px',
-            height: '50px',
-            marginBottom: '10px',
-        },
-        description: {
-            fontSize: '16px',
-            marginBottom: '20px',
-        },
-        button: {
-            backgroundColor: '#007bff',
-            color: '#ffffff',
-            padding: '10px 20px',
-            borderRadius: '4px',
-            border: 'none',
-            cursor: 'pointer',
-        },
-    },
     badgesModal: {
         overlay: {
             position: 'fixed',

@@ -49,20 +49,6 @@ const initialState = {
  * @see node_modules/react-achievements/dist/defaultStyles.d.ts
  */
 const customStyles = {
-  achievementModal: {
-    overlay: {
-      backgroundColor: "rgba(0, 0, 0, 0.6)",
-    },
-    content: {
-      color: "#000000",
-    },
-    title: {
-      // color: "#ffd700",
-    },
-    button: {
-      // backgroundColor: "#4CAF50",
-    },
-  },
   badgesModal: {
     content: {
       color: "#000000",
