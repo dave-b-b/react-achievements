@@ -7,6 +7,10 @@
     "badge",
     "achievement"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dave-b-b/react-achievements.git"
+  },
   "main": "dist/cjs.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
