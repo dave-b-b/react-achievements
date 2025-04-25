@@ -35,8 +35,8 @@ const firstVisitAchievement: AchievementDetails = {
 const testAchievementConfig: AchievementConfiguration = {
     'pageVisits': [
         {
-            isConditionMet: (metricValue: AchievementMetricValue) => typeof metricValue ===
-                'number' && metricValue >= 1,
+            isConditionMet: (value: AchievementMetricValue) => 
+                typeof value === 'number' && value >= 1,
             achievementDetails: firstVisitAchievement
         }
     ]

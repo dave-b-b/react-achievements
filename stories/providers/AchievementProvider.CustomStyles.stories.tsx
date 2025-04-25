@@ -8,7 +8,7 @@ import { AchievementProvider } from '../../src';
 import { AchievementConfiguration, AchievementMetricValue } from '../../src/types';
 import { useAchievement } from '../../src/hooks/useAchievement';
 import { defaultAchievementIcons } from '../../src/assets/defaultIcons';
-import { defaultStyles } from '../../src/defaultStyles';
+import { defaultStyles, Styles } from '../../src/defaultStyles';
 
 export default {
     title: 'Providers/AchievementProvider/Customization',
@@ -16,44 +16,6 @@ export default {
 } as Meta;
 
 const customStyles = {
-    achievementModal: {
-        ...defaultStyles.achievementModal,
-        overlay: {
-            ...defaultStyles.achievementModal.overlay,
-            backgroundColor: 'rgba(25, 25, 25, 0.9)',
-        },
-        content: {
-            ...defaultStyles.achievementModal.content,
-            backgroundColor: '#2a2a2a',
-            color: '#ffffff',
-            border: '2px solid #ffd700',
-            boxShadow: '0 0 20px rgba(255, 215, 0, 0.3)',
-        },
-        title: {
-            ...defaultStyles.achievementModal.title,
-            color: '#ffd700',
-            fontFamily: 'Georgia, serif',
-            textTransform: 'uppercase',
-        },
-        description: {
-            ...defaultStyles.achievementModal.description,
-            color: '#cccccc',
-            fontStyle: 'italic',
-        },
-        button: {
-            ...defaultStyles.achievementModal.button,
-            backgroundColor: '#ffd700',
-            color: '#000000',
-            fontWeight: 'bold',
-            padding: '12px 24px',
-            borderRadius: '25px',
-            transition: 'all 0.3s ease',
-            ':hover': {
-                backgroundColor: '#ffed4a',
-                transform: 'scale(1.05)',
-            },
-        },
-    },
     badgesModal: {
         ...defaultStyles.badgesModal,
         overlay: {
@@ -82,10 +44,7 @@ const customStyles = {
             backgroundColor: '#1a1a1a',
             padding: '15px',
             borderRadius: '10px',
-            transition: 'transform 0.3s ease',
-            ':hover': {
-                transform: 'scale(1.05)',
-            },
+            transform: 'none', // Initial state
         },
         badgeTitle: {
             ...defaultStyles.badgesModal.badgeTitle,
@@ -101,15 +60,11 @@ const customStyles = {
         padding: '12px 24px',
         borderRadius: '25px',
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        transition: 'all 0.3s ease',
-        ':hover': {
-            backgroundColor: '#ffed4a',
-            transform: 'scale(1.05)',
-        },
+        transform: 'none', // Initial state
     },
 };
 
-const Template: StoryFn<{ config: AchievementConfiguration }> = (args) => {
+const Template: StoryFn<{ config: AchievementConfiguration; styles?: Partial<Styles> }> = (args) => {
     const store = configureStore({
         reducer: {
             achievements: achievementReducer,
@@ -136,7 +91,7 @@ const TestComponent = () => {
     const { updateMetrics } = useAchievement();
 
     useEffect(() => {
-        // Trigger an achievement immediately to show styled modal
+        // Trigger an achievement immediately to show styled toast
         updateMetrics({
             score: [100]
         });
@@ -147,7 +102,7 @@ const TestComponent = () => {
             <h2>Style Customization Demo</h2>
             <p>This story demonstrates comprehensive style customization for all components.</p>
             <ul>
-                <li>Custom achievement notification modal styling</li>
+                <li>Toast notification styling is handled by react-toastify</li>
                 <li>Custom badges modal styling</li>
                 <li>Custom badges button styling</li>
             </ul>
@@ -171,13 +126,6 @@ CustomizedStyles.args = {
                 }
             }
         ]
-    }
-};
-
-CustomizedStyles.parameters = {
-    docs: {
-        description: {
-            story: 'Demonstrates comprehensive style customization for all components in the achievement system.',
-        },
     },
+    styles: customStyles
 };

@@ -38,28 +38,11 @@ const Template: StoryFn<{ config: AchievementConfiguration; initialState: Initia
 
 const TestComponent = () => {
     const { metrics, updateMetrics, unlockedAchievements } = useAchievement();
-    const initialClick = typeof metrics.clicks?.[0] === 'number' ? metrics.clicks[0] : 0;
-    const [clickCount, setClickCount] = useState<number>(0);
-    const initialView = typeof metrics.views?.[0] === 'number' ? metrics.views[0] : 0;
-    const [viewCount, setViewCount] = useState<number>(0);
-    const initialPoint = typeof metrics.points?.[0] === 'number' ? metrics.points[0] : 0;
-    const [pointCount, setPointCount] = useState<number>(0);
+    const [clickCount, setClickCount] = useState(0);
+    const [viewCount, setViewCount] = useState(0);
+    const [pointCount, setPointCount] = useState(0);
 
-    const handleButtonClick = () => {
-        setClickCount((prevCount) => prevCount + 1);
-        updateMetrics({ clicks: [clickCount + 1] });
-    };
-
-    const handleView = () => {
-        setViewCount((prevCount) => prevCount + 1);
-        updateMetrics({ views: [viewCount + 1] });
-    };
-
-    const handlePointGain = () => {
-        setPointCount((prevCount) => prevCount + 50);
-        updateMetrics({ points: [pointCount + 50] });
-    };
-
+    // Initialize state from metrics
     useEffect(() => {
         const initialClicks = typeof metrics.clicks?.[0] === 'number' ? metrics.clicks[0] : 0;
         const initialViews = typeof metrics.views?.[0] === 'number' ? metrics.views[0] : 0;
@@ -70,13 +53,106 @@ const TestComponent = () => {
         setPointCount(initialPoints);
     }, [metrics]);
 
+    const handleButtonClick = () => {
+        setClickCount(prev => prev + 1);
+        updateMetrics({ clicks: [clickCount + 1] });
+    };
+
+    const handleView = () => {
+        setViewCount(prev => prev + 1);
+        updateMetrics({ views: [viewCount + 1] });
+    };
+
+    const handlePointGain = () => {
+        setPointCount(prev => prev + 50);
+        updateMetrics({ points: [pointCount + 50] });
+    };
+
+    // New handler for testing multiple simultaneous achievements
+    const handleMultipleAchievements = () => {
+        const newClicks = clickCount + 5;
+        const newViews = viewCount + 3;
+        const newPoints = pointCount + 100;
+        
+        setClickCount(newClicks);
+        setViewCount(newViews);
+        setPointCount(newPoints);
+        
+        // Update all metrics at once
+        updateMetrics({
+            clicks: [newClicks],
+            views: [newViews],
+            points: [newPoints]
+        });
+    };
+
     return (
-        <div>
-            <p>Metrics: {JSON.stringify(metrics)}</p>
-            <p>Unlocked Achievements: {JSON.stringify(unlockedAchievements)}</p>
-            <button onClick={handleButtonClick}>Click Me</button>
-            <button onClick={handleView}>View Page</button>
-            <button onClick={handlePointGain}>Gain Points</button>
+        <div style={{ padding: '20px' }}>
+            <h2>Multiple Metrics Test</h2>
+            <div style={{ marginBottom: '20px' }}>
+                <h3>Current State:</h3>
+                <pre>{JSON.stringify(metrics, null, 2)}</pre>
+                <h3>Unlocked Achievements:</h3>
+                <pre>{JSON.stringify(unlockedAchievements, null, 2)}</pre>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                <button 
+                    onClick={handleButtonClick}
+                    style={{
+                        padding: '10px',
+                        backgroundColor: '#4CAF50',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    Click (+1)
+                </button>
+                
+                <button 
+                    onClick={handleView}
+                    style={{
+                        padding: '10px',
+                        backgroundColor: '#2196F3',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    View Page (+1)
+                </button>
+                
+                <button 
+                    onClick={handlePointGain}
+                    style={{
+                        padding: '10px',
+                        backgroundColor: '#FF9800',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    Add Points (+50)
+                </button>
+
+                <button 
+                    onClick={handleMultipleAchievements}
+                    style={{
+                        padding: '10px',
+                        backgroundColor: '#9C27B0',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    Trigger Multiple Achievements
+                </button>
+            </div>
         </div>
     );
 };
@@ -86,39 +162,72 @@ MultipleMetrics.args = {
     config: {
         clicks: [
             {
-                isConditionMet: (value: AchievementMetricValue) => typeof value === 'number' && value >= 5,
+                isConditionMet: (value: AchievementMetricValue) => 
+                    typeof value === 'number' && value >= 5,
                 achievementDetails: {
                     achievementId: 'click_master_bronze',
                     achievementTitle: 'Bronze Click Master',
                     achievementDescription: 'Clicked 5 times!',
                     achievementIconKey: 'bronze',
-                },
+                }
             },
+            {
+                isConditionMet: (value: AchievementMetricValue) => 
+                    typeof value === 'number' && value >= 10,
+                achievementDetails: {
+                    achievementId: 'click_master_silver',
+                    achievementTitle: 'Silver Click Master',
+                    achievementDescription: 'Clicked 10 times!',
+                    achievementIconKey: 'silver',
+                }
+            }
         ],
         views: [
             {
-                isConditionMet: (value: AchievementMetricValue) => typeof value === 'number' && value >= 3,
+                isConditionMet: (value: AchievementMetricValue) => 
+                    typeof value === 'number' && value >= 3,
                 achievementDetails: {
                     achievementId: 'view_watcher_bronze',
                     achievementTitle: 'Bronze View Watcher',
                     achievementDescription: 'Viewed 3 times!',
                     achievementIconKey: 'bronze',
-                },
+                }
             },
+            {
+                isConditionMet: (value: AchievementMetricValue) => 
+                    typeof value === 'number' && value >= 5,
+                achievementDetails: {
+                    achievementId: 'view_watcher_silver',
+                    achievementTitle: 'Silver View Watcher',
+                    achievementDescription: 'Viewed 5 times!',
+                    achievementIconKey: 'silver',
+                }
+            }
         ],
         points: [
             {
-                isConditionMet: (value: AchievementMetricValue) => typeof value === 'number' && value >= 100,
+                isConditionMet: (value: AchievementMetricValue) => 
+                    typeof value === 'number' && value >= 100,
                 achievementDetails: {
                     achievementId: 'point_collector_bronze',
                     achievementTitle: 'Bronze Point Collector',
                     achievementDescription: 'Collected 100 points!',
                     achievementIconKey: 'bronze',
-                },
+                }
             },
-        ],
+            {
+                isConditionMet: (value: AchievementMetricValue) => 
+                    typeof value === 'number' && value >= 200,
+                achievementDetails: {
+                    achievementId: 'point_collector_silver',
+                    achievementTitle: 'Silver Point Collector',
+                    achievementDescription: 'Collected 200 points!',
+                    achievementIconKey: 'silver',
+                }
+            }
+        ]
     },
-    initialState: {},
+    initialState: {}
 };
 
 MultipleMetrics.decorators = [

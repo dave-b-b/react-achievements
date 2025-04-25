@@ -107,5 +107,7 @@
   },
   "include": [
     "src",
-    "react-confetti.d.ts"]
+    "stories",
+    "react-confetti.d.ts"
+  ]
 }

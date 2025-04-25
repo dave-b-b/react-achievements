@@ -1,6 +1,6 @@
 {
   "name": "react-achievements",
-  "version": "2.1.1",
+  "version": "2.2.0",
   "description": "This package allows users to transpose a React achievements engine over their React apps",
   "keywords": [
     "react",
@@ -40,7 +40,9 @@
     "@types/node": "^20.14.12",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "postcss": "^8.5.3",
     "rollup": "^4.19.0",
+    "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-typescript2": "^0.36.0",
     "storybook": "^8.6.8",
     "typescript": "^5.5.4"
@@ -51,6 +53,10 @@
     "react-confetti": "^6.0.0",
     "react-dom": "^18.0.0",
     "react-redux": "^8.0.0 || ^9.0.0",
+    "react-toastify": "^10.0.0",
     "react-use": "^17.0.0"
+  },
+  "dependencies": {
+    "react-toastify": "^10.0.0"
   }
 }

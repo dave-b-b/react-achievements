@@ -96,46 +96,79 @@ const TestComponent = () => {
 export const TestPreviousSavedState = Template.bind({});
 TestPreviousSavedState.args = {
     config: {
-        clicks: [
+        visits: [
             {
-                isConditionMet: (value: AchievementMetricValue) => typeof value === 'number' && value >= 5,
+                isConditionMet: (value: AchievementMetricValue) => 
+                    typeof value === 'number' && value >= 5,
                 achievementDetails: {
-                    achievementId: 'click_master_bronze',
-                    achievementTitle: 'Bronze Click Master',
-                    achievementDescription: 'Clicked 5 times!',
-                    achievementIconKey: 'bronze',
-                },
+                    achievementId: 'previous_visitor',
+                    achievementTitle: 'Regular Visitor',
+                    achievementDescription: 'Visited 5 times',
+                    achievementIconKey: 'return'
+                }
             },
-        ],
-        views: [
             {
-                isConditionMet: (value: AchievementMetricValue) => typeof value === 'number' && value >= 3,
+                isConditionMet: (value: AchievementMetricValue) => 
+                    typeof value === 'number' && value >= 10,
                 achievementDetails: {
-                    achievementId: 'view_watcher_bronze',
-                    achievementTitle: 'Bronze View Watcher',
-                    achievementDescription: 'Viewed 3 times!',
-                    achievementIconKey: 'bronze',
-                },
-            },
+                    achievementId: 'frequent_visitor',
+                    achievementTitle: 'Frequent Visitor',
+                    achievementDescription: 'Visited 10 times',
+                    achievementIconKey: 'star'
+                }
+            }
         ],
         points: [
             {
-                isConditionMet: (value: AchievementMetricValue) => typeof value === 'number' && value >= 100,
+                isConditionMet: (value: AchievementMetricValue) => 
+                    typeof value === 'number' && value >= 150,
                 achievementDetails: {
-                    achievementId: 'point_collector_bronze',
-                    achievementTitle: 'Bronze Point Collector',
-                    achievementDescription: 'Collected 100 points!',
-                    achievementIconKey: 'bronze',
-                },
+                    achievementId: 'point_collector',
+                    achievementTitle: 'Point Collector',
+                    achievementDescription: 'Earned 150 points',
+                    achievementIconKey: 'trophy'
+                }
             },
+            {
+                isConditionMet: (value: AchievementMetricValue) => 
+                    typeof value === 'number' && value >= 200,
+                achievementDetails: {
+                    achievementId: 'point_master',
+                    achievementTitle: 'Point Master',
+                    achievementDescription: 'Earned 200 points',
+                    achievementIconKey: 'gold'
+                }
+            }
         ],
+        achievements: [
+            {
+                isConditionMet: (value: AchievementMetricValue) => 
+                    typeof value === 'number' && value >= 3,
+                achievementDetails: {
+                    achievementId: 'achievement_collector',
+                    achievementTitle: 'Achievement Collector',
+                    achievementDescription: 'Unlocked 3 other achievements',
+                    achievementIconKey: 'collection'
+                }
+            },
+            {
+                isConditionMet: (value: AchievementMetricValue) => 
+                    typeof value === 'number' && value >= 5,
+                achievementDetails: {
+                    achievementId: 'achievement_master',
+                    achievementTitle: 'Achievement Master',
+                    achievementDescription: 'Unlocked 5 other achievements',
+                    achievementIconKey: 'diamond'
+                }
+            }
+        ]
     },
     initialState: {
-        clicks: 2,
-        views: 4,
-        points: 50,
-        previouslyAwardedAchievements: ['view_watcher_bronze'], // 'view_watcher_bronze' should not trigger again
-    },
+        visits: 0,
+        points: 0,
+        achievements: 0,
+        previouslyAwardedAchievements: ['early_adopter', 'beta_tester']
+    }
 };
 
 TestPreviousSavedState.decorators = [
