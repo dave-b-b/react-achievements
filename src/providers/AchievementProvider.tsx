@@ -18,12 +18,12 @@ import ConfettiWrapper from '../components/ConfettiWrapper';
 import { defaultStyles } from '../defaultStyles';
 
 export interface AchievementContextType {
-    updateMetrics: (newMetrics: AchievementMetrics | ((prevMetrics: AchievementMetrics) => AchievementMetrics)) => void;
+    updateMetrics: (metrics: AchievementMetrics | ((prev: AchievementMetrics) => AchievementMetrics)) => void;
     unlockedAchievements: string[];
     resetStorage: () => void;
 }
 
-export const AchievementContext = React.createContext<AchievementContextType | undefined>(undefined);
+export const AchievementContext = React.createContext<AchievementContextType | null>(null);
 
 export const useAchievementContext = () => {
     const context = React.useContext(AchievementContext);
@@ -64,6 +64,7 @@ const AchievementProvider: React.FC<AchievementProviderProps> = ({
 }) => {
     const dispatch: AppDispatch = useDispatch();
     const configRef = useRef(config);
+    const isMountedRef = useRef(false);
     const metrics = useSelector((state: RootState) => state.achievements.metrics);
     const unlockedAchievementIds = useSelector((state: RootState) => state.achievements.unlockedAchievements);
     const pendingNotifications = useSelector((state: RootState) => state.achievements.pendingNotifications);
@@ -145,10 +146,13 @@ const AchievementProvider: React.FC<AchievementProviderProps> = ({
 
     // Initialize on mount, but don't store config in Redux
     useEffect(() => {
-        dispatch(initialize({
-            initialState,
-            storageKey,
-        }));
+        if (!isMountedRef.current) {
+            isMountedRef.current = true;
+            dispatch(initialize({
+                initialState,
+                storageKey,
+            }));
+        }
     }, [dispatch, initialState, storageKey]);
 
     // Convert achievement IDs to details using config from ref
@@ -175,8 +179,14 @@ const AchievementProvider: React.FC<AchievementProviderProps> = ({
             },
             unlockedAchievements: unlockedAchievementIds,
             resetStorage: () => {
-                localStorage.removeItem(storageKey);
+                if (storageKey) {
+                    localStorage.removeItem(storageKey);
+                }
                 dispatch(resetAchievements());
+                dispatch(initialize({ 
+                    storageKey,
+                    initialState: undefined  // Force empty state
+                }));
             },
         }}>
             {children}
