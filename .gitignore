@@ -1,6 +1,6 @@
-.idea*
 node_modules
 dist
 coverage
-*storybook.log
-.cursor
+.DS_Store
+.idea
+*.log
