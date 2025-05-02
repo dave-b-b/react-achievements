@@ -45,7 +45,15 @@ export const achievementSlice = createSlice({
             initialState?: InitialAchievementMetrics & { unlockedAchievements?: string[] }; 
             storageKey: string 
         }>) => {
+            // Set storage key
             state.storageKey = action.payload.storageKey;
+
+            // If initialState is undefined, reset to empty state
+            if (action.payload.initialState === undefined) {
+                state.metrics = {};
+                state.unlockedAchievements = [];
+                return;
+            }
 
             // Load from storage first
             if (action.payload.storageKey) {
@@ -63,19 +71,17 @@ export const achievementSlice = createSlice({
             }
 
             // If no storage or parse error, use initial state
-            if (action.payload.initialState) {
-                const { unlockedAchievements, ...metrics } = action.payload.initialState;
-                state.metrics = Object.entries(metrics).reduce((acc, [key, value]) => ({
-                    ...acc,
-                    [key]: Array.isArray(value) ? value.map(serializeValue) : [serializeValue(value as AchievementMetricValue)]
-                }), {});
-                state.unlockedAchievements = unlockedAchievements || [];
-            }
+            const { unlockedAchievements, ...metrics } = action.payload.initialState;
+            state.metrics = Object.entries(metrics).reduce((acc, [key, value]) => ({
+                ...acc,
+                [key]: Array.isArray(value) ? value.map(serializeValue) : [serializeValue(value as AchievementMetricValue)]
+            }), {});
+            state.unlockedAchievements = unlockedAchievements || [];
         },
 
         setMetrics: (state, action: PayloadAction<AchievementMetrics>) => {
             state.metrics = processMetrics(action.payload);
-            if (state.storageKey) {
+            if (state.storageKey !== null) {
                 localStorage.setItem(state.storageKey, JSON.stringify({
                     metrics: state.metrics,
                     unlockedAchievements: state.unlockedAchievements
@@ -87,7 +93,7 @@ export const achievementSlice = createSlice({
             if (!state.unlockedAchievements.includes(action.payload.achievementId)) {
                 state.unlockedAchievements.push(action.payload.achievementId);
                 state.pendingNotifications.push(action.payload);
-                if (state.storageKey) {
+                if (state.storageKey !== null) {
                     localStorage.setItem(state.storageKey, JSON.stringify({
                         metrics: state.metrics,
                         unlockedAchievements: state.unlockedAchievements
@@ -101,12 +107,16 @@ export const achievementSlice = createSlice({
         },
 
         resetAchievements: (state) => {
-            state.metrics = {};
-            state.unlockedAchievements = [];
-            state.pendingNotifications = [];
+            // Remove from localStorage instead of setting empty state
             if (state.storageKey) {
                 localStorage.removeItem(state.storageKey);
             }
+
+            // Reset to empty state
+            state.metrics = {};
+            state.unlockedAchievements = [];
+            state.pendingNotifications = [];
+            state.storageKey = null;  // Clear the storage key to prevent re-initialization
         },
     },
 });

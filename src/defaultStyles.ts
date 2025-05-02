@@ -8,6 +8,8 @@ interface BadgesModalStyles {
     badge: StyleObject;
     badgeIcon: StyleObject;
     badgeTitle: StyleObject;
+    badgeDescription: StyleObject;
+    emptyState: StyleObject;
     button: StyleObject;
 }
 
@@ -62,6 +64,18 @@ export const defaultStyles: Styles = {
         badgeTitle: {
             fontSize: '14px',
             textAlign: 'center',
+            marginBottom: '5px',
+        },
+        badgeDescription: {
+            fontSize: '12px',
+            textAlign: 'center',
+            color: '#666',
+        },
+        emptyState: {
+            fontSize: '16px',
+            textAlign: 'center',
+            color: '#666',
+            margin: '20px 0',
         },
         button: {
             backgroundColor: '#007bff',
@@ -82,5 +96,6 @@ export const defaultStyles: Styles = {
         borderRadius: '4px',
         cursor: 'pointer',
         zIndex: 1000,
+        transition: 'transform 0.2s ease-in-out',
     },
 };

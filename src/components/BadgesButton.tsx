@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Styles } from '../defaultStyles';
 import { AchievementDetails } from '../types';
 
@@ -7,20 +7,22 @@ interface BadgesButtonProps {
     position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
     styles: Styles['badgesButton'];
     unlockedAchievements: AchievementDetails[];
-    icon?: React.ReactNode; // Allow custom icons
-    drawer?: boolean; // Indicate if it triggers a drawer
-    customStyles?: React.CSSProperties; // Allow custom styles
+    icon?: React.ReactNode;
+    drawer?: boolean;
+    customStyles?: React.CSSProperties;
 }
 
 const BadgesButton: React.FC<BadgesButtonProps> = ({
-                                                       onClick,
-                                                       position,
-                                                       styles,
-                                                       unlockedAchievements,
-                                                       icon,
-                                                       drawer = false,
-                                                       customStyles,
-                                                   }) => {
+    onClick,
+    position,
+    styles,
+    unlockedAchievements,
+    icon,
+    drawer = false,
+    customStyles,
+}) => {
+    const [isHovered, setIsHovered] = useState(false);
+
     const positionStyle = position
         ? {
             [position.split('-')[0]]: '20px',
@@ -28,18 +30,22 @@ const BadgesButton: React.FC<BadgesButtonProps> = ({
         }
         : {};
 
-    const handleButtonClick = () => {
-        onClick();
+    const buttonStyles = {
+        ...styles,
+        ...positionStyle,
+        ...customStyles,
+        transform: isHovered ? 'scale(1.1)' : 'scale(1)',
     };
 
     const achievementsText = 'View Achievements';
-
     const buttonContent = icon ? icon : achievementsText;
 
     return (
         <button
-            onClick={handleButtonClick}
-            style={{ ...styles, ...positionStyle, ...customStyles }}
+            onClick={onClick}
+            style={buttonStyles}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
         >
             {buttonContent}
         </button>
