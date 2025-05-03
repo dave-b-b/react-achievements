@@ -23,21 +23,83 @@ npm install react-achievements-core
 ```tsx
 import { AchievementProvider, useAchievements } from 'react-achievements-core';
 
-// Define your achievements
+// Define your achievements with various data types and conditions
 const achievements = {
+  // Numeric achievements with thresholds
   score: {
-    // Simple numeric threshold
     100: {
       title: 'Century!',
       description: 'Score 100 points',
       icon: 'trophy'
     },
-    // Custom condition
     500: {
       title: 'Half a Thousand!',
       description: 'Score 500 points',
       icon: 'gold',
       condition: (value) => value >= 500
+    }
+  },
+
+  // Boolean achievements
+  completedTutorial: {
+    true: {
+      title: 'Tutorial Master',
+      description: 'Complete the tutorial',
+      icon: 'book'
+    }
+  },
+
+  // String-based achievements
+  characterClass: {
+    'wizard': {
+      title: 'Arcane Scholar',
+      description: 'Choose the wizard class',
+      icon: 'wand'
+    },
+    'warrior': {
+      title: 'Battle Hardened',
+      description: 'Choose the warrior class',
+      icon: 'sword'
+    }
+  },
+
+  // Array-based achievements
+  collectedItems: {
+    ['sword', 'shield', 'potion']: {
+      title: 'Fully Equipped',
+      description: 'Collect all essential items',
+      icon: 'backpack',
+      condition: (items) => ['sword', 'shield', 'potion'].every(item => items.includes(item))
+    }
+  },
+
+  // Object-based achievements
+  playerStats: {
+    { strength: 10, intelligence: 10 }: {
+      title: 'Balanced Warrior',
+      description: 'Achieve balanced stats',
+      icon: 'scale',
+      condition: (stats) => stats.strength === 10 && stats.intelligence === 10
+    }
+  },
+
+  // Time-based achievements
+  playTime: {
+    3600: {
+      title: 'Dedicated Player',
+      description: 'Play for 1 hour',
+      icon: 'clock',
+      condition: (seconds) => seconds >= 3600
+    }
+  },
+
+  // Combination achievements
+  combo: {
+    { score: 1000, level: 5 }: {
+      title: 'Rising Star',
+      description: 'Reach level 5 with 1000 points',
+      icon: 'star',
+      condition: (metrics) => metrics.score >= 1000 && metrics.level >= 5
     }
   }
 };

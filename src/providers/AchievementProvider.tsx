@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { AchievementConfiguration, AchievementStorage, InitialAchievementMetrics, AchievementMetrics, StorageType } from '../core/types';
 import { LocalStorage } from '../core/storage/LocalStorage';
+import { MemoryStorage } from '../core/storage/MemoryStorage';
 
 export interface AchievementContextType {
   update: (metrics: Record<string, any>) => void;
@@ -44,8 +45,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     if (storage === StorageType.Local) {
       storageImpl = new LocalStorage('achievements');
     } else if (storage === StorageType.Memory) {
-      // TODO: Implement memory storage
-      storageImpl = new LocalStorage('achievements');
+      storageImpl = new MemoryStorage();
     } else {
       throw new Error(`Unsupported storage type: ${storage}`);
     }
