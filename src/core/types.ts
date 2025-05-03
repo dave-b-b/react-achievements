@@ -74,4 +74,10 @@ export interface AchievementProviderProps {
     icons?: Record<string, string>;
     storage?: AchievementStorage;
     onAchievementUnlocked?: (achievement: AchievementDetails) => void;
+}
+
+export enum StorageType {
+    Local = 'local',
+    Memory = 'memory',
+    Custom = 'custom'
 } 

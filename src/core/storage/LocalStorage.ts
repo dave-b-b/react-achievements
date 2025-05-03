@@ -30,6 +30,7 @@ export class LocalStorage implements AchievementStorage {
     }
 
     private deserializeMetrics(metrics: any): AchievementMetrics {
+        if (!metrics) return {};
         const deserialized: AchievementMetrics = {};
         for (const [key, values] of Object.entries(metrics)) {
             deserialized[key] = (values as any[]).map(this.deserializeValue);
@@ -37,14 +38,18 @@ export class LocalStorage implements AchievementStorage {
         return deserialized;
     }
 
-    private getStorageData() {
+    private getStorageData(): { metrics: AchievementMetrics; unlockedAchievements: string[] } {
         const data = localStorage.getItem(this.storageKey);
         if (!data) return { metrics: {}, unlockedAchievements: [] };
-        const parsed = JSON.parse(data);
-        return {
-            metrics: this.deserializeMetrics(parsed.metrics),
-            unlockedAchievements: parsed.unlockedAchievements
-        };
+        try {
+            const parsed = JSON.parse(data);
+            return {
+                metrics: this.deserializeMetrics(parsed.metrics || {}),
+                unlockedAchievements: parsed.unlockedAchievements || []
+            };
+        } catch (e) {
+            return { metrics: {}, unlockedAchievements: [] };
+        }
     }
 
     private setStorageData(data: { metrics: AchievementMetrics; unlockedAchievements: string[] }) {

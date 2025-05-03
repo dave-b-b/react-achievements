@@ -1,5 +1,54 @@
 ---
 description: 
 globs: 
-alwaysApply: false
+alwaysApply: true
 ---
+Favor code that is readable over code that is clever.
+
+1. Code Style and Organization:
+   - Use consistent naming conventions (camelCase for variables/functions, PascalCase for components)
+   - Group related code together and separate concerns appropriately
+   - Add meaningful comments for complex logic, but prefer self-documenting code
+   - Keep functions and components focused on a single responsibility
+
+2. Error Handling and Validation:
+   - Always handle potential errors gracefully
+   - Validate inputs and data before processing
+   - Provide meaningful error messages to users
+   - Use appropriate error boundaries in React components
+
+3. Performance and Optimization:
+   - Avoid unnecessary re-renders in React components
+   - Use appropriate data structures and algorithms
+   - Optimize expensive operations
+   - Consider memory usage and cleanup
+
+4. Testing and Quality:
+   - Write tests for critical functionality
+   - Ensure code is testable and maintainable
+   - Follow testing best practices (unit, integration, e2e)
+   - Document edge cases and test scenarios
+
+5. Security:
+   - Never expose sensitive information
+   - Validate and sanitize user inputs
+   - Follow security best practices
+   - Keep dependencies updated
+
+6. Documentation:
+   - Document complex business logic
+   - Keep README files up to date
+   - Document API endpoints and their usage
+   - Include setup and deployment instructions
+
+7. Accessibility:
+   - Follow WCAG guidelines
+   - Ensure proper ARIA attributes
+   - Test with screen readers
+   - Maintain keyboard navigation support
+
+8. Code Review:
+   - Write code that's easy to review
+   - Include context in commit messages
+   - Break down large changes into smaller PRs
+   - Address review comments promptly

@@ -1,27 +1,31 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { AchievementConfiguration, AchievementStorage, InitialAchievementMetrics } from '../core/types';
+import { AchievementConfiguration, AchievementStorage, InitialAchievementMetrics, AchievementMetrics, StorageType } from '../core/types';
 import { LocalStorage } from '../core/storage/LocalStorage';
 
-interface AchievementContextType {
+export interface AchievementContextType {
   update: (metrics: Record<string, any>) => void;
   achievements: {
     unlocked: string[];
     all: Record<string, any>;
   };
   reset: () => void;
+  getState: () => {
+    metrics: AchievementMetrics;
+    unlocked: string[];
+  };
 }
 
 export const AchievementContext = createContext<AchievementContextType | undefined>(undefined);
 
 interface AchievementProviderProps {
   achievements: AchievementConfiguration;
-  storage?: AchievementStorage | 'local' | 'memory';
+  storage?: AchievementStorage | StorageType;
   children: React.ReactNode;
 }
 
 export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   achievements,
-  storage = 'local',
+  storage = StorageType.Local,
   children,
 }) => {
   const [achievementState, setAchievementState] = useState<{
@@ -32,32 +36,53 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     all: achievements,
   });
 
-  const storageImpl = typeof storage === 'string'
-    ? storage === 'local'
-      ? new LocalStorage('achievements')
-      : new LocalStorage('achievements') // TODO: Implement memory storage
-    : storage;
+  const [metrics, setMetrics] = useState<AchievementMetrics>({});
+
+  let storageImpl: AchievementStorage;
+  
+  if (typeof storage === 'string') {
+    if (storage === StorageType.Local) {
+      storageImpl = new LocalStorage('achievements');
+    } else if (storage === StorageType.Memory) {
+      // TODO: Implement memory storage
+      storageImpl = new LocalStorage('achievements');
+    } else {
+      throw new Error(`Unsupported storage type: ${storage}`);
+    }
+  } else {
+    storageImpl = storage;
+  }
 
   useEffect(() => {
     // Load initial state from storage
     const savedUnlocked = storageImpl.getUnlockedAchievements() || [];
-    if (savedUnlocked.length > 0) {
+    const savedMetrics = storageImpl.getMetrics() || {};
+    if (savedUnlocked.length > 0 || Object.keys(savedMetrics).length > 0) {
       setAchievementState(prev => ({
         ...prev,
         unlocked: savedUnlocked,
       }));
+      setMetrics(savedMetrics);
     }
   }, []);
 
-  const update = (metrics: Record<string, any>) => {
+  const update = (newMetrics: Record<string, any>) => {
+    // Update metrics state
+    const updatedMetrics = Object.entries(newMetrics).reduce((acc, [key, value]) => ({
+      ...acc,
+      [key]: Array.isArray(value) ? value : [value]
+    }), { ...metrics });
+
+    setMetrics(updatedMetrics);
+
     // Check each achievement condition
-    Object.entries(metrics).forEach(([metricName, value]) => {
+    Object.entries(newMetrics).forEach(([metricName, value]) => {
       const metricAchievements = achievements[metricName];
       if (metricAchievements) {
-        Object.entries(metricAchievements).forEach(([threshold, details]) => {
-          const thresholdValue = parseInt(threshold, 10);
-          if (value >= thresholdValue) {
-            const achievementId = `${metricName}_${threshold}`;
+        metricAchievements.forEach((achievement) => {
+          const state = { metrics: updatedMetrics, unlockedAchievements: achievementState.unlocked };
+          if (achievement.isConditionMet(value, state)) {
+            const achievementId = achievement.achievementDetails.achievementId;
             if (!achievementState.unlocked.includes(achievementId)) {
               const newUnlocked = [...achievementState.unlocked, achievementId];
               setAchievementState(prev => ({
@@ -70,16 +95,25 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         });
       }
     });
-    storageImpl.setMetrics(metrics);
+    storageImpl.setMetrics(updatedMetrics);
   };
 
   const reset = () => {
+    // Clear the storage first
+    storageImpl.clear();
+    
+    // Reset the state to initial values
     setAchievementState({
       unlocked: [],
       all: achievements,
     });
-    storageImpl.clear();
+    setMetrics({});
   };
+
+  const getState = () => ({
+    metrics,
+    unlocked: achievementState.unlocked,
+  });
 
   return (
     <AchievementContext.Provider
@@ -87,6 +121,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         update,
         achievements: achievementState,
         reset,
+        getState,
       }}
     >
       {children}
