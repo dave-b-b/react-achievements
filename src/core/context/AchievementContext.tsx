@@ -15,6 +15,7 @@ import { BadgesButton } from '../components/BadgesButton';
 import { BadgesModal } from '../components/BadgesModal';
 import { ConfettiWrapper } from '../components/ConfettiWrapper';
 import { defaultStyles } from '../styles/defaultStyles';
+import { defaultAchievementIcons } from '../icons/defaultIcons';
 
 const AchievementContext = createContext<AchievementContextValue | null>(null);
 
@@ -109,18 +110,33 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         });
     }, [metrics, unlockedAchievements, onAchievementUnlocked]);
 
+    // Merge custom icons with default icons, with custom icons taking precedence
+    const mergedIcons: Record<string, string> = useMemo(() => {
+        return { ...defaultAchievementIcons, ...icons };
+    }, [icons]);
+
     // Handle notifications
     useEffect(() => {
         if (pendingNotifications.length > 0) {
             pendingNotifications.forEach((notification) => {
+                let iconToDisplay = null;
+                
+                if (notification.achievementIconKey) {
+                    if (notification.achievementIconKey in mergedIcons) {
+                        iconToDisplay = mergedIcons[notification.achievementIconKey];
+                    } else if ('default' in mergedIcons) {
+                        iconToDisplay = mergedIcons.default;
+                    }
+                }
+                
                 toast.success(
                     <div>
                         <h4 style={{ margin: '0 0 8px 0' }}>Achievement Unlocked! 🎉</h4>
                         <strong>{notification.achievementTitle}</strong>
                         <p style={{ margin: '4px 0 0 0' }}>{notification.achievementDescription}</p>
-                        {notification.achievementIconKey && icons[notification.achievementIconKey] && (
+                        {iconToDisplay && (
                             <div style={{ fontSize: '24px', marginTop: '8px' }}>
-                                {icons[notification.achievementIconKey]}
+                                {iconToDisplay}
                             </div>
                         )}
                     </div>,
@@ -136,7 +152,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
             });
             setPendingNotifications([]);
         }
-    }, [pendingNotifications, icons]);
+    }, [pendingNotifications, mergedIcons]);
 
     // Reset confetti after delay
     useEffect(() => {
@@ -185,7 +201,11 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         }}>
             {children}
             <ToastContainer />
-            <ConfettiWrapper show={showConfetti} />
+            <ConfettiWrapper 
+                show={showConfetti} 
+                achievement={pendingNotifications[0]} 
+                icons={mergedIcons} 
+            />
             <BadgesButton
                 onClick={() => setShowBadges(true)}
                 position={badgesButtonPosition}
@@ -197,7 +217,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
                 achievements={achievementDetails}
                 onClose={() => setShowBadges(false)}
                 styles={styles.badgesModal || defaultStyles.badgesModal}
-                icons={icons}
+                icons={mergedIcons}
             />
         </AchievementContext.Provider>
     );

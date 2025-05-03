@@ -1,212 +1,95 @@
-import React, { useState, useEffect } from 'react';
-import { StoryFn, Meta } from '@storybook/react';
-import ConfettiWrapper from '../../src/components/ConfettiWrapper';
+import React from 'react';
+import type { Meta, StoryObj } from '@storybook/react';
+import { ConfettiWrapper } from '../../src/core/components/ConfettiWrapper';
+import { defaultAchievementIcons } from '../../src/core/icons/defaultIcons';
 
-export default {
-    title: 'Components/ConfettiWrapper',
-    component: ConfettiWrapper,
-} as Meta;
-
-const Template: StoryFn = () => {
-    const [showConfetti, setShowConfetti] = useState(false);
-
-    return (
-        <div style={{ padding: '20px' }}>
-            <h2>Confetti Animation Demo</h2>
-            <p>Click the button to trigger the confetti animation.</p>
-            
-            <button 
-                onClick={() => {
-                    setShowConfetti(true);
-                    setTimeout(() => setShowConfetti(false), 5000);
-                }}
-                style={{
-                    padding: '10px 20px',
-                    fontSize: '16px',
-                    cursor: 'pointer',
-                    backgroundColor: '#4CAF50',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px'
-                }}
-            >
-                Celebrate! 🎉
-            </button>
-
-            <ConfettiWrapper show={showConfetti} />
-
-            <div style={{ marginTop: '20px' }}>
-                <h3>Component Details:</h3>
-                <ul>
-                    <li>The confetti animation plays when the <code>show</code> prop is true</li>
-                    <li>Animation automatically stops when particles fall off screen</li>
-                    <li>Uses window dimensions for full-screen coverage</li>
-                    <li>Reacts to window resize events</li>
-                </ul>
-            </div>
-        </div>
-    );
+const meta: Meta<typeof ConfettiWrapper> = {
+  title: 'Components/ConfettiWrapper',
+  component: ConfettiWrapper,
+  parameters: {
+    layout: 'fullscreen',
+  },
+  tags: ['autodocs'],
 };
 
-export const Default = Template.bind({});
-Default.parameters = {
-    docs: {
-        description: {
-            story: 'A celebratory confetti animation component used when achievements are unlocked.',
-        },
+export default meta;
+type Story = StoryObj<typeof ConfettiWrapper>;
+
+export const Active: Story = {
+  args: {
+    show: true,
+    achievement: {
+      achievementTitle: 'Achievement Unlocked!',
+      achievementDescription: 'You\'ve unlocked a special achievement',
+      achievementIconKey: 'trophy',
     },
+    // The component will automatically use defaultAchievementIcons
+  },
 };
 
-// Test rapid toggling of the show prop
-const RapidToggleTemplate: StoryFn = () => {
-    const [showConfetti, setShowConfetti] = useState(false);
-
-    useEffect(() => {
-        let count = 0;
-        const interval = setInterval(() => {
-            if (count < 5) {
-                setShowConfetti(prev => !prev);
-                count++;
-            } else {
-                clearInterval(interval);
-                setShowConfetti(false);
-            }
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, []);
-
-    return (
-        <div style={{ padding: '20px' }}>
-            <h2>Rapid Toggle Test</h2>
-            <p>Tests the confetti animation with rapid show/hide transitions.</p>
-            <ConfettiWrapper show={showConfetti} />
-        </div>
-    );
-};
-
-export const RapidToggle = RapidToggleTemplate.bind({});
-RapidToggle.parameters = {
-    docs: {
-        description: {
-            story: 'Tests the component\'s stability when rapidly toggling the show prop.',
-        },
+export const Hidden: Story = {
+  args: {
+    show: false,
+    achievement: {
+      achievementTitle: 'Achievement Unlocked!',
+      achievementDescription: 'You\'ve unlocked a special achievement',
+      achievementIconKey: 'trophy',
     },
+  },
 };
 
-// Test multiple simultaneous instances
-const MultipleInstancesTemplate: StoryFn = () => {
-    const [showConfetti1, setShowConfetti1] = useState(false);
-    const [showConfetti2, setShowConfetti2] = useState(false);
-
-    return (
-        <div style={{ padding: '20px' }}>
-            <h2>Multiple Instances Test</h2>
-            <p>Tests multiple confetti animations running simultaneously.</p>
-            
-            <div style={{ display: 'flex', gap: '10px' }}>
-                <button 
-                    onClick={() => {
-                        setShowConfetti1(true);
-                        setTimeout(() => setShowConfetti1(false), 5000);
-                    }}
-                    style={{
-                        padding: '10px',
-                        backgroundColor: '#4CAF50',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px'
-                    }}
-                >
-                    Trigger Confetti 1
-                </button>
-                
-                <button 
-                    onClick={() => {
-                        setShowConfetti2(true);
-                        setTimeout(() => setShowConfetti2(false), 5000);
-                    }}
-                    style={{
-                        padding: '10px',
-                        backgroundColor: '#2196F3',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '4px'
-                    }}
-                >
-                    Trigger Confetti 2
-                </button>
-            </div>
-
-            <ConfettiWrapper show={showConfetti1} />
-            <ConfettiWrapper show={showConfetti2} />
-        </div>
-    );
-};
-
-export const MultipleInstances = MultipleInstancesTemplate.bind({});
-MultipleInstances.parameters = {
-    docs: {
-        description: {
-            story: 'Tests multiple confetti instances running simultaneously.',
-        },
+export const WithDefaultIcons: Story = {
+  args: {
+    show: true,
+    achievement: {
+      achievementTitle: 'Quest Completed!',
+      achievementDescription: 'You\'ve completed an epic quest',
+      achievementIconKey: 'questComplete', // Using a key from defaultAchievementIcons
     },
+  },
 };
 
-// Add window resize test
-const WindowResizeTest: StoryFn = () => {
-    const [showConfetti, setShowConfetti] = useState(false);
-    const [windowSize, setWindowSize] = useState({
-        width: window.innerWidth,
-        height: window.innerHeight
-    });
-
-    useEffect(() => {
-        const handleResize = () => {
-            setWindowSize({
-                width: window.innerWidth,
-                height: window.innerHeight
-            });
-        };
-
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    return (
-        <div style={{ padding: '20px' }}>
-            <h2>Window Resize Test</h2>
-            <p>Current window size: {windowSize.width}x{windowSize.height}</p>
-            <p>Try resizing your browser window to see the confetti adapt.</p>
-            
-            <button 
-                onClick={() => {
-                    setShowConfetti(true);
-                    setTimeout(() => setShowConfetti(false), 5000);
-                }}
-                style={{
-                    padding: '10px 20px',
-                    fontSize: '16px',
-                    cursor: 'pointer',
-                    backgroundColor: '#4CAF50',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px'
-                }}
-            >
-                Start Confetti
-            </button>
-
-            <ConfettiWrapper show={showConfetti} />
-        </div>
-    );
-};
-
-export const ResizeHandling = WindowResizeTest.bind({});
-ResizeHandling.parameters = {
-    docs: {
-        description: {
-            story: 'Tests the confetti component\'s ability to adapt to window resize events.',
-        },
+export const WithCustomIcons: Story = {
+  args: {
+    show: true,
+    achievement: {
+      achievementTitle: 'Mystery Achievement',
+      achievementDescription: 'You\'ve unlocked a mysterious achievement',
+      achievementIconKey: 'custom', // This will use the custom icon
     },
+    icons: {
+      custom: '🔮', // Custom icon that's not in the defaults
+    },
+  },
 };
+
+// Informational story to show how defaultAchievementIcons are used
+export const DefaultIconsInfo: Story = {
+  render: () => (
+    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+      <h2>Default Achievement Icons</h2>
+      <p>This component automatically uses the <code>defaultAchievementIcons</code> from the library. 
+         You can reference any of these icons by using their key in the <code>achievementIconKey</code> property.</p>
+      
+      <p>You can also provide custom icons that will override or extend the defaults.</p>
+      
+      <h3>Example Icons:</h3>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '10px' }}>
+        {Object.entries(defaultAchievementIcons).slice(0, 20).map(([key, icon]) => (
+          <div key={key} style={{ 
+            padding: '10px', 
+            borderRadius: '8px', 
+            background: '#f5f5f5',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}>
+            <span style={{ fontSize: '24px' }}>{icon}</span>
+            <span style={{ fontSize: '14px' }}>{key}</span>
+          </div>
+        ))}
+      </div>
+      <p><i>View all icons in the defaultAchievementIcons documentation.</i></p>
+    </div>
+  )
+}; 

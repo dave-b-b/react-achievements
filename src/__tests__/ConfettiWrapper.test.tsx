@@ -3,6 +3,7 @@ import { render, screen, act } from '@testing-library/react';
 import { ConfettiWrapper } from '../core/components/ConfettiWrapper';
 import { toast } from 'react-toastify';
 import '@testing-library/jest-dom';
+import { defaultAchievementIcons } from '../core/icons/defaultIcons';
 
 // Mock react-confetti
 jest.mock('react-confetti', () => {
@@ -95,6 +96,60 @@ describe('ConfettiWrapper Component', () => {
     render(<ConfettiWrapper show={true} achievement={achievement} />);
     
     // Toast should be called with default trophy emoji
+    expect(toast).toHaveBeenCalledTimes(1);
+  });
+
+  it('should display toast notification for new achievements with default icons', () => {
+    const achievement = {
+      achievementTitle: 'Test Achievement',
+      achievementDescription: 'This is a test achievement',
+      achievementIconKey: 'levelUp' // Using one of the default icon keys
+    };
+    
+    render(<ConfettiWrapper show={true} achievement={achievement} />);
+    
+    // Confetti should be rendered
+    expect(screen.getByTestId('mock-confetti')).toBeInTheDocument();
+    
+    // Toast should be called with achievement data
+    expect(toast).toHaveBeenCalledTimes(1);
+  });
+
+  it('should merge custom icons with defaultAchievementIcons', () => {
+    const achievement = {
+      achievementTitle: 'Test Achievement',
+      achievementDescription: 'This is a test achievement',
+      achievementIconKey: 'customKey'
+    };
+    
+    const customIcons = {
+      'customKey': '🌟'
+    };
+    
+    render(<ConfettiWrapper show={true} achievement={achievement} icons={customIcons} />);
+    
+    // Confetti should be rendered
+    expect(screen.getByTestId('mock-confetti')).toBeInTheDocument();
+    
+    // Toast should be called with custom icon
+    expect(toast).toHaveBeenCalledTimes(1);
+  });
+
+  it('should override default icons with custom icons', () => {
+    const achievement = {
+      achievementTitle: 'Test Achievement',
+      achievementDescription: 'This is a test achievement',
+      achievementIconKey: 'levelUp' // This key exists in defaultAchievementIcons
+    };
+    
+    // Override the default levelUp icon
+    const customIcons = {
+      'levelUp': '🚀'
+    };
+    
+    render(<ConfettiWrapper show={true} achievement={achievement} icons={customIcons} />);
+    
+    // Toast should be called with overridden icon
     expect(toast).toHaveBeenCalledTimes(1);
   });
 

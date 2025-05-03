@@ -1,6 +1,7 @@
 import React from 'react';
 import Modal from 'react-modal';
 import { AchievementDetails, StylesProps } from '../types';
+import { defaultAchievementIcons } from '../icons/defaultIcons';
 
 interface BadgesModalProps {
     isOpen: boolean;
@@ -17,6 +18,9 @@ export const BadgesModal: React.FC<BadgesModalProps> = ({
     styles = {},
     icons = {}
 }) => {
+    // Merge custom icons with default icons, with custom icons taking precedence
+    const mergedIcons: Record<string, string> = { ...defaultAchievementIcons, ...icons };
+    
     const defaultOverlayStyle: React.CSSProperties = {
         position: 'fixed',
         top: 0,
@@ -115,9 +119,11 @@ export const BadgesModal: React.FC<BadgesModalProps> = ({
                         key={achievement.achievementId}
                         style={{ ...defaultAchievementItemStyle, ...styles?.achievementItem }}
                     >
-                        {achievement.achievementIconKey && icons[achievement.achievementIconKey] && (
+                        {achievement.achievementIconKey && (
                             <div style={{ ...defaultAchievementIconStyle, ...styles?.achievementIcon }}>
-                                {icons[achievement.achievementIconKey]}
+                                {achievement.achievementIconKey in mergedIcons 
+                                    ? mergedIcons[achievement.achievementIconKey]
+                                    : mergedIcons.default || '⭐'}
                             </div>
                         )}
                         <div>

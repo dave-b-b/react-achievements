@@ -27,3 +27,6 @@ export { useAchievements } from './hooks/useAchievements';
 
 // Core Styles
 export { defaultStyles } from './core/styles/defaultStyles';
+
+// Core Icons
+export { defaultAchievementIcons } from './core/icons/defaultIcons';

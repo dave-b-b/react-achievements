@@ -136,6 +136,81 @@ const Game = () => {
 };
 ```
 
+## Default Icons
+
+The package comes with a comprehensive set of default icons that you can use in your achievements. These are available through the `defaultAchievementIcons` export:
+
+```tsx
+import { AchievementProvider, defaultAchievementIcons } from 'react-achievements-core';
+
+// Example achievement configuration using default icons
+const achievementConfig = {
+  pageViews: [
+    {
+      isConditionMet: (value) => value >= 5,
+      achievementDetails: {
+        achievementId: 'views-5',
+        achievementTitle: 'Getting Started',
+        achievementDescription: 'Viewed 5 pages',
+        achievementIconKey: 'firstStep' // This will use the 👣 emoji from defaultAchievementIcons
+      }
+    }
+  ]
+};
+
+// Create your app component
+const App = () => {
+  return (
+    <AchievementProvider
+      achievements={achievementConfig}
+      // The provider automatically uses defaultAchievementIcons
+    >
+      <Game />
+    </AchievementProvider>
+  );
+};
+```
+
+### Custom Icons
+
+You can also provide your own custom icons that will override or extend the default ones:
+
+```tsx
+import { AchievementProvider, defaultAchievementIcons } from 'react-achievements-core';
+
+// Create custom icons by extending the defaults
+const customIcons = {
+  ...defaultAchievementIcons, // Include all default icons
+  levelUp: '🚀', // Override the default for 'levelUp'
+  myCustomIcon: '💻' // Add a new icon not in the defaults
+};
+
+const App = () => {
+  return (
+    <AchievementProvider
+      achievements={achievementConfig}
+      icons={customIcons} // Pass your custom icons to the provider
+    >
+      <Game />
+    </AchievementProvider>
+  );
+};
+```
+
+### Available Icons
+
+The `defaultAchievementIcons` includes icons in these categories:
+
+- General Progress & Milestones (levelUp, questComplete, etc.)
+- Social & Engagement (shared, liked, etc.)
+- Time & Activity (activeDay, streak, etc.)
+- Creativity & Skill (artist, expert, etc.)
+- Achievement Types (bronze, silver, gold, etc.)
+- Numbers & Counters (one, ten, hundred, etc.)
+- Actions & Interactions (clicked, discovered, etc.)
+- Placeholders (default, loading, error, etc.)
+- Miscellaneous (trophy, star, gem, etc.)
+
 ## Custom Storage
 
 You can implement your own storage solution by implementing the `AchievementStorage` interface:
