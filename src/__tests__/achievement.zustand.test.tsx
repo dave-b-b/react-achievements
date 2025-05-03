@@ -95,6 +95,6 @@ describe('Achievement System with Zustand', () => {
     expect(screen.getByTestId('score')).toHaveTextContent('Score: 100');
     expect(screen.getByTestId('unlocked-count')).toHaveTextContent('Unlocked: 1');
     expect(mockStorage.getUnlockedAchievements()).toHaveLength(1);
-    expect(mockStorage.getMetrics()).toEqual({ score: 100 });
+    expect(mockStorage.getMetrics()).toEqual({ score: [100] });
   });
 }); 

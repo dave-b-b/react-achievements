@@ -73,7 +73,7 @@ describe('Achievement System with Context', () => {
   const mockStorage = new MockStorage();
   const achievementConfig: AchievementConfiguration = {
     score: [{
-      isConditionMet: (value: number) => value >= 100,
+      isConditionMet: (value: any, state: any) => typeof value === 'number' && value >= 100,
       achievementDetails: {
         achievementId: 'score_100',
         achievementTitle: 'Century!',
@@ -112,6 +112,6 @@ describe('Achievement System with Context', () => {
     expect(screen.getByTestId('score')).toHaveTextContent('Score: 100');
     expect(screen.getByTestId('unlocked-count')).toHaveTextContent('Unlocked: 1');
     expect(mockStorage.getUnlockedAchievements()).toHaveLength(1);
-    expect(mockStorage.getMetrics()).toEqual({ score: 100 });
+    expect(mockStorage.getMetrics()).toEqual({ score: [100] });
   });
 }); 

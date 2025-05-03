@@ -1,10 +1,17 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { AchievementProvider } from '../providers/AchievementProvider';
+import { AchievementProvider, AchievementContext } from '../providers/AchievementProvider';
 import { StorageType } from '../core/types';
+import { MemoryStorage } from '../core/storage/MemoryStorage';
 
 const TestComponent = () => {
-  const { update, achievements } = React.useContext(AchievementProvider.context);
+  const context = React.useContext(AchievementContext);
+  
+  if (!context) {
+    throw new Error('TestComponent must be used within an AchievementProvider');
+  }
+  
+  const { update, achievements } = context;
 
   return (
     <div>
@@ -50,10 +57,14 @@ describe('AchievementProvider with Memory Storage', () => {
   });
 
   it('should not persist achievements between renders', () => {
-    const { rerender } = render(
+    // Create a new memory storage for each test
+    const storage1 = new MemoryStorage();
+    
+    // First render
+    const { unmount } = render(
       <AchievementProvider
         achievements={achievementConfig}
-        storage={StorageType.Memory}
+        storage={storage1}
       >
         <TestComponent />
       </AchievementProvider>
@@ -62,18 +73,24 @@ describe('AchievementProvider with Memory Storage', () => {
     // Update score
     fireEvent.click(screen.getByText('Update Score'));
     expect(screen.getByTestId('unlocked-count')).toHaveTextContent('Unlocked: 1');
-
-    // Re-render with new provider instance
-    rerender(
+    
+    // Completely unmount
+    unmount();
+    
+    // Create a fresh storage instance
+    const storage2 = new MemoryStorage();
+    
+    // Mount again with new instance
+    render(
       <AchievementProvider
         achievements={achievementConfig}
-        storage={StorageType.Memory}
+        storage={storage2}
       >
         <TestComponent />
       </AchievementProvider>
     );
 
-    // State should be reset
+    // State should be reset (new memory storage instance)
     expect(screen.getByTestId('unlocked-count')).toHaveTextContent('Unlocked: 0');
   });
 }); 

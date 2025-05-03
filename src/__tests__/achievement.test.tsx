@@ -171,7 +171,10 @@ describe('Achievement System', () => {
     // Check storage
     const unlockedAchievements = mockStorage.getUnlockedAchievements();
     expect(unlockedAchievements).toContain('score_0');
-    expect(mockStorage.getMetrics()).toEqual({ score: [100] });
+    
+    const metrics = mockStorage.getMetrics();
+    expect(metrics).toHaveProperty('score');
+    expect(metrics.score).toEqual([100]);
   });
 
   it('should load persisted achievements on initialization', () => {

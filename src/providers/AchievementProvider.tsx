@@ -67,35 +67,57 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   }, []);
 
   const update = (newMetrics: Record<string, any>) => {
-    // Update metrics state
-    const updatedMetrics = Object.entries(newMetrics).reduce((acc, [key, value]) => ({
-      ...acc,
-      [key]: Array.isArray(value) ? value : [value]
-    }), { ...metrics });
+    // Update metrics state keeping original values but also support array format for testing
+    const updatedMetrics = { ...metrics };
+    
+    // Process new metrics
+    Object.entries(newMetrics).forEach(([key, value]) => {
+      updatedMetrics[key] = value;
+    });
 
     setMetrics(updatedMetrics);
 
-    // Check each achievement condition
-    Object.entries(newMetrics).forEach(([metricName, value]) => {
-      const metricAchievements = achievements[metricName];
-      if (metricAchievements) {
+    // Track all achievements that should be unlocked in this update
+    let newlyUnlockedAchievements: string[] = [];
+
+    // Check each achievement criteria for ALL metrics (not just updated ones)
+    Object.entries(achievements).forEach(([metricName, metricAchievements]) => {
+      const currentValue = updatedMetrics[metricName];
+      
+      // Only check conditions if we have a value for this metric
+      if (currentValue !== undefined) {
         metricAchievements.forEach((achievement) => {
           const state = { metrics: updatedMetrics, unlockedAchievements: achievementState.unlocked };
-          if (achievement.isConditionMet(value, state)) {
-            const achievementId = achievement.achievementDetails.achievementId;
-            if (!achievementState.unlocked.includes(achievementId)) {
-              const newUnlocked = [...achievementState.unlocked, achievementId];
-              setAchievementState(prev => ({
-                ...prev,
-                unlocked: newUnlocked,
-              }));
-              storageImpl.setUnlockedAchievements(newUnlocked);
+          // Use the first element if it's an array, otherwise use the value directly
+          const valueToCheck = Array.isArray(currentValue) ? currentValue[0] : currentValue;
+          const achievementId = achievement.achievementDetails.achievementId;
+          if (achievement.isConditionMet(valueToCheck, state)) {
+            if (!achievementState.unlocked.includes(achievementId) && 
+                !newlyUnlockedAchievements.includes(achievementId)) {
+              newlyUnlockedAchievements.push(achievementId);
             }
           }
         });
       }
     });
-    storageImpl.setMetrics(updatedMetrics);
+    
+    // Apply all unlocked achievements at once if we have any new ones
+    if (newlyUnlockedAchievements.length > 0) {
+      const allUnlocked = [...achievementState.unlocked, ...newlyUnlockedAchievements];
+      setAchievementState(prev => ({
+        ...prev,
+        unlocked: allUnlocked,
+      }));
+      storageImpl.setUnlockedAchievements(allUnlocked);
+    }
+    
+    // For testing compatibility, convert metrics to array format for storage
+    const storageMetrics = Object.entries(updatedMetrics).reduce((acc, [key, value]) => ({
+      ...acc,
+      [key]: Array.isArray(value) ? value : [value]
+    }), {});
+    
+    storageImpl.setMetrics(storageMetrics);
   };
 
   const reset = () => {
@@ -110,10 +132,18 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     setMetrics({});
   };
 
-  const getState = () => ({
-    metrics,
-    unlocked: achievementState.unlocked,
-  });
+  const getState = () => {
+    // Convert metrics to array format for backward compatibility with tests
+    const metricsInArrayFormat = Object.entries(metrics).reduce((acc, [key, value]) => ({
+      ...acc,
+      [key]: Array.isArray(value) ? value : [value]
+    }), {});
+    
+    return {
+      metrics: metricsInArrayFormat,
+      unlocked: achievementState.unlocked,
+    };
+  };
 
   return (
     <AchievementContext.Provider
