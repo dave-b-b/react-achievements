@@ -3,6 +3,15 @@ import { AchievementConfiguration, AchievementStorage, InitialAchievementMetrics
 import { LocalStorage } from '../core/storage/LocalStorage';
 import { MemoryStorage } from '../core/storage/MemoryStorage';
 import { ConfettiWrapper } from '../core/components/ConfettiWrapper';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+interface AchievementDetails {
+  achievementId?: string;
+  achievementTitle?: string;
+  achievementDescription?: string;
+  achievementIconKey?: string;
+}
 
 export interface AchievementContextType {
   update: (metrics: Record<string, any>) => void;
@@ -46,12 +55,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   const storageRef = useRef<AchievementStorage | null>(null);
   const metricsUpdatedRef = useRef<boolean>(false);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [currentAchievement, setCurrentAchievement] = useState<{
-    achievementId?: string;
-    achievementTitle?: string;
-    achievementDescription?: string;
-    achievementIconKey?: string;
-  } | null>(null);
+  const [currentAchievement, setCurrentAchievement] = useState<AchievementDetails | null>(null);
 
   if (!storageRef.current) {
     if (typeof storage === 'string') {
@@ -144,12 +148,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     metricsUpdatedRef.current = false;
     
     let newlyUnlockedAchievements: string[] = [];
-    let achievementToShow: {
-      achievementId?: string;
-      achievementTitle?: string;
-      achievementDescription?: string;
-      achievementIconKey?: string;
-    } | null = null;
+    let achievementToShow: AchievementDetails | null = null;
 
     Object.entries(achievements).forEach(([metricName, metricAchievements]) => {
       const currentValue = metrics[metricName];
@@ -174,7 +173,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
       }
     });
     
-    if (newlyUnlockedAchievements.length > 0) {
+    if (newlyUnlockedAchievements.length > 0 && achievementToShow) {
       const allUnlocked = [...achievementState.unlocked, ...newlyUnlockedAchievements];
       setAchievementState(prev => ({
         ...prev,
@@ -182,17 +181,55 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
       }));
       storageImpl.setUnlockedAchievements(allUnlocked);
 
-      if (achievementToShow) {
-        setShowConfetti(false);
-        setCurrentAchievement(null);
+      const achievement: AchievementDetails = achievementToShow;
+      
+      setShowConfetti(false);
+      setCurrentAchievement(null);
+      
+      setTimeout(() => {
+        setCurrentAchievement(achievement);
+        setShowConfetti(true);
+
+        // Show toast notification
+        let iconToDisplay = '🏆';
         
-        setTimeout(() => {
-          setCurrentAchievement(achievementToShow);
-          setShowConfetti(true);
-        }, 100);
-      }
+        if (achievement.achievementIconKey && achievement.achievementIconKey in icons) {
+          iconToDisplay = icons[achievement.achievementIconKey];
+        }
+
+        const toastId = achievement.achievementId 
+          ? `achievement-${achievement.achievementId}` 
+          : `achievement-${Date.now()}`;
+
+        toast.success(
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <span style={{ fontSize: '2em', marginRight: '10px' }}>{iconToDisplay}</span>
+            <div>
+              <h4 style={{ margin: '0 0 8px 0' }}>Achievement Unlocked! 🎉</h4>
+              <div style={{ fontWeight: 'bold' }}>{achievement.achievementTitle}</div>
+              <div style={{ color: '#666' }}>{achievement.achievementDescription}</div>
+            </div>
+          </div>,
+          {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            toastId
+          }
+        );
+
+        // Update seen achievements
+        if (achievement.achievementId) {
+          seenAchievementsRef.current.add(achievement.achievementId);
+          saveNotifiedAchievements(seenAchievementsRef.current);
+        }
+      }, 100);
     }
-  }, [metrics, achievementState.unlocked, achievements]);
+  }, [metrics, achievementState.unlocked, achievements, icons]);
 
   useEffect(() => {
     if (showConfetti) {
@@ -266,16 +303,19 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
       }}
     >
       {children}
-      <ConfettiWrapper 
-        show={showConfetti}
-        achievement={currentAchievement || undefined}
-        icons={icons}
-        notifiedAchievements={seenAchievementsRef.current}
-        onAchievementNotified={(achievementId) => {
-          seenAchievementsRef.current.add(achievementId);
-          saveNotifiedAchievements(seenAchievementsRef.current);
-        }}
+      <ToastContainer 
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
       />
+      <ConfettiWrapper show={showConfetti} />
     </AchievementContext.Provider>
   );
 }; 
