@@ -52,6 +52,13 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     const [showBadges, setShowBadges] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
     const [pendingNotifications, setPendingNotifications] = useState<AchievementDetails[]>([]);
+    
+    // Track which achievements have already been notified to the user
+    // This helps prevent duplicate notifications
+    const [notifiedAchievements, setNotifiedAchievements] = useState<Set<string>>(new Set());
+    
+    // Track if we've loaded initially from storage
+    const initialLoadRef = useRef(false);
 
     // Update config ref when it changes
     useEffect(() => {
@@ -74,11 +81,25 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
             if (initialState.previouslyAwardedAchievements) {
                 achievementStorage.setUnlockedAchievements(initialState.previouslyAwardedAchievements);
                 setUnlockedAchievements(initialState.previouslyAwardedAchievements);
+                
+                // Mark these as already notified since they were pre-existing
+                setNotifiedAchievements(new Set(initialState.previouslyAwardedAchievements));
             }
+        } else if (Object.keys(storedMetrics).length > 0 || unlockedAchievements.length > 0) {
+            // If we have stored data, mark all existing achievements as notified
+            // This prevents showing notifications for already unlocked achievements
+            setNotifiedAchievements(new Set(unlockedAchievements));
         }
+        
+        // Mark that we've completed the initial load
+        initialLoadRef.current = true;
     }, []);
 
     const checkAchievements = useCallback(() => {
+        if (!initialLoadRef.current) return; // Skip checking until initial load is complete
+        
+        let newlyUnlockedAchievements: AchievementDetails[] = [];
+
         Object.entries(configRef.current).forEach(([metricName, conditions]) => {
             const metricValues = metrics[metricName];
             if (!metricValues) return;
@@ -93,22 +114,51 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
             };
 
             conditions.forEach((condition) => {
+                const achievementId = condition.achievementDetails.achievementId;
+                
                 if (
                     condition.isConditionMet(latestValue, state) &&
-                    !unlockedAchievements.includes(condition.achievementDetails.achievementId)
+                    !unlockedAchievements.includes(achievementId)
                 ) {
-                    const newUnlockedAchievements = [...unlockedAchievements, condition.achievementDetails.achievementId];
-                    setUnlockedAchievements(newUnlockedAchievements);
-                    achievementStorage.setUnlockedAchievements(newUnlockedAchievements);
-                    setPendingNotifications(prev => [...prev, condition.achievementDetails]);
-                    setShowConfetti(true);
-                    if (onAchievementUnlocked) {
-                        onAchievementUnlocked(condition.achievementDetails);
-                    }
+                    newlyUnlockedAchievements.push(condition.achievementDetails);
                 }
             });
         });
-    }, [metrics, unlockedAchievements, onAchievementUnlocked]);
+        
+        // If we found new achievements
+        if (newlyUnlockedAchievements.length > 0) {
+            // Get all achievement IDs
+            const newAchievementIds = newlyUnlockedAchievements.map(a => a.achievementId);
+            
+            // Update unlocked achievements in state and storage
+            const updatedUnlockedAchievements = [...unlockedAchievements, ...newAchievementIds];
+            setUnlockedAchievements(updatedUnlockedAchievements);
+            achievementStorage.setUnlockedAchievements(updatedUnlockedAchievements);
+            
+            // Filter out any achievements that have already been notified
+            const filteredNotifications = newlyUnlockedAchievements.filter(
+                a => !notifiedAchievements.has(a.achievementId)
+            );
+            
+            // If we have new notifications to show
+            if (filteredNotifications.length > 0) {
+                setPendingNotifications(prev => [...prev, ...filteredNotifications]);
+                setShowConfetti(true);
+                
+                // Update our notified achievements tracker
+                const updatedNotified = new Set(notifiedAchievements);
+                filteredNotifications.forEach(a => updatedNotified.add(a.achievementId));
+                setNotifiedAchievements(updatedNotified);
+                
+                // Call onAchievementUnlocked for all new achievements
+                if (onAchievementUnlocked) {
+                    filteredNotifications.forEach(achievement => {
+                        onAchievementUnlocked(achievement);
+                    });
+                }
+            }
+        }
+    }, [metrics, unlockedAchievements, notifiedAchievements, onAchievementUnlocked]);
 
     // Merge custom icons with default icons, with custom icons taking precedence
     const mergedIcons: Record<string, string> = useMemo(() => {
@@ -118,39 +168,42 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     // Handle notifications
     useEffect(() => {
         if (pendingNotifications.length > 0) {
-            pendingNotifications.forEach((notification) => {
-                let iconToDisplay = null;
-                
-                if (notification.achievementIconKey) {
-                    if (notification.achievementIconKey in mergedIcons) {
-                        iconToDisplay = mergedIcons[notification.achievementIconKey];
-                    } else if ('default' in mergedIcons) {
-                        iconToDisplay = mergedIcons.default;
-                    }
+            // Only take the first notification to display
+            const notification = pendingNotifications[0]; 
+            let iconToDisplay = null;
+            
+            if (notification.achievementIconKey) {
+                if (notification.achievementIconKey in mergedIcons) {
+                    iconToDisplay = mergedIcons[notification.achievementIconKey];
+                } else if ('default' in mergedIcons) {
+                    iconToDisplay = mergedIcons.default;
                 }
-                
-                toast.success(
-                    <div>
-                        <h4 style={{ margin: '0 0 8px 0' }}>Achievement Unlocked! 🎉</h4>
-                        <strong>{notification.achievementTitle}</strong>
-                        <p style={{ margin: '4px 0 0 0' }}>{notification.achievementDescription}</p>
-                        {iconToDisplay && (
-                            <div style={{ fontSize: '24px', marginTop: '8px' }}>
-                                {iconToDisplay}
-                            </div>
-                        )}
-                    </div>,
-                    {
-                        position: "top-right",
-                        autoClose: 5000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                    }
-                );
-            });
-            setPendingNotifications([]);
+            }
+            
+            toast.success(
+                <div>
+                    <h4 style={{ margin: '0 0 8px 0' }}>Achievement Unlocked! 🎉</h4>
+                    <strong>{notification.achievementTitle}</strong>
+                    <p style={{ margin: '4px 0 0 0' }}>{notification.achievementDescription}</p>
+                    {iconToDisplay && (
+                        <div style={{ fontSize: '24px', marginTop: '8px' }}>
+                            {iconToDisplay}
+                        </div>
+                    )}
+                </div>,
+                {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    toastId: `achievement-${notification.achievementId}`, // Prevent duplicate toasts
+                }
+            );
+            
+            // Remove this notification from pending
+            setPendingNotifications(prev => prev.slice(1));
         }
     }, [pendingNotifications, mergedIcons]);
 
@@ -179,6 +232,8 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         achievementStorage.clear();
         setMetrics({});
         setUnlockedAchievements([]);
+        setNotifiedAchievements(new Set());
+        setPendingNotifications([]);
     }, [achievementStorage]);
 
     // Convert achievement IDs to details using config from ref
