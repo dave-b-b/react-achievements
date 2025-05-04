@@ -2,6 +2,96 @@
 
 A flexible and extensible achievement system for React applications. This package provides the foundation for implementing achievements in React applications with support for multiple state management solutions including Redux, Zustand, and Context API. Check the `stories/examples` directory for implementation examples with different state management solutions.
 
+<p align="center">
+  <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExbnMxdHVqanZvbGR6czJqOTdpejZqc3F3NXh6a2FiM3lmdnB0d3VoOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LYXAZelQMeeYpzbgtT/giphy.gif" alt="React Achievements Demo" width="600" />
+</p>
+
+## Quick Start
+
+Here's a complete working example that shows automatic notifications and achievement tracking:
+
+```tsx
+import React, { useState } from 'react';
+import { 
+  AchievementProvider, 
+  useAchievements, 
+  BadgesButton, 
+  BadgesModal 
+} from 'react-achievements';
+
+// Define a simple achievement
+const achievementConfig = {
+  score: [{
+    isConditionMet: (value: number) => value >= 100,
+    achievementDetails: {
+      achievementId: 'score_100',
+      achievementTitle: 'Century!',
+      achievementDescription: 'Score 100 points',
+      achievementIconKey: 'trophy'
+    }
+  }]
+};
+
+// Demo component with all essential features
+const DemoComponent = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { update, achievements, reset } = useAchievements();
+
+  return (
+    <div>
+      <h1>Achievement Demo</h1>
+      
+      {/* Button to trigger achievement */}
+      <button onClick={() => update({ score: 100 })}>
+        Score 100 points
+      </button>
+      
+      {/* Reset button */}
+      <button onClick={reset}>
+        Reset Achievements
+      </button>
+      
+      {/* Shows unlocked achievements count */}
+      <p>Unlocked: {achievements.unlocked.length}</p>
+      
+      {/* Floating badges button */}
+      <BadgesButton 
+        position="bottom-right"
+        onClick={() => setIsModalOpen(true)}
+        unlockedAchievements={achievements.unlocked}
+      />
+      
+      {/* Achievement history modal */}
+      <BadgesModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        achievements={achievements.unlocked}
+      />
+    </div>
+  );
+};
+
+// Root component with provider
+const App = () => {
+  return (
+    <AchievementProvider
+      achievements={achievementConfig}
+      storage="local"
+    >
+      <DemoComponent />
+    </AchievementProvider>
+  );
+};
+
+export default App;
+```
+
+When you click "Score 100 points":
+1. A toast notification appears
+2. Confetti animation plays
+3. The achievement is stored and visible in the badges modal
+4. The badges button updates to show the new count
+
 ## State Management Options
 
 This package includes example implementations for different state management solutions in the `stories/examples` directory:
@@ -21,6 +111,41 @@ See the [examples directory](./stories/examples) for detailed implementations an
 - Toast notifications
 - Confetti animations
 - TypeScript support
+
+## Achievement Notifications & History
+
+The package provides two ways to display achievements to users:
+
+### Automatic Notifications
+When an achievement is unlocked, the system automatically:
+- Shows a toast notification in the top-right corner with the achievement details
+- Plays a confetti animation to celebrate the achievement
+
+These notifications appear immediately when achievements are unlocked and require no additional setup.
+
+### Achievement History
+To allow users to view their achievement history, the package provides two essential components:
+
+1. `BadgesButton`: A floating button that shows the number of unlocked achievements
+```tsx
+<BadgesButton 
+  position="bottom-right" // or "top-right", "top-left", "bottom-left"
+  onClick={() => setIsModalOpen(true)}
+  unlockedAchievements={achievements.unlocked}
+/>
+```
+
+2. `BadgesModal`: A modal dialog that displays all unlocked achievements with their details
+```tsx
+<BadgesModal 
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  achievements={achievements.unlocked}
+  icons={customIcons} // Optional custom icons
+/>
+```
+
+These components are the recommended way to give users access to their achievement history. While you could build custom UI using the `useAchievements` hook data, these components provide a polished, ready-to-use interface for achievement history.
 
 ## Installation
 
