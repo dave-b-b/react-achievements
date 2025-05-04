@@ -1,6 +1,7 @@
-export type AchievementMetricValue = number | string | boolean | Date;
+export type AchievementMetricValue = number | string | boolean | Date | null | undefined;
+export type AchievementMetricArrayValue = AchievementMetricValue | AchievementMetricValue[];
 
-export const isDate = (value: unknown): value is Date => {
+export const isDate = (value: any): value is Date => {
     return value instanceof Date;
 };
 
@@ -15,13 +16,18 @@ export interface AchievementDetails {
     achievementIconKey?: string;
 }
 
-export interface AchievementUnlockCondition {
-    isConditionMet: (value: AchievementMetricValue, state: AchievementState) => boolean;
-    achievementDetails: AchievementDetails;
+export interface AchievementCondition {
+    isConditionMet: (value: AchievementMetricArrayValue, state: AchievementState) => boolean;
+    achievementDetails: {
+        achievementId: string;
+        achievementTitle: string;
+        achievementDescription: string;
+        achievementIconKey: string;
+    };
 }
 
 export interface AchievementConfiguration {
-    [metricName: string]: AchievementUnlockCondition[];
+    [key: string]: AchievementCondition[];
 }
 
 export interface InitialAchievementMetrics {
@@ -29,9 +35,7 @@ export interface InitialAchievementMetrics {
 }
 
 export interface AchievementState {
-    metrics: {
-        [key: string]: AchievementMetricValue[];
-    };
+    metrics: AchievementMetrics;
     unlockedAchievements: string[];
 }
 
@@ -78,6 +82,5 @@ export interface AchievementProviderProps {
 
 export enum StorageType {
     Local = 'local',
-    Memory = 'memory',
-    Custom = 'custom'
+    Memory = 'memory'
 } 

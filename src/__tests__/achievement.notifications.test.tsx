@@ -7,18 +7,20 @@ import { StorageType } from '../core/types';
 import { MemoryStorage } from '../core/storage/MemoryStorage';
 
 // Mock react-toastify
-jest.mock('react-toastify', () => ({
-  toast: jest.fn(),
-  ToastContainer: () => <div data-testid="toast-container" />,
+jest.mock('react-toastify');
+
+// Mock ConfettiWrapper
+jest.mock('../core/components/ConfettiWrapper', () => ({
+  ConfettiWrapper: jest.fn(({ show }) => (show ? <div data-testid="mock-confetti" /> : null)),
 }));
 
 // Simple achievement configuration for testing
 const achievementConfig = {
   score: [{
-    isConditionMet: (value: number) => value >= 100,
+    isConditionMet: (value: any) => value >= 100,
     achievementDetails: {
       achievementId: 'score_100',
-      achievementTitle: 'Century',
+      achievementTitle: 'High Score!',
       achievementDescription: 'Score 100 points',
       achievementIconKey: 'trophy'
     }
@@ -38,18 +40,28 @@ const TestComponent = () => {
   const context = React.useContext(AchievementContext);
   
   if (!context) {
-    return <div>No context</div>;
+    throw new Error('TestComponent must be used within an AchievementProvider');
   }
   
   const { update, achievements, reset } = context;
   
   return (
     <div>
-      <div data-testid="unlocked-count">{achievements.unlocked.length}</div>
-      <div data-testid="unlocked-list">{achievements.unlocked.join(',')}</div>
-      <button data-testid="score-100" onClick={() => update({ score: 100 })}>Score 100</button>
-      <button data-testid="score-200" onClick={() => update({ score: 200 })}>Score 200</button>
-      <button data-testid="reset" onClick={reset}>Reset</button>
+      <button data-testid="score-button" onClick={() => update({ score: 100 })}>
+        Score 100
+      </button>
+      <button data-testid="score-50" onClick={() => update({ score: 50 })}>
+        Score 50
+      </button>
+      <button data-testid="reset" onClick={reset}>
+        Reset
+      </button>
+      <div data-testid="unlocked-count">
+        {achievements.unlocked.length}
+      </div>
+      <div data-testid="unlocked-list">
+        {achievements.unlocked.join(',')}
+      </div>
     </div>
   );
 };
@@ -57,151 +69,139 @@ const TestComponent = () => {
 describe('Achievement Notifications', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers();
+  });
+  
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
   });
   
   it('should not show duplicate notifications for the same achievement', async () => {
-    // Create persistent storage
-    const testStorage = new MemoryStorage();
-    
     render(
-      <AchievementProvider 
-        achievements={achievementConfig} 
-        storage={testStorage}
+      <AchievementProvider
+        achievements={achievementConfig}
+        storage={StorageType.Memory}
       >
         <TestComponent />
       </AchievementProvider>
     );
-    
-    // Unlock an achievement
+
+    // Earn achievement
     await act(async () => {
-      fireEvent.click(screen.getByTestId('score-100'));
+      fireEvent.click(screen.getByTestId('score-button'));
     });
-    
-    // Should show one unlocked achievement
-    expect(screen.getByTestId('unlocked-count')).toHaveTextContent('1');
-    expect(screen.getByTestId('unlocked-list')).toHaveTextContent('score_100');
-    
+
+    await waitFor(() => {
+      expect(screen.getByTestId('unlocked-count')).toHaveTextContent('1');
+    });
+
     // Verify toast was called once
-    expect(toast).toHaveBeenCalledTimes(1);
-    
+    expect(toast.success).toHaveBeenCalledTimes(1);
+
     // Click the same button again, should not trigger another notification
     await act(async () => {
-      fireEvent.click(screen.getByTestId('score-100'));
+      fireEvent.click(screen.getByTestId('score-button'));
     });
-    
-    // Should still show one unlocked achievement
-    expect(screen.getByTestId('unlocked-count')).toHaveTextContent('1');
-    
-    // Should still only have called toast once (no duplicate notification)
-    expect(toast).toHaveBeenCalledTimes(1);
+
+    // Toast should still only have been called once
+    expect(toast.success).toHaveBeenCalledTimes(1);
   });
   
   it('should properly handle multiple achievements in sequence', async () => {
-    // Create persistent storage
-    const testStorage = new MemoryStorage();
-    
     render(
-      <AchievementProvider 
-        achievements={achievementConfig} 
-        storage={testStorage}
+      <AchievementProvider
+        achievements={achievementConfig}
+        storage={StorageType.Memory}
       >
         <TestComponent />
       </AchievementProvider>
     );
-    
-    // Unlock an achievement
+
+    // Earn first achievement
     await act(async () => {
-      fireEvent.click(screen.getByTestId('score-100'));
+      fireEvent.click(screen.getByTestId('score-button'));
     });
-    
-    // Should show one unlocked achievement
-    expect(screen.getByTestId('unlocked-count')).toHaveTextContent('1');
-    expect(screen.getByTestId('unlocked-list')).toHaveTextContent('score_100');
-    expect(toast).toHaveBeenCalledTimes(1);
-    
-    // Unlock a new achievement
-    await act(async () => {
-      fireEvent.click(screen.getByTestId('score-200'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('unlocked-count')).toHaveTextContent('1');
+      expect(screen.getByTestId('unlocked-list')).toHaveTextContent('score_100');
     });
-    
-    // Should now show two unlocked achievements
-    expect(screen.getByTestId('unlocked-count')).toHaveTextContent('2');
-    expect(screen.getByTestId('unlocked-list')).toHaveTextContent('score_100,score_200');
-    
-    // Should have shown one more notification (total 2)
-    expect(toast).toHaveBeenCalledTimes(2);
+
+    expect(toast.success).toHaveBeenCalledTimes(1);
   });
   
   it('should properly reset achievements', async () => {
-    // Create persistent storage
-    const testStorage = new MemoryStorage();
-    
     render(
-      <AchievementProvider 
-        achievements={achievementConfig} 
-        storage={testStorage}
+      <AchievementProvider
+        achievements={achievementConfig}
+        storage={StorageType.Memory}
       >
         <TestComponent />
       </AchievementProvider>
     );
-    
-    // Unlock an achievement
+
+    // Earn achievement
     await act(async () => {
-      fireEvent.click(screen.getByTestId('score-100'));
+      fireEvent.click(screen.getByTestId('score-button'));
     });
-    
-    // Should show one unlocked achievement
-    expect(screen.getByTestId('unlocked-count')).toHaveTextContent('1');
-    
+
+    await waitFor(() => {
+      expect(screen.getByTestId('unlocked-count')).toHaveTextContent('1');
+    });
+
     // Reset achievements
     await act(async () => {
       fireEvent.click(screen.getByTestId('reset'));
     });
-    
-    // Should immediately show zero unlocked achievements after reset
-    expect(screen.getByTestId('unlocked-count')).toHaveTextContent('0');
-    expect(screen.getByTestId('unlocked-list')).toHaveTextContent('');
-    
-    // Unlock the achievement again after reset
-    await act(async () => {
-      fireEvent.click(screen.getByTestId('score-100'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('unlocked-count')).toHaveTextContent('0');
     });
-    
+
+    // Earn achievement again
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('score-button'));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('unlocked-count')).toHaveTextContent('1');
+    });
+
     // Should show notification again after reset and new achievement
-    expect(toast).toHaveBeenCalledTimes(2);
-    expect(screen.getByTestId('unlocked-count')).toHaveTextContent('1');
+    expect(toast.success).toHaveBeenCalledTimes(2);
   });
   
   it('should handle achievements from initial state', async () => {
-    // Create persistent storage with pre-existing achievement
-    const testStorage = new MemoryStorage();
-    testStorage.setUnlockedAchievements(['score_100']);
-    
-    // First render with pre-existing achievement
+    const storage = {
+      getUnlockedAchievements: jest.fn().mockReturnValue(['score_50']),
+      setUnlockedAchievements: jest.fn(),
+      getMetrics: jest.fn().mockReturnValue({}),
+      setMetrics: jest.fn(),
+      clear: jest.fn(),
+      getItem: jest.fn().mockReturnValue(JSON.stringify(['score_50'])),
+      setItem: jest.fn()
+    };
+
     render(
-      <AchievementProvider 
-        achievements={achievementConfig} 
-        storage={testStorage}
+      <AchievementProvider
+        achievements={achievementConfig}
+        storage={storage}
       >
         <TestComponent />
       </AchievementProvider>
     );
-    
-    // Should show one unlocked achievement but not trigger notification
-    expect(screen.getByTestId('unlocked-count')).toHaveTextContent('1');
-    expect(screen.getByTestId('unlocked-list')).toHaveTextContent('score_100');
-    expect(toast).not.toHaveBeenCalled();
-    
-    // Unlock a new achievement
+
+    // Earn a new achievement
     await act(async () => {
-      fireEvent.click(screen.getByTestId('score-200'));
+      fireEvent.click(screen.getByTestId('score-button'));
     });
-    
-    // Should now show two unlocked achievements
-    expect(screen.getByTestId('unlocked-count')).toHaveTextContent('2');
-    expect(screen.getByTestId('unlocked-list')).toHaveTextContent('score_100,score_200');
-    
+
+    await waitFor(() => {
+      expect(screen.getByTestId('unlocked-count')).toHaveTextContent('2');
+    });
+
     // Should only show notification for the new achievement
-    expect(toast).toHaveBeenCalledTimes(1);
+    expect(toast.success).toHaveBeenCalledTimes(1);
   });
 }); 

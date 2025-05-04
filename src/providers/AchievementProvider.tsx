@@ -156,7 +156,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
       if (currentValue !== undefined) {
         metricAchievements.forEach((achievement) => {
           const state = { metrics, unlockedAchievements: achievementState.unlocked };
-          const valueToCheck = Array.isArray(currentValue) ? currentValue[0] : currentValue;
+          const valueToCheck = currentValue;
           const achievementId = achievement.achievementDetails.achievementId;
           
           if (achievement.isConditionMet(valueToCheck, state)) {
@@ -173,7 +173,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
       }
     });
     
-    if (newlyUnlockedAchievements.length > 0 && achievementToShow) {
+    if (newlyUnlockedAchievements.length > 0) {
       const allUnlocked = [...achievementState.unlocked, ...newlyUnlockedAchievements];
       setAchievementState(prev => ({
         ...prev,
@@ -181,15 +181,9 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
       }));
       storageImpl.setUnlockedAchievements(allUnlocked);
 
-      const achievement: AchievementDetails = achievementToShow;
-      
-      setShowConfetti(false);
-      setCurrentAchievement(null);
-      
-      setTimeout(() => {
-        setCurrentAchievement(achievement);
-        setShowConfetti(true);
-
+      if (achievementToShow) {
+        const achievement: AchievementDetails = achievementToShow;
+        
         // Show toast notification
         let iconToDisplay = '🏆';
         
@@ -227,19 +221,21 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
           seenAchievementsRef.current.add(achievement.achievementId);
           saveNotifiedAchievements(seenAchievementsRef.current);
         }
-      }, 100);
+
+        // Show confetti
+        setCurrentAchievement(achievement);
+        setShowConfetti(true);
+
+        // Hide confetti after 5 seconds
+        const timer = setTimeout(() => {
+          setShowConfetti(false);
+          setCurrentAchievement(null);
+        }, 5000);
+
+        return () => clearTimeout(timer);
+      }
     }
   }, [metrics, achievementState.unlocked, achievements, icons]);
-
-  useEffect(() => {
-    if (showConfetti) {
-      const timer = setTimeout(() => {
-        setShowConfetti(false);
-        setCurrentAchievement(null);
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [showConfetti]);
 
   const update = (newMetrics: Record<string, any>) => {
     metricsUpdatedRef.current = true;

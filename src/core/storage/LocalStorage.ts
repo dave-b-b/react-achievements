@@ -52,12 +52,23 @@ export class LocalStorage implements AchievementStorage {
         }
     }
 
-    private setStorageData(data: { metrics: AchievementMetrics; unlockedAchievements: string[] }) {
-        const serialized = {
-            metrics: this.serializeMetrics(data.metrics),
-            unlockedAchievements: data.unlockedAchievements
-        };
-        localStorage.setItem(this.storageKey, JSON.stringify(serialized));
+    private setStorageData(data: { metrics: AchievementMetrics; unlockedAchievements: string[] }): void {
+        try {
+            const serialized = {
+                metrics: this.serializeMetrics(data.metrics),
+                unlockedAchievements: data.unlockedAchievements
+            };
+            localStorage.setItem(this.storageKey, JSON.stringify(serialized));
+        } catch (error) {
+            // Silently fail on quota exceeded errors
+            if (error instanceof Error && 
+                (error.name === 'QuotaExceededError' || 
+                 error.name === 'NS_ERROR_DOM_QUOTA_REACHED' ||
+                 error.message.includes('QuotaExceeded'))) {
+                return;
+            }
+            throw error;
+        }
     }
 
     getMetrics(): AchievementMetrics {
