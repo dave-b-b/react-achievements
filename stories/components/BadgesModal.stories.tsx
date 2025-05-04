@@ -1,8 +1,14 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import Modal from 'react-modal';
 import { BadgesModal } from '../../src/core/components/BadgesModal';
 import { AchievementDetails } from '../../src/core/types';
 import { defaultAchievementIcons } from '../../src/core/icons/defaultIcons';
+
+// Set up Modal for Storybook environment
+if (typeof window !== 'undefined') {
+  Modal.setAppElement('#storybook-root');
+}
 
 const meta: Meta<typeof BadgesModal> = {
   title: 'Components/BadgesModal',
@@ -50,7 +56,7 @@ export const Default: Story = {
     isOpen: true,
     onClose: () => {},
     achievements: sampleAchievements,
-    // The component will automatically use defaultAchievementIcons, so no need to pass icons
+    icons: defaultAchievementIcons, // Explicitly set default icons
   },
 };
 
@@ -59,7 +65,6 @@ export const WithCustomIcons: Story = {
     isOpen: true,
     onClose: () => {},
     achievements: sampleAchievements,
-    // Custom icons will be merged with defaultAchievementIcons inside the component
     icons: customIcons,
   },
 };
@@ -69,6 +74,7 @@ export const Empty: Story = {
     isOpen: true,
     onClose: () => {},
     achievements: [],
+    icons: defaultAchievementIcons,
   },
 };
 
@@ -77,7 +83,7 @@ export const CustomStyling: Story = {
     isOpen: true,
     onClose: () => {},
     achievements: sampleAchievements,
-    icons: defaultIcons,
+    icons: defaultAchievementIcons,
     styles: {
       overlay: {
         backgroundColor: 'rgba(0, 0, 0, 0.85)',
