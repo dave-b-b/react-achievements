@@ -6,19 +6,57 @@ import { BadgesButton } from '../../src/core/components/BadgesButton';
 import { BadgesModal } from '../../src/core/components/BadgesModal';
 import { useAchievements } from '../../src/hooks/useAchievements';
 
-// Define the meta information
+/**
+ * The `AchievementProvider` is the core component of the React Achievements system.
+ * It manages achievement state, handles achievement unlocking logic, and provides
+ * the achievement context to child components.
+ * 
+ * ## Features
+ * - Manages achievement state and unlocking logic
+ * - Supports multiple storage types (Memory, Local)
+ * - Provides achievement context to child components
+ * - Handles achievement notifications and animations
+ * - Supports custom achievement icons
+ */
 const meta: Meta<typeof AchievementProvider> = {
   title: 'Providers/AchievementProvider',
   component: AchievementProvider,
   parameters: {
     layout: 'fullscreen',
+    docs: {
+      description: {
+        component: 'A provider component that manages achievement state and unlocking logic in your React application.'
+      }
+    }
   },
   tags: ['autodocs'],
+  argTypes: {
+    achievements: {
+      description: 'Configuration object defining achievements and their unlock conditions',
+      control: 'object'
+    },
+    storage: {
+      description: 'Storage type for persisting achievement state',
+      control: 'select',
+      options: [StorageType.Memory, StorageType.Local],
+      table: {
+        defaultValue: { summary: StorageType.Memory }
+      }
+    },
+    icons: {
+      description: 'Custom icons mapping for achievements',
+      control: 'object'
+    },
+    children: {
+      description: 'Child components that will have access to the achievement context',
+      control: false
+    }
+  }
 };
 
 export default meta;
 
-// Define the achievement configuration for the stories
+// Achievement configuration for the demo
 const achievementConfig = {
   score: [{
     isConditionMet: (value: number) => value >= 100,
@@ -48,7 +86,6 @@ const achievementConfig = {
   }]
 };
 
-// Icons for the stories
 const icons = {
   trophy: '🏆',
   star: '⭐',
@@ -56,7 +93,7 @@ const icons = {
   default: '🎖️'
 };
 
-// Create a demo component that uses the achievement context
+// Demo component showcasing achievement functionality
 const DemoComponent = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const { update, achievements, reset, getState } = useAchievements();
@@ -146,28 +183,88 @@ const DemoComponent = () => {
   );
 };
 
-// Story with Memory Storage
-export const WithMemoryStorage = {
-  render: () => (
-    <AchievementProvider 
-      achievements={achievementConfig} 
-      storage={StorageType.Memory}
-      icons={icons}
-    >
+/**
+ * The Memory Storage variant stores achievement data in memory.
+ * This is useful for:
+ * - Development and testing
+ * - Temporary achievement tracking
+ * - Scenarios where persistence isn't needed
+ */
+export const WithMemoryStorage: StoryObj<typeof AchievementProvider> = {
+  args: {
+    achievements: achievementConfig,
+    storage: StorageType.Memory,
+    icons: icons
+  },
+  render: (args) => (
+    <AchievementProvider {...args}>
       <DemoComponent />
     </AchievementProvider>
-  )
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Uses in-memory storage for achievement data. Data is cleared when the page refreshes.'
+      }
+    }
+  }
 };
 
-// Story with Local Storage
-export const WithLocalStorage = {
-  render: () => (
-    <AchievementProvider 
-      achievements={achievementConfig} 
-      storage={StorageType.Local}
-      icons={icons}
-    >
+/**
+ * The Local Storage variant persists achievement data in the browser.
+ * This is useful for:
+ * - Persisting achievements between sessions
+ * - Production applications
+ * - Long-term achievement tracking
+ */
+export const WithLocalStorage: StoryObj<typeof AchievementProvider> = {
+  args: {
+    achievements: achievementConfig,
+    storage: StorageType.Local,
+    icons: icons
+  },
+  render: (args) => (
+    <AchievementProvider {...args}>
       <DemoComponent />
     </AchievementProvider>
-  )
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Uses localStorage to persist achievement data between page refreshes and browser sessions.'
+      }
+    }
+  }
+};
+
+/**
+ * Example of using custom achievement configuration.
+ * Demonstrates how to:
+ * - Define custom achievement conditions
+ * - Structure achievement details
+ * - Set up achievement categories
+ */
+export const CustomAchievements: StoryObj<typeof AchievementProvider> = {
+  args: {
+    achievements: {
+      customMetric: [{
+        isConditionMet: (value: number) => value > 10,
+        achievementDetails: {
+          achievementId: 'custom_achievement',
+          achievementTitle: 'Custom Achievement',
+          achievementDescription: 'Unlocked through custom logic',
+          achievementIconKey: 'star'
+        }
+      }]
+    },
+    storage: StorageType.Memory,
+    icons: icons
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Shows how to configure custom achievements with unique unlock conditions.'
+      }
+    }
+  }
 }; 

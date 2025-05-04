@@ -10,13 +10,51 @@ if (typeof window !== 'undefined') {
   Modal.setAppElement('#storybook-root');
 }
 
+/**
+ * The BadgesModal component displays a list of achievements in a modal dialog.
+ * It supports custom styling and icons, making it highly customizable for different themes and designs.
+ * 
+ * @component
+ * @example
+ * ```tsx
+ * <BadgesModal
+ *   isOpen={true}
+ *   onClose={() => {}}
+ *   achievements={achievements}
+ *   icons={customIcons}
+ * />
+ * ```
+ */
 const meta: Meta<typeof BadgesModal> = {
   title: 'Components/BadgesModal',
   component: BadgesModal,
   parameters: {
     layout: 'centered',
+    docs: {
+      description: {
+        component: 'A modal component that displays user achievements with customizable styling and icons.'
+      }
+    }
   },
   tags: ['autodocs'],
+  argTypes: {
+    isOpen: {
+      description: 'Controls whether the modal is visible',
+      control: 'boolean'
+    },
+    onClose: {
+      description: 'Callback function called when the modal should close'
+    },
+    achievements: {
+      description: 'Array of achievement objects to display'
+    },
+    icons: {
+      description: 'Custom icons mapping for achievement display'
+    },
+    styles: {
+      description: 'Custom styles to override default modal styling'
+    }
+  }
 };
 
 export default meta;
