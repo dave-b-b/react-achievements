@@ -3,8 +3,9 @@ export type {
     AchievementMetrics, 
     AchievementConfiguration, 
     AchievementDetails, 
-    AchievementUnlockCondition, 
+    AchievementCondition,
     AchievementMetricValue, 
+    AchievementMetricArrayValue,
     InitialAchievementMetrics,
     AchievementState,
     AchievementStorage,
@@ -15,6 +16,7 @@ export type {
 
 // Core Storage Interface
 export { LocalStorage } from './core/storage/LocalStorage';
+export { StorageType } from './core/types';
 
 // Core UI Components
 export { BadgesButton } from './core/components/BadgesButton';
@@ -22,7 +24,7 @@ export { BadgesModal } from './core/components/BadgesModal';
 export { ConfettiWrapper } from './core/components/ConfettiWrapper';
 
 // Core Provider and Hooks
-export { AchievementProvider } from './providers/AchievementProvider';
+export { AchievementProvider, AchievementContext } from './providers/AchievementProvider';
 export { useAchievements } from './hooks/useAchievements';
 
 // Core Styles

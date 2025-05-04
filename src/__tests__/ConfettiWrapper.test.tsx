@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { ConfettiWrapper } from '../core/components/ConfettiWrapper';
+import { ConfettiWrapper } from '../index';
 import '@testing-library/jest-dom';
 
 // Mock react-confetti

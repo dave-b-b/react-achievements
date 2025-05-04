@@ -1,13 +1,17 @@
 import React from 'react';
 import { render, screen, fireEvent, act, cleanup } from '@testing-library/react';
-import { AchievementProvider, useAchievements } from '../index';
-import { LocalStorage } from '../core/storage/LocalStorage';
-import { BadgesButton } from '../core/components/BadgesButton';
-import { BadgesModal } from '../core/components/BadgesModal';
+import { 
+  AchievementProvider, 
+  useAchievements, 
+  LocalStorage, 
+  BadgesButton, 
+  BadgesModal, 
+  ConfettiWrapper,
+  AchievementConfiguration,
+  AchievementMetricValue 
+} from '../index';
 import Modal from 'react-modal';
 import '@testing-library/jest-dom';
-import { ConfettiWrapper } from '../core/components/ConfettiWrapper';
-import { AchievementConfiguration, AchievementMetricValue } from '../core/types';
 
 // Mock react-confetti
 jest.mock('react-confetti', () => {

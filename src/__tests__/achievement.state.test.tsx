@@ -1,8 +1,10 @@
 import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import { AchievementProvider } from '../providers/AchievementProvider';
-import { useAchievements } from '../hooks/useAchievements';
-import { AchievementConfiguration } from '../core/types';
+import { 
+  AchievementProvider, 
+  useAchievements,
+  AchievementConfiguration 
+} from '../index';
 import '@testing-library/jest-dom';
 
 // Mock storage implementation

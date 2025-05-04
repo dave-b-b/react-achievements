@@ -1,5 +1,4 @@
-import { LocalStorage } from '../core/storage/LocalStorage';
-import { AchievementMetrics } from '../core/types';
+import { LocalStorage, AchievementMetrics } from '../index';
 
 describe('LocalStorage', () => {
   let storage: LocalStorage;

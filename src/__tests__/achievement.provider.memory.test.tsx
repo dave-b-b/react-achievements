@@ -1,7 +1,15 @@
 import React from 'react';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
-import { AchievementProvider, AchievementContext } from '../providers/AchievementProvider';
-import { StorageType, AchievementConfiguration, AchievementMetricValue, AchievementState, AchievementMetricArrayValue } from '../core/types';
+import { 
+  AchievementProvider, 
+  AchievementContext,
+  AchievementConfiguration, 
+  AchievementMetricValue, 
+  AchievementState, 
+  AchievementMetricArrayValue,
+  LocalStorage,
+  StorageType
+} from '../index';
 import { MemoryStorage } from '../core/storage/MemoryStorage';
 import { toast } from 'react-toastify';
 import '@testing-library/jest-dom';

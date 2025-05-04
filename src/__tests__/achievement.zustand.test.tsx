@@ -1,9 +1,14 @@
 import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import { AchievementProvider } from '../providers/AchievementProvider';
 import { create } from 'zustand';
-import { useAchievements } from '../hooks/useAchievements';
-import { AchievementConfiguration, AchievementMetricValue, AchievementState } from '../core/types';
+import { 
+  AchievementProvider, 
+  useAchievements,
+  AchievementConfiguration, 
+  AchievementMetricValue,
+  AchievementMetricArrayValue,
+  AchievementState 
+} from '../index';
 import '@testing-library/jest-dom';
 
 // Mock storage implementation
@@ -57,7 +62,7 @@ describe('Achievement System with Zustand', () => {
   const mockStorage = new MockStorage();
   const achievementConfig: AchievementConfiguration = {
     score: [{
-      isConditionMet: (value: AchievementMetricValue, state: AchievementState) => typeof value === 'number' && value >= 100,
+      isConditionMet: (value: AchievementMetricArrayValue, state: AchievementState) => typeof value === 'number' && value >= 100,
       achievementDetails: {
         achievementId: 'score_100',
         achievementTitle: 'Century!',

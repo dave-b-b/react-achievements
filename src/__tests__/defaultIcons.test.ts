@@ -1,4 +1,4 @@
-import { defaultAchievementIcons } from '../core/icons/defaultIcons';
+import { defaultAchievementIcons } from '../index';
 
 describe('defaultAchievementIcons', () => {
   it('should export an object with icon keys', () => {
