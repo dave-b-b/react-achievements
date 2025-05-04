@@ -9,7 +9,7 @@ The `defaultAchievementIcons` object provides a comprehensive set of emoji icons
 You can reference these icons directly in your achievement configuration by using the key as the `achievementIconKey`:
 
 ```tsx
-import { AchievementProvider, defaultAchievementIcons } from 'react-achievements-core';
+import { AchievementProvider, defaultAchievementIcons } from 'react-achievements';
 
 const achievementConfig = {
   pageViews: [
@@ -40,7 +40,7 @@ function App() {
 You can also provide your own custom icons, which will override the default ones:
 
 ```tsx
-import { AchievementProvider, defaultAchievementIcons } from 'react-achievements-core';
+import { AchievementProvider, defaultAchievementIcons } from 'react-achievements';
 
 // Create your custom icons by extending or overriding default icons
 const customIcons = {

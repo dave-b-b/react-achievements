@@ -1,6 +1,16 @@
-# React Achievements Core
+# React Achievements
 
-A flexible and extensible achievement system for React applications. This is the core package that provides the foundation for implementing achievements in React applications.
+A flexible and extensible achievement system for React applications. This package provides the foundation for implementing achievements in React applications with support for multiple state management solutions including Redux, Zustand, and Context API. Check the `stories/examples` directory for implementation examples with different state management solutions.
+
+## State Management Options
+
+This package includes example implementations for different state management solutions in the `stories/examples` directory:
+
+- **Redux**: For large applications with complex state management needs
+- **Zustand**: For applications needing a lightweight, modern state solution
+- **Context API**: For applications preferring React's built-in solutions
+
+See the [examples directory](./stories/examples) for detailed implementations and instructions for each state management solution.
 
 ## Features
 
@@ -15,13 +25,17 @@ A flexible and extensible achievement system for React applications. This is the
 ## Installation
 
 ```bash
-npm install react-achievements-core
+npm install react-achievements
 ```
 
 ## Basic Usage
 
 ```tsx
-import { AchievementProvider, useAchievements } from 'react-achievements-core';
+import { AchievementProvider, useAchievements } from 'react-achievements';
+// For specific state management implementations:
+// import { AchievementProvider, useAchievements } from 'react-achievements/redux';
+// import { AchievementProvider, useAchievements } from 'react-achievements/zustand';
+// import { AchievementProvider, useAchievements } from 'react-achievements/context';
 
 // Define your achievements with various data types and conditions
 const achievements = {

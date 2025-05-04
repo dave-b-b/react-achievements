@@ -5,6 +5,17 @@ This example demonstrates how to integrate the achievements system using React's
 ## Files
 
 - `AchievementsContext.tsx`: Contains the Context API implementation with reducer pattern and custom hooks
+- `AchievementsContext.stories.tsx`: Storybook example showcasing the Context API implementation
+
+## Implementation Details
+
+The Context API implementation includes:
+- Pure React solution using built-in Context API
+- Reducer pattern for predictable state updates
+- Custom hooks for easy state access
+- Support for achievement metrics and progress tracking
+- Built-in TypeScript support
+- Zero external dependencies
 
 ## Usage
 
@@ -22,28 +33,40 @@ function App() {
 }
 ```
 
-2. Access achievements state in your components using the provided hooks:
+2. Use the achievements hooks and components in your app:
 
 ```typescript
-import { useAchievementsState, useAchievementsDispatch } from './AchievementsContext';
-
 function YourComponent() {
-  const { unlockedAchievements, progress } = useAchievementsState();
-  const dispatch = useAchievementsDispatch();
+  const { update, achievements, reset, getState } = useAchievements();
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const { unlockedAchievements } = useAchievementsState();
 
-  // Example of dispatching actions
-  const handleAchievement = (achievement) => {
-    dispatch({ type: 'UNLOCK_ACHIEVEMENT', achievement });
-  };
-
-  const updateProgress = (achievementId, value) => {
-    dispatch({ type: 'UPDATE_PROGRESS', achievementId, progress: value });
+  // Update achievements
+  const handleScore = () => update({ score: 100 });
+  
+  // Reset achievements
+  const handleReset = () => {
+    reset();
   };
 
   return (
     <div>
-      <h2>Unlocked Achievements: {unlockedAchievements.length}</h2>
-      {/* Your component content */}
+      <button onClick={handleScore}>Score 100 points</button>
+      <button onClick={handleReset}>Reset</button>
+      
+      {/* Display achievements using provided components */}
+      <BadgesButton 
+        position="bottom-right" 
+        onClick={() => setIsModalOpen(true)}
+        unlockedAchievements={unlockedAchievements}
+      />
+      
+      <BadgesModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        achievements={unlockedAchievements}
+        icons={defaultAchievementIcons}
+      />
     </div>
   );
 }
@@ -60,10 +83,12 @@ No additional dependencies are required!
 
 ## How it Works
 
-The implementation uses React's Context API with the reducer pattern to manage achievements state. It provides two contexts:
-1. `AchievementsStateContext`: Holds the current state
-2. `AchievementsDispatchContext`: Provides the dispatch function for updating state
+The implementation uses React's Context API with the reducer pattern to manage achievements state. The `ContextAchievementsProvider` component creates a context that:
 
-The `ContextAchievementsProvider` component connects these contexts to the achievements system's provider, making it easy to access and update achievements state throughout your application.
+1. Manages achievement state using useReducer
+2. Provides achievement data through context
+3. Handles unlocking and resetting achievements
+4. Tracks achievement metrics and progress
+5. Integrates seamlessly with the achievements system's components
 
-Custom hooks (`useAchievementsState` and `useAchievementsDispatch`) are provided for convenient access to the state and dispatch function. 
+The implementation is designed to be lightweight and efficient, perfect for applications that want to avoid external dependencies while maintaining robust achievement tracking functionality. All state updates are handled through the reducer pattern, ensuring predictable state changes and making it easy to debug and maintain. 
