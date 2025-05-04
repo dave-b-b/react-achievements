@@ -1,105 +1,89 @@
 import React from 'react';
-import { StoryFn, Meta } from '@storybook/react';
-import BadgesButton from '../../src/components/BadgesButton';
-import { AchievementDetails } from '../../src/types';
-import { defaultStyles } from '../../src/defaultStyles';
-import { defaultAchievementIcons } from '../../src/assets/defaultIcons';
+import type { Meta, StoryObj } from '@storybook/react';
+import { BadgesButton } from '../../src/core/components/BadgesButton';
+import { AchievementDetails } from '../../src/core/types';
 
-export default {
-    title: 'Components/BadgesButton',
-    component: BadgesButton,
-} as Meta;
+const meta: Meta<typeof BadgesButton> = {
+  title: 'Components/BadgesButton',
+  component: BadgesButton,
+  parameters: {
+    layout: 'fullscreen',
+  },
+  tags: ['autodocs'],
+  argTypes: {
+    position: {
+      control: 'select',
+      options: ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
+    },
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof BadgesButton>;
 
 const sampleAchievements: AchievementDetails[] = [
-    {
-        achievementId: 'test1',
-        achievementTitle: 'Test Achievement 1',
-        achievementDescription: 'Description 1',
-        achievementIconKey: 'star'
-    }
+  {
+    achievementId: '1',
+    achievementTitle: 'First Login',
+    achievementDescription: 'Logged in for the first time',
+  },
+  {
+    achievementId: '2',
+    achievementTitle: 'Profile Complete',
+    achievementDescription: 'Completed your profile information',
+  },
 ];
 
-const Template: StoryFn<{
-    position: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-    onClick: () => void;
-    unlockedAchievements: AchievementDetails[];
-    icons?: Record<string, string>;
-}> = (args) => (
-    <div style={{ width: '100%', height: '400px', position: 'relative', border: '1px dashed #ccc' }}>
-        <BadgesButton {...args} styles={defaultStyles.badgesButton} />
-    </div>
-);
-
-// Test each position
-export const TopLeft = Template.bind({});
-TopLeft.args = {
+export const TopLeft: Story = {
+  args: {
     position: 'top-left',
-    onClick: () => {},
     unlockedAchievements: sampleAchievements,
-    icons: defaultAchievementIcons
+    onClick: () => alert('Button clicked!'),
+  },
 };
 
-export const TopRight = Template.bind({});
-TopRight.args = {
+export const TopRight: Story = {
+  args: {
     position: 'top-right',
-    onClick: () => {},
     unlockedAchievements: sampleAchievements,
-    icons: defaultAchievementIcons
+    onClick: () => alert('Button clicked!'),
+  },
 };
 
-export const BottomLeft = Template.bind({});
-BottomLeft.args = {
+export const BottomLeft: Story = {
+  args: {
     position: 'bottom-left',
-    onClick: () => {},
     unlockedAchievements: sampleAchievements,
-    icons: defaultAchievementIcons
+    onClick: () => alert('Button clicked!'),
+  },
 };
 
-export const BottomRight = Template.bind({});
-BottomRight.args = {
+export const BottomRight: Story = {
+  args: {
     position: 'bottom-right',
-    onClick: () => {},
     unlockedAchievements: sampleAchievements,
-    icons: defaultAchievementIcons
+    onClick: () => alert('Button clicked!'),
+  },
 };
 
-// Test with no achievements
-export const NoAchievements = Template.bind({});
-NoAchievements.args = {
+export const CustomStyled: Story = {
+  args: {
     position: 'top-right',
-    onClick: () => {},
+    unlockedAchievements: sampleAchievements,
+    onClick: () => alert('Button clicked!'),
+    styles: {
+      backgroundColor: '#6200ea',
+      borderRadius: '4px',
+      padding: '12px 24px',
+      fontSize: '18px',
+    },
+  },
+};
+
+export const NoAchievements: Story = {
+  args: {
+    position: 'top-right',
     unlockedAchievements: [],
-    icons: defaultAchievementIcons
-};
-
-// Test with missing icon key
-export const MissingIconKey = Template.bind({});
-MissingIconKey.args = {
-    position: 'top-right',
-    onClick: () => {},
-    unlockedAchievements: [
-        {
-            achievementId: 'test1',
-            achievementTitle: 'Missing Icon Key',
-            achievementDescription: 'Testing missing icon key'
-        }
-    ],
-    icons: defaultAchievementIcons
-};
-
-// Test with undefined icons
-export const UndefinedIcons = Template.bind({});
-UndefinedIcons.args = {
-    position: 'top-right',
-    onClick: () => {},
-    unlockedAchievements: sampleAchievements
-};
-
-// Test with empty icons object
-export const EmptyIcons = Template.bind({});
-EmptyIcons.args = {
-    position: 'top-right',
-    onClick: () => {},
-    unlockedAchievements: sampleAchievements,
-    icons: {}
-};
+    onClick: () => alert('Button clicked!'),
+  },
+}; 

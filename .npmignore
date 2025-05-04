@@ -1,3 +1,11 @@
-stories/
-.storybook/
+src
+__tests__
+*.test.ts
+*.test.tsx
+.DS_Store
+.idea
+coverage
+demo
+stories
+.storybook
 storybook-static/

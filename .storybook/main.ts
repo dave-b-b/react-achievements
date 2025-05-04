@@ -1,26 +1,23 @@
-// @ts-ignore
-import type { StorybookConfig } from "@storybook/react-webpack5";
+import type { StorybookConfig } from '@storybook/react-webpack5';
 
 const config: StorybookConfig = {
-  stories: [
+  "stories": [
     "../stories/**/*.mdx",
-    "../stories/**/*.stories.@(js|jsx|ts|tsx)",
-    "../src/**/*.mdx",
-    "../src/**/*.stories.@(js|jsx|ts|tsx)",
-    "../demo/src/**/*.mdx",
-    "../demo/src/**/*.stories.@(js|jsx|ts|tsx)"
+    "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)"
   ],
-  addons: [
+  "addons": [
     "@storybook/addon-webpack5-compiler-swc",
-    "@storybook/addon-onboarding",
-    "@storybook/addon-links",
     "@storybook/addon-essentials",
-    "@chromatic-com/storybook",
-    "@storybook/addon-interactions",
+    "@storybook/addon-onboarding",
+    "@storybook/addon-interactions"
   ],
-  framework: {
-    name: "@storybook/react-webpack5",
-    options: {},
+  "framework": {
+    "name": "@storybook/react-webpack5",
+    "options": {}
+  },
+  docs: {
+    autodocs: true,
+    defaultName: 'Documentation',
   },
 };
 export default config;
