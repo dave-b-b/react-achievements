@@ -6,6 +6,14 @@ A flexible and extensible achievement system for React applications. This packag
   <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExbnMxdHVqanZvbGR6czJqOTdpejZqc3F3NXh6a2FiM3lmdnB0d3VoOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LYXAZelQMeeYpzbgtT/giphy.gif" alt="React Achievements Demo" width="600" />
 </p>
 
+## Installation
+
+```bash
+npm install react-achievements react react-dom react-confetti react-modal react-toastify react-use
+```
+
+Note: React and React DOM should be version 16.8.0 or higher. If you already have some of these packages installed, npm will skip them automatically.
+
 ## Quick Start
 
 Here's a complete working example that shows automatic notifications and achievement tracking:
@@ -146,12 +154,6 @@ To allow users to view their achievement history, the package provides two essen
 ```
 
 These components are the recommended way to give users access to their achievement history. While you could build custom UI using the `useAchievements` hook data, these components provide a polished, ready-to-use interface for achievement history.
-
-## Installation
-
-```bash
-npm install react-achievements
-```
 
 ## Basic Usage
 
