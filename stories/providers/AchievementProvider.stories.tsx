@@ -1,10 +1,11 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { AchievementProvider } from '../../src/providers/AchievementProvider';
-import { StorageType } from '../../src/core/types';
+import { StorageType, SimpleAchievementConfig } from '../../src/core/types';
 import { BadgesButton } from '../../src/core/components/BadgesButton';
 import { BadgesModal } from '../../src/core/components/BadgesModal';
 import { useAchievements } from '../../src/hooks/useAchievements';
+import { useSimpleAchievements } from '../../src/hooks/useSimpleAchievements';
 
 /**
  * The `AchievementProvider` is the core component of the React Achievements system.
@@ -267,4 +268,108 @@ export const CustomAchievements: StoryObj<typeof AchievementProvider> = {
       }
     }
   }
+};
+
+/**
+ * The Simple API reduces configuration complexity by 90% for common use cases.
+ * Define achievements using simple threshold values instead of complex condition functions.
+ */
+export const SimpleAPI: StoryObj<typeof AchievementProvider> = {
+  args: {
+    achievements: {
+      score: {
+        100: { title: 'Century!', description: 'Score 100 points', icon: '🏆' },
+        500: { title: 'High Scorer!', description: 'Score 500 points', icon: '⭐' }
+      },
+      level: {
+        5: { title: 'Leveling Up', description: 'Reach level 5', icon: '📈' }
+      },
+      completedTutorial: {
+        true: { title: 'Tutorial Master', description: 'Complete the tutorial', icon: '📚' }
+      }
+    } as SimpleAchievementConfig,
+    storage: StorageType.Memory
+  },
+  render: (args) => (
+    <AchievementProvider {...args}>
+      <SimpleAPIDemoComponent />
+    </AchievementProvider>
+  ),
+  parameters: {
+    docs: {
+      description: {
+        story: 'Demonstrates the new Simple API that dramatically reduces configuration complexity while maintaining full functionality.'
+      }
+    }
+  }
+};
+
+// Demo component for Simple API
+const SimpleAPIDemoComponent = () => {
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const { track, unlocked, unlockedCount, reset } = useSimpleAchievements();
+
+  return (
+    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '800px', margin: '0 auto' }}>
+      <h1>Simple API Demo</h1>
+      <p>Much cleaner achievement configuration with the same functionality!</p>
+      
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        <button 
+          onClick={() => track('score', 100)}
+          style={{ padding: '10px 15px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Score 100 points
+        </button>
+        
+        <button 
+          onClick={() => track('score', 500)}
+          style={{ padding: '10px 15px', backgroundColor: '#2196F3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Score 500 points
+        </button>
+        
+        <button 
+          onClick={() => track('level', 5)}
+          style={{ padding: '10px 15px', backgroundColor: '#FF9800', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Reach Level 5
+        </button>
+        
+        <button 
+          onClick={() => track('completedTutorial', true)}
+          style={{ padding: '10px 15px', backgroundColor: '#9C27B0', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Complete Tutorial
+        </button>
+        
+        <button 
+          onClick={reset}
+          style={{ padding: '10px 15px', backgroundColor: '#F44336', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        >
+          Reset
+        </button>
+      </div>
+      
+      <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+        <h2>Achievement Status</h2>
+        <p><strong>Unlocked:</strong> {unlockedCount}</p>
+        <div style={{ fontSize: '14px', fontFamily: 'monospace' }}>
+          {unlocked.map(id => <div key={id}>{id}</div>)}
+        </div>
+      </div>
+      
+      <BadgesButton 
+        position="bottom-right" 
+        onClick={() => setIsModalOpen(true)}
+        unlockedAchievements={[]}
+      />
+      
+      <BadgesModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        achievements={[]}
+      />
+    </div>
+  );
 }; 

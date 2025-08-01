@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
-import { AchievementConfiguration, AchievementStorage, InitialAchievementMetrics, AchievementMetrics, StorageType } from '../core/types';
+import { AchievementConfiguration, AchievementConfigurationType, AchievementStorage, InitialAchievementMetrics, AchievementMetrics, StorageType } from '../core/types';
+import { normalizeAchievements } from '../core/utils/configNormalizer';
 import { LocalStorage } from '../core/storage/LocalStorage';
 import { MemoryStorage } from '../core/storage/MemoryStorage';
 import { ConfettiWrapper } from '../core/components/ConfettiWrapper';
@@ -29,18 +30,20 @@ export interface AchievementContextType {
 export const AchievementContext = createContext<AchievementContextType | undefined>(undefined);
 
 interface AchievementProviderProps {
-  achievements: AchievementConfiguration;
+  achievements: AchievementConfigurationType;
   storage?: AchievementStorage | StorageType;
   children: React.ReactNode;
   icons?: Record<string, string>;
 }
 
 export const AchievementProvider: React.FC<AchievementProviderProps> = ({
-  achievements,
+  achievements: achievementsConfig,
   storage = StorageType.Local,
   children,
   icons = {},
 }) => {
+  // Normalize the configuration to the complex format
+  const achievements = normalizeAchievements(achievementsConfig);
   const [achievementState, setAchievementState] = useState<{
     unlocked: string[];
     all: Record<string, any>;
@@ -151,13 +154,18 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     let achievementToShow: AchievementDetails | null = null;
 
     Object.entries(achievements).forEach(([metricName, metricAchievements]) => {
-      const currentValue = metrics[metricName];
-      
-      if (currentValue !== undefined) {
-        metricAchievements.forEach((achievement) => {
-          const state = { metrics, unlockedAchievements: achievementState.unlocked };
+      metricAchievements.forEach((achievement) => {
+        const state = { metrics, unlockedAchievements: achievementState.unlocked };
+        const achievementId = achievement.achievementDetails.achievementId;
+        
+        // For custom conditions, we always check against all metrics
+        // For threshold-based conditions, we check against the specific metric
+        const currentValue = metrics[metricName];
+        const shouldCheckAchievement = currentValue !== undefined || 
+          achievement.achievementDetails.achievementId.includes('_custom_');
+        
+        if (shouldCheckAchievement) {
           const valueToCheck = currentValue;
-          const achievementId = achievement.achievementDetails.achievementId;
           
           if (achievement.isConditionMet(valueToCheck, state)) {
             if (!achievementState.unlocked.includes(achievementId) && 
@@ -169,8 +177,8 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
               }
             }
           }
-        });
-      }
+        }
+      });
     });
     
     if (newlyUnlockedAchievements.length > 0) {
