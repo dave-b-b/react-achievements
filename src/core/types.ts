@@ -30,6 +30,26 @@ export interface AchievementConfiguration {
     [key: string]: AchievementCondition[];
 }
 
+// Simple API types
+export interface SimpleAchievementDetails {
+    title: string;
+    description?: string;
+    icon?: string;
+}
+
+export interface CustomAchievementDetails extends SimpleAchievementDetails {
+    condition: (metrics: Record<string, any>) => boolean;
+}
+
+export interface SimpleAchievementConfig {
+    [metric: string]: {
+        [threshold: string]: SimpleAchievementDetails | CustomAchievementDetails;
+    };
+}
+
+// Union type for backward compatibility
+export type AchievementConfigurationType = AchievementConfiguration | SimpleAchievementConfig;
+
 export interface InitialAchievementMetrics {
     [key: string]: AchievementMetricValue;
 }

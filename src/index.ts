@@ -2,6 +2,10 @@
 export type { 
     AchievementMetrics, 
     AchievementConfiguration, 
+    AchievementConfigurationType,
+    SimpleAchievementConfig,
+    SimpleAchievementDetails,
+    CustomAchievementDetails,
     AchievementDetails, 
     AchievementCondition,
     AchievementMetricValue, 
@@ -26,9 +30,13 @@ export { ConfettiWrapper } from './core/components/ConfettiWrapper';
 // Core Provider and Hooks
 export { AchievementProvider, AchievementContext } from './providers/AchievementProvider';
 export { useAchievements } from './hooks/useAchievements';
+export { useSimpleAchievements } from './hooks/useSimpleAchievements';
 
 // Core Styles
 export { defaultStyles } from './core/styles/defaultStyles';
 
 // Core Icons
 export { defaultAchievementIcons } from './core/icons/defaultIcons';
+
+// Configuration Utils
+export { normalizeAchievements, isSimpleConfig } from './core/utils/configNormalizer';
