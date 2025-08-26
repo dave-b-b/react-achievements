@@ -121,7 +121,6 @@
     "dist",
     "**/__tests__/**",
     "**/*.test.ts",
-    "**/*.test.tsx",
-    "stories"
+    "**/*.test.tsx"
   ]
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { ContextAchievementsProvider } from './AchievementsContext';
 import { useAchievements, BadgesButton, BadgesModal, defaultAchievementIcons } from '../../../src/index';
+import { AchievementDetails } from '../../../src/core/types';
 
 const meta: Meta<typeof ContextAchievementsProvider> = {
   title: 'Examples/Context API',
@@ -98,7 +99,7 @@ const DemoComponent = () => {
             });
           });
           return achievementDetails;
-        }).filter(Boolean)}
+        }).filter(Boolean) as unknown as AchievementDetails[]}
       />
       
       <BadgesModal 
@@ -114,7 +115,7 @@ const DemoComponent = () => {
             });
           });
           return achievementDetails;
-        }).filter(Boolean)}
+        }).filter(Boolean) as unknown as AchievementDetails[]}
         icons={{
           trophy: defaultAchievementIcons.trophy,
           login: defaultAchievementIcons.master,

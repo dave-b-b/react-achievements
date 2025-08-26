@@ -18,11 +18,6 @@ type Story = StoryObj<typeof ConfettiWrapper>;
 export const Active: Story = {
   args: {
     show: true,
-    achievement: {
-      achievementTitle: 'Achievement Unlocked!',
-      achievementDescription: 'You\'ve unlocked a special achievement',
-      achievementIconKey: 'trophy',
-    },
     // The component will automatically use defaultAchievementIcons
   },
 };
@@ -30,36 +25,20 @@ export const Active: Story = {
 export const Hidden: Story = {
   args: {
     show: false,
-    achievement: {
-      achievementTitle: 'Achievement Unlocked!',
-      achievementDescription: 'You\'ve unlocked a special achievement',
-      achievementIconKey: 'trophy',
-    },
   },
 };
 
 export const WithDefaultIcons: Story = {
   args: {
     show: true,
-    achievement: {
-      achievementTitle: 'Quest Completed!',
-      achievementDescription: 'You\'ve completed an epic quest',
-      achievementIconKey: 'questComplete', // Using a key from defaultAchievementIcons
-    },
+    // Using a key from defaultAchievementIcons
   },
 };
 
 export const WithCustomIcons: Story = {
   args: {
     show: true,
-    achievement: {
-      achievementTitle: 'Mystery Achievement',
-      achievementDescription: 'You\'ve unlocked a mysterious achievement',
-      achievementIconKey: 'custom', // This will use the custom icon
-    },
-    icons: {
-      custom: '🔮', // Custom icon that's not in the defaults
-    },
+    // Custom icon that's not in the defaults
   },
 };
 

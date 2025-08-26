@@ -1,4 +1,5 @@
 import { AchievementBuilder } from '../utils/achievementHelpers';
+import { CustomAchievementDetails } from '../core/types';
 
 describe('AchievementBuilder - Three-Tier API', () => {
   
@@ -259,7 +260,7 @@ describe('AchievementBuilder - Three-Tier API', () => {
         });
 
         // Test the condition function (note: it now receives metrics object)
-        const condition = config.weekly_login.custom.condition;
+        const condition = (config.weekly_login.custom as CustomAchievementDetails).condition;
         expect(condition).toBeDefined();
         
         // Test with Date within 7 days

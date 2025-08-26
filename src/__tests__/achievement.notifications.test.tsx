@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import '@testing-library/jest-dom';
 import { AchievementProvider, AchievementContext } from '../providers/AchievementProvider';
 import { toast } from 'react-toastify';
-import { StorageType } from '../core/types';
+import { StorageType, AchievementConfiguration } from '../core/types';
 import { MemoryStorage } from '../core/storage/MemoryStorage';
 
 // Mock react-toastify
@@ -15,9 +15,9 @@ jest.mock('../core/components/ConfettiWrapper', () => ({
 }));
 
 // Simple achievement configuration for testing
-const achievementConfig = {
+const achievementConfig: AchievementConfiguration = {
   score: [{
-    isConditionMet: (value: any) => value >= 100,
+    isConditionMet: (value: any) => (value as number) >= 100,
     achievementDetails: {
       achievementId: 'score_100',
       achievementTitle: 'High Score!',
@@ -25,7 +25,7 @@ const achievementConfig = {
       achievementIconKey: 'trophy'
     }
   }, {
-    isConditionMet: (value: number) => value >= 200,
+    isConditionMet: (value: any) => (value as number) >= 200,
     achievementDetails: {
       achievementId: 'score_200',
       achievementTitle: 'Double Century',
