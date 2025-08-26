@@ -40,3 +40,9 @@ export { defaultAchievementIcons } from './core/icons/defaultIcons';
 
 // Configuration Utils
 export { normalizeAchievements, isSimpleConfig } from './core/utils/configNormalizer';
+
+// Helper utilities for easier achievement creation
+export { 
+    AchievementBuilder,
+    type AchievementDefinition,
+} from './utils/achievementHelpers';
