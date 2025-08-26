@@ -176,6 +176,89 @@ describe('useSimpleAchievements', () => {
 
     expect(screen.getByTestId('unlocked-count')).toHaveTextContent('1');
   });
+
+  it('should handle increment functionality', async () => {
+    const TestComponentForIncrement: React.FC = () => {
+      const { increment, unlocked, unlockedCount, getState } = useSimpleAchievements();
+
+      return (
+        <div>
+          <div data-testid="unlocked-count">{unlockedCount}</div>
+          <div data-testid="current-clicks">{getState().metrics.buttonClicks || 0}</div>
+          <button 
+            onClick={() => increment('buttonClicks')} 
+            data-testid="increment-clicks"
+          >
+            Click Me
+          </button>
+          <button 
+            onClick={() => increment('score', 50)} 
+            data-testid="increment-score"
+          >
+            Add 50 Score
+          </button>
+        </div>
+      );
+    };
+
+    const simpleAchievements = {
+      buttonClicks: {
+        3: { title: 'Clicker', description: 'Click 3 times', icon: '👆' },
+        5: { title: 'Super Clicker', icon: '🖱️' }
+      },
+      score: {
+        100: { title: 'Century', icon: '🏆' }
+      }
+    };
+
+    render(
+      <AchievementProvider achievements={simpleAchievements} storage="memory">
+        <TestComponentForIncrement />
+      </AchievementProvider>
+    );
+
+    expect(screen.getByTestId('unlocked-count')).toHaveTextContent('0');
+    expect(screen.getByTestId('current-clicks')).toHaveTextContent('0');
+
+    // Click 3 times - should unlock first achievement
+    await act(async () => {
+      screen.getByTestId('increment-clicks').click();
+      screen.getByTestId('increment-clicks').click();
+      screen.getByTestId('increment-clicks').click();
+    });
+
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    });
+
+    expect(screen.getByTestId('current-clicks')).toHaveTextContent('3');
+    expect(screen.getByTestId('unlocked-count')).toHaveTextContent('1');
+
+    // Click 2 more times - should unlock second achievement
+    await act(async () => {
+      screen.getByTestId('increment-clicks').click();
+      screen.getByTestId('increment-clicks').click();
+    });
+
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    });
+
+    expect(screen.getByTestId('current-clicks')).toHaveTextContent('5');
+    expect(screen.getByTestId('unlocked-count')).toHaveTextContent('2');
+
+    // Test custom increment amount
+    await act(async () => {
+      screen.getByTestId('increment-score').click(); // +50
+      screen.getByTestId('increment-score').click(); // +50 (total 100)
+    });
+
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    });
+
+    expect(screen.getByTestId('unlocked-count')).toHaveTextContent('3');
+  });
 });
 
 // Helper component for custom condition testing
