@@ -44,5 +44,5 @@ export { normalizeAchievements, isSimpleConfig } from './core/utils/configNormal
 // Helper utilities for easier achievement creation
 export { 
     AchievementBuilder,
-    type AchievementDefinition,
+    type AwardDetails,
 } from './utils/achievementHelpers';

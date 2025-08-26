@@ -1,179 +1,336 @@
-import { SimpleAchievementConfig } from '../core/types';
+import { SimpleAchievementConfig, AchievementMetricValue, AchievementState } from '../core/types';
 
 /**
- * Helper interface for cleaner achievement definitions
+ * Helper interface for cleaner achievement award definitions
  */
-export interface AchievementDefinition {
-  title: string;
+export interface AwardDetails {
+  title?: string;
   description?: string;
   icon?: string;
 }
 
 /**
- * Creates a Simple Achievement configuration with helper functions for common patterns.
- * This provides a cleaner, less error-prone way to define achievements.
+ * Base class for chainable achievement configuration (Tier 2)
  */
-export class AchievementBuilder {
-  private config: SimpleAchievementConfig = {};
+abstract class Achievement {
+  protected metric: string;
+  protected award: AwardDetails;
 
-  /**
-   * Create a new achievement builder instance
-   * @returns New AchievementBuilder instance for fluent configuration
-   */
-  static create(): AchievementBuilder {
-    return new AchievementBuilder();
+  constructor(metric: string, defaultAward: AwardDetails) {
+    this.metric = metric;
+    this.award = defaultAward;
   }
 
   /**
-   * Create score-based achievements quickly
-   * @param thresholds - Array of [score, title, icon?] tuples
-   * @returns Achievement configuration for score metric
+   * Customize the award details for this achievement
+   * @param award - Custom award details
+   * @returns This achievement for chaining
    */
-  static score(thresholds: [number, string, string?][]): SimpleAchievementConfig {
-    return AchievementBuilder.create()
-      .thresholds('score', thresholds.map(([threshold, title, icon]) => [
-        threshold, 
-        { title, description: `Score ${threshold} points`, icon: icon || '🏆' }
-      ]))
-      .build();
-  }
-
-  /**
-   * Create level-based achievements quickly
-   * @param thresholds - Array of [level, title, icon?] tuples
-   * @returns Achievement configuration for level metric
-   */
-  static level(thresholds: [number, string, string?][]): SimpleAchievementConfig {
-    return AchievementBuilder.create()
-      .thresholds('level', thresholds.map(([threshold, title, icon]) => [
-        threshold,
-        { title, description: `Reach level ${threshold}`, icon: icon || '📈' }
-      ]))
-      .build();
-  }
-
-  /**
-   * Create a tutorial completion achievement
-   * @param title - Achievement title (defaults to "Tutorial Master")
-   * @param icon - Achievement icon (defaults to "📚")
-   * @returns Achievement configuration for completedTutorial metric
-   */
-  static tutorial(title = 'Tutorial Master', icon = '📚'): SimpleAchievementConfig {
-    return AchievementBuilder.create()
-      .boolean('completedTutorial', { title, description: 'Complete the tutorial', icon })
-      .build();
-  }
-
-  /**
-   * Add threshold-based achievements for numeric metrics
-   * @param metric - The metric name (e.g., 'score', 'level', 'points')
-   * @param achievements - Array of [threshold, definition] tuples
-   */
-  thresholds(metric: string, achievements: [number, AchievementDefinition][]): AchievementBuilder {
-    if (!this.config[metric]) {
-      this.config[metric] = {};
-    }
-    
-    achievements.forEach(([threshold, def]) => {
-      this.config[metric][threshold] = {
-        title: def.title,
-        description: def.description || `Reach ${threshold} ${metric}`,
-        icon: def.icon || '🏆'
-      };
-    });
-    
+  withAward(award: AwardDetails): Achievement {
+    this.award = { ...this.award, ...award };
     return this;
   }
 
   /**
-   * Add a single threshold achievement
-   * @param metric - The metric name
-   * @param threshold - The threshold value
-   * @param definition - Achievement details
+   * Convert this achievement to a SimpleAchievementConfig
    */
-  threshold(metric: string, threshold: number, definition: AchievementDefinition): AchievementBuilder {
-    return this.thresholds(metric, [[threshold, definition]]);
+  abstract toConfig(): SimpleAchievementConfig;
+}
+
+/**
+ * Threshold-based achievement (score, level, etc.)
+ */
+class ThresholdAchievement extends Achievement {
+  private threshold: number;
+
+  constructor(metric: string, threshold: number, defaultAward: AwardDetails) {
+    super(metric, defaultAward);
+    this.threshold = threshold;
   }
 
-  /**
-   * Add a boolean achievement (triggered when metric becomes true)
-   * @param metric - The metric name (e.g., 'completedTutorial', 'firstLogin')
-   * @param definition - Achievement details
-   */
-  boolean(metric: string, definition: AchievementDefinition): AchievementBuilder {
-    if (!this.config[metric]) {
-      this.config[metric] = {};
-    }
-    
-    this.config[metric].true = {
-      title: definition.title,
-      description: definition.description || `Complete ${metric}`,
-      icon: definition.icon || '✅'
+  toConfig(): SimpleAchievementConfig {
+    return {
+      [this.metric]: {
+        [this.threshold]: {
+          title: this.award.title!,
+          description: this.award.description!,
+          icon: this.award.icon!
+        }
+      }
     };
-    
-    return this;
   }
+}
 
-  /**
-   * Add value-based achievements for string metrics
-   * @param metric - The metric name (e.g., 'characterClass', 'difficulty')
-   * @param achievements - Object mapping values to definitions
-   */
-  values(metric: string, achievements: Record<string, AchievementDefinition>): AchievementBuilder {
-    if (!this.config[metric]) {
-      this.config[metric] = {};
-    }
-    
-    Object.entries(achievements).forEach(([value, def]) => {
-      this.config[metric][value] = {
-        title: def.title,
-        description: def.description || `Choose ${value} for ${metric}`,
-        icon: def.icon || '🎯'
-      };
-    });
-    
-    return this;
-  }
-
-  /**
-   * Add a single value-based achievement
-   * @param metric - The metric name
-   * @param value - The value to match
-   * @param definition - Achievement details
-   */
-  value(metric: string, value: string, definition: AchievementDefinition): AchievementBuilder {
-    return this.values(metric, { [value]: definition });
-  }
-
-  /**
-   * Add a custom condition achievement for complex logic
-   * @param id - Unique identifier for this achievement
-   * @param definition - Achievement details with condition function
-   * @param condition - Function that determines if achievement is unlocked
-   */
-  custom(
-    id: string, 
-    definition: AchievementDefinition, 
-    condition: (metrics: Record<string, any>) => boolean
-  ): AchievementBuilder {
-    if (!this.config[id]) {
-      this.config[id] = {};
-    }
-    
-    this.config[id].custom = {
-      title: definition.title,
-      description: definition.description || `Achieve ${definition.title}`,
-      icon: definition.icon || '💎',
-      condition
+/**
+ * Boolean achievement (tutorial completion, first login, etc.)
+ */
+class BooleanAchievement extends Achievement {
+  toConfig(): SimpleAchievementConfig {
+    return {
+      [this.metric]: {
+        true: {
+          title: this.award.title!,
+          description: this.award.description!,
+          icon: this.award.icon!
+        }
+      }
     };
-    
+  }
+}
+
+/**
+ * Value-based achievement (character class, difficulty, etc.)
+ */
+class ValueAchievement extends Achievement {
+  private value: string;
+
+  constructor(metric: string, value: string, defaultAward: AwardDetails) {
+    super(metric, defaultAward);
+    this.value = value;
+  }
+
+  toConfig(): SimpleAchievementConfig {
+    return {
+      [this.metric]: {
+        [this.value]: {
+          title: this.award.title!,
+          description: this.award.description!,
+          icon: this.award.icon!
+        }
+      }
+    };
+  }
+}
+
+/**
+ * Complex achievement builder for power users (Tier 3)
+ */
+class ComplexAchievementBuilder {
+  private id: string = '';
+  private metric: string = '';
+  private condition: ((value: AchievementMetricValue, state: AchievementState) => boolean) | null = null;
+  private award: AwardDetails = {};
+
+  /**
+   * Set the unique identifier for this achievement
+   */
+  withId(id: string): ComplexAchievementBuilder {
+    this.id = id;
     return this;
   }
 
   /**
-   * Get the final achievement configuration
+   * Set the metric this achievement tracks
+   */
+  withMetric(metric: string): ComplexAchievementBuilder {
+    this.metric = metric;
+    return this;
+  }
+
+  /**
+   * Set the condition function that determines if achievement is unlocked
+   */
+  withCondition(fn: (value: AchievementMetricValue, state: AchievementState) => boolean): ComplexAchievementBuilder {
+    this.condition = fn;
+    return this;
+  }
+
+  /**
+   * Set the award details for this achievement
+   */
+  withAward(award: AwardDetails): ComplexAchievementBuilder {
+    this.award = { ...this.award, ...award };
+    return this;
+  }
+
+  /**
+   * Build the final achievement configuration
    */
   build(): SimpleAchievementConfig {
-    return { ...this.config };
+    if (!this.id || !this.metric || !this.condition) {
+      throw new Error('Complex achievement requires id, metric, and condition');
+    }
+
+    // Convert our two-parameter condition function to the single-parameter format
+    // expected by the existing CustomAchievementDetails type
+    const compatibleCondition = (metrics: Record<string, any>) => {
+      const state: AchievementState = {
+        metrics: {} as any, // We don't have access to the full metrics structure here
+        unlockedAchievements: []
+      };
+      return this.condition!(metrics[this.metric], state);
+    };
+
+    return {
+      [this.id]: {
+        custom: {
+          title: this.award.title || this.id,
+          description: this.award.description || `Achieve ${this.award.title || this.id}`,
+          icon: this.award.icon || '💎',
+          condition: compatibleCondition
+        }
+      }
+    };
+  }
+}
+
+/**
+ * Main AchievementBuilder with three-tier API
+ * Tier 1: Simple static methods with smart defaults
+ * Tier 2: Chainable customization 
+ * Tier 3: Full builder for complex logic
+ */
+export class AchievementBuilder {
+  
+  // TIER 1: Simple Static Methods (90% of use cases)
+  
+  /**
+   * Create a single score achievement with smart defaults
+   * @param threshold - Score threshold to achieve
+   * @returns Chainable ThresholdAchievement
+   */
+  static createScoreAchievement(threshold: number): ThresholdAchievement {
+    return new ThresholdAchievement('score', threshold, {
+      title: `Score ${threshold}!`,
+      description: `Score ${threshold} points`,
+      icon: '🏆'
+    });
+  }
+
+  /**
+   * Create multiple score achievements
+   * @param thresholds - Array of thresholds or [threshold, award] tuples
+   * @returns Complete SimpleAchievementConfig
+   */
+  static createScoreAchievements(thresholds: (number | [number, AwardDetails])[]): SimpleAchievementConfig {
+    const config: SimpleAchievementConfig = { score: {} };
+    
+    thresholds.forEach(item => {
+      if (typeof item === 'number') {
+        // Use default award
+        config.score![item] = {
+          title: `Score ${item}!`,
+          description: `Score ${item} points`,
+          icon: '🏆'
+        };
+      } else {
+        // Custom award
+        const [threshold, award] = item;
+        config.score![threshold] = {
+          title: award.title || `Score ${threshold}!`,
+          description: award.description || `Score ${threshold} points`,
+          icon: award.icon || '🏆'
+        };
+      }
+    });
+    
+    return config;
+  }
+
+  /**
+   * Create a single level achievement with smart defaults
+   * @param level - Level threshold to achieve
+   * @returns Chainable ThresholdAchievement
+   */
+  static createLevelAchievement(level: number): ThresholdAchievement {
+    return new ThresholdAchievement('level', level, {
+      title: `Level ${level}!`,
+      description: `Reach level ${level}`,
+      icon: '📈'
+    });
+  }
+
+  /**
+   * Create multiple level achievements
+   * @param levels - Array of levels or [level, award] tuples
+   * @returns Complete SimpleAchievementConfig
+   */
+  static createLevelAchievements(levels: (number | [number, AwardDetails])[]): SimpleAchievementConfig {
+    const config: SimpleAchievementConfig = { level: {} };
+    
+    levels.forEach(item => {
+      if (typeof item === 'number') {
+        // Use default award
+        config.level![item] = {
+          title: `Level ${item}!`,
+          description: `Reach level ${item}`,
+          icon: '📈'
+        };
+      } else {
+        // Custom award
+        const [level, award] = item;
+        config.level![level] = {
+          title: award.title || `Level ${level}!`,
+          description: award.description || `Reach level ${level}`,
+          icon: award.icon || '📈'
+        };
+      }
+    });
+    
+    return config;
+  }
+
+  /**
+   * Create a boolean achievement with smart defaults
+   * @param metric - The metric name (e.g., 'completedTutorial')
+   * @returns Chainable BooleanAchievement
+   */
+  static createBooleanAchievement(metric: string): BooleanAchievement {
+    // Convert camelCase to Title Case
+    const formattedMetric = metric.replace(/([A-Z])/g, ' $1').toLowerCase();
+    const titleCase = formattedMetric.charAt(0).toUpperCase() + formattedMetric.slice(1);
+    return new BooleanAchievement(metric, {
+      title: `${titleCase}!`,
+      description: `Complete ${formattedMetric}`,
+      icon: '✅'
+    });
+  }
+
+  /**
+   * Create a value-based achievement with smart defaults
+   * @param metric - The metric name (e.g., 'characterClass')
+   * @param value - The value to match (e.g., 'wizard')
+   * @returns Chainable ValueAchievement
+   */
+  static createValueAchievement(metric: string, value: string): ValueAchievement {
+    const formattedValue = value.charAt(0).toUpperCase() + value.slice(1);
+    return new ValueAchievement(metric, value, {
+      title: `${formattedValue}!`,
+      description: `Choose ${formattedValue.toLowerCase()} for ${metric}`,
+      icon: '🎯'
+    });
+  }
+
+  // TIER 3: Full Builder for Complex Logic
+  
+  /**
+   * Create a complex achievement builder for power users
+   * @returns ComplexAchievementBuilder for full control
+   */
+  static create(): ComplexAchievementBuilder {
+    return new ComplexAchievementBuilder();
+  }
+
+  // UTILITY METHODS
+  
+  /**
+   * Combine multiple achievement configurations
+   * @param achievements - Array of SimpleAchievementConfig objects or Achievement instances
+   * @returns Combined SimpleAchievementConfig
+   */
+  static combine(achievements: (SimpleAchievementConfig | Achievement)[]): SimpleAchievementConfig {
+    const combined: SimpleAchievementConfig = {};
+    
+    achievements.forEach(achievement => {
+      const config = achievement instanceof Achievement ? achievement.toConfig() : achievement;
+      Object.keys(config).forEach(key => {
+        if (!combined[key]) {
+          combined[key] = {};
+        }
+        Object.assign(combined[key], config[key]);
+      });
+    });
+    
+    return combined;
   }
 }
