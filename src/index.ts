@@ -20,6 +20,7 @@ export type {
 
 // Core Storage Interface
 export { LocalStorage } from './core/storage/LocalStorage';
+export { MemoryStorage } from './core/storage/MemoryStorage';
 export { StorageType } from './core/types';
 
 // Core UI Components
@@ -40,3 +41,9 @@ export { defaultAchievementIcons } from './core/icons/defaultIcons';
 
 // Configuration Utils
 export { normalizeAchievements, isSimpleConfig } from './core/utils/configNormalizer';
+
+// Helper utilities for easier achievement creation
+export { 
+    AchievementBuilder,
+    type AwardDetails,
+} from './utils/achievementHelpers';

@@ -77,7 +77,7 @@ describe('LocalStorage', () => {
       const retrieved = storage.getMetrics();
       
       expect(retrieved.lastLogin[0]).toBeInstanceOf(Date);
-      expect(retrieved.lastLogin[0].getTime()).toBe(now.getTime());
+      expect((retrieved.lastLogin[0] as Date).getTime()).toBe(now.getTime());
     });
 
     it('should merge new metrics with existing storage data', () => {
@@ -188,7 +188,7 @@ describe('LocalStorage', () => {
 
       const metrics = storage.getMetrics();
       expect(metrics.lastLogin[0]).toBeInstanceOf(Date);
-      expect(metrics.lastLogin[0].toString()).toBe('Invalid Date');
+      expect((metrics.lastLogin[0] as Date).toString()).toBe('Invalid Date');
     });
 
     it('should handle undefined or null values in metrics', () => {

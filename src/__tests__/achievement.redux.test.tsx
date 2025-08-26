@@ -31,6 +31,9 @@ const gameSlice = createSlice({
   reducers: {
     incrementScore: (state) => {
       state.score += 100;
+    },
+    resetScore: (state) => {
+      state.score = 0;
     }
   }
 });
@@ -70,7 +73,7 @@ describe('Achievement System with Redux', () => {
   const mockStorage = new MockStorage();
   const achievementConfig: AchievementConfiguration = {
     score: [{
-      isConditionMet: (value: number) => value >= 100,
+      isConditionMet: (value: any) => (value as number) >= 100,
       achievementDetails: {
         achievementId: 'score_100',
         achievementTitle: 'Century!',
@@ -82,7 +85,7 @@ describe('Achievement System with Redux', () => {
 
   beforeEach(() => {
     mockStorage.clear();
-    store.dispatch(gameSlice.actions.incrementScore.match, { score: 0 });
+    store.dispatch(gameSlice.actions.resetScore());
   });
 
   it('should unlock achievement when score increases through Redux', async () => {

@@ -1,80 +1,57 @@
 # Default Achievement Icons
 
-The `defaultAchievementIcons` object provides a comprehensive set of emoji icons that can be used for achievements in your application. 
+The `defaultAchievementIcons` object provides a minimal set of essential fallback icons for system use in the React Achievements library.
 
-## Usage
+## Philosophy
 
-### Standard Usage
-
-You can reference these icons directly in your achievement configuration by using the key as the `achievementIconKey`:
-
-```tsx
-import { AchievementProvider, defaultAchievementIcons } from 'react-achievements';
-
-const achievementConfig = {
-  pageViews: [
-    {
-      isConditionMet: (value) => value >= 5,
-      achievementDetails: {
-        achievementId: 'views-5',
-        achievementTitle: 'Getting Started',
-        achievementDescription: 'Viewed 5 pages',
-        achievementIconKey: 'firstStep' // This will use the 👣 emoji
-      }
-    }
-  ]
-};
-
-// The AchievementProvider will automatically use the default icons
-function App() {
-  return (
-    <AchievementProvider config={achievementConfig}>
-      {/* Your app components */}
-    </AchievementProvider>
-  );
-}
-```
-
-### Custom Icons
-
-You can also provide your own custom icons, which will override the default ones:
-
-```tsx
-import { AchievementProvider, defaultAchievementIcons } from 'react-achievements';
-
-// Create your custom icons by extending or overriding default icons
-const customIcons = {
-  ...defaultAchievementIcons,
-  // Override some default icons
-  levelUp: '🚀', // Replace the trophy with a rocket
-  // Add your own icons
-  myCustomIcon: '💻'
-};
-
-function App() {
-  return (
-    <AchievementProvider 
-      config={achievementConfig}
-      icons={customIcons}
-    >
-      {/* Your app components */}
-    </AchievementProvider>
-  );
-}
-```
+With the Simple API, users can include emojis directly in their achievement definitions (e.g., `icon: '🏆'`), making icon management much simpler and more intuitive. The default icons are now limited to essential system fallbacks rather than a comprehensive icon library.
 
 ## Available Icons
 
-The package includes icons in these categories:
+The library includes only essential fallback icons:
 
-- General Progress & Milestones (levelUp, questComplete, etc.)
-- Social & Engagement (shared, liked, etc.)
-- Time & Activity (activeDay, streak, etc.)
-- Creativity & Skill (artist, expert, etc.)
-- Achievement Types (bronze, silver, gold, etc.)
-- Numbers & Counters (one, ten, hundred, etc.)
-- Actions & Interactions (clicked, discovered, etc.)
-- Placeholders (default, loading, error, etc.)
-- Miscellaneous (trophy, star, gem, etc.)
+- `default`: ⭐ - Fallback when no icon is provided
+- `loading`: ⏳ - For loading states
+- `error`: ⚠️ - For error states  
+- `success`: ✅ - For success states
+- `trophy`: 🏆 - Common achievement icon (backward compatibility)
+- `star`: ⭐ - Common achievement icon (backward compatibility)
 
-See the `defaultIcons.ts` file for the complete list of available icons. 
+## Usage
+
+### Recommended: Direct Emoji Usage
+
+Use emojis directly in your achievement definitions:
+
+```tsx
+import { AchievementProvider } from 'react-achievements';
+
+const achievements = {
+  score: {
+    100: { title: 'Century!', icon: '🏆' }, // Direct emoji - simple!
+    500: { title: 'High Scorer!', icon: '⭐' }
+  }
+};
+
+function App() {
+  return (
+    <AchievementProvider achievements={achievements}>
+      {/* Your app components */}
+    </AchievementProvider>
+  );
+}
+```
+
+### Legacy: Icon Key References
+
+For backward compatibility, you can still reference icon keys:
+
+```tsx
+const achievements = {
+  score: {
+    100: { title: 'Century!', icon: 'trophy' } // References defaultAchievementIcons.trophy
+  }
+};
+```
+
+The system automatically falls back to `defaultAchievementIcons.default` if an icon key is not found. 

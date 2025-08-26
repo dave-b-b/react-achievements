@@ -1,12 +1,17 @@
 {
   "name": "react-achievements",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "Core achievement system for React applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rollup -c",
-    "test": "jest",
+    "test": "npm run type-check && jest",
+    "test:unit": "jest",
+    "type-check": "tsc --noEmit --project tsconfig.test.json",
+    "type-check:watch": "tsc --noEmit --watch --project tsconfig.test.json",
+    "type-check:src": "tsc --noEmit",
+    "type-check:stories": "find stories -name '*.tsx' -o -name '*.ts' | xargs tsc --noEmit --jsx react --esModuleInterop --skipLibCheck",
     "prepare": "npm run build",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"

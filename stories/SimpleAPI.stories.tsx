@@ -4,7 +4,7 @@ import { AchievementProvider } from '../src/providers/AchievementProvider';
 import { useSimpleAchievements } from '../src/hooks/useSimpleAchievements';
 import { BadgesButton } from '../src/core/components/BadgesButton';
 import { BadgesModal } from '../src/core/components/BadgesModal';
-import { StorageType, SimpleAchievementConfig } from '../src/core/types';
+import { StorageType, SimpleAchievementConfig, AchievementDetails } from '../src/core/types';
 
 /**
  * The Simple API provides an easier way to define achievements using threshold-based 
@@ -190,7 +190,7 @@ const SimpleAPIDemo = () => {
             });
           });
           return achievement;
-        }).filter(Boolean)}
+        }).filter(Boolean) as unknown as AchievementDetails[]}
       />
       
       <BadgesModal 
@@ -211,7 +211,7 @@ const SimpleAPIDemo = () => {
             });
           });
           return achievement;
-        }).filter(Boolean)}
+        }).filter(Boolean) as unknown as AchievementDetails[]}
         icons={{}}
       />
     </div>

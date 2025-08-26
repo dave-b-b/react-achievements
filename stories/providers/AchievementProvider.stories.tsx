@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { AchievementProvider } from '../../src/providers/AchievementProvider';
-import { StorageType, SimpleAchievementConfig } from '../../src/core/types';
+import { StorageType, SimpleAchievementConfig, AchievementDetails, AchievementConfiguration } from '../../src/core/types';
 import { BadgesButton } from '../../src/core/components/BadgesButton';
 import { BadgesModal } from '../../src/core/components/BadgesModal';
 import { useAchievements } from '../../src/hooks/useAchievements';
@@ -58,9 +58,9 @@ const meta: Meta<typeof AchievementProvider> = {
 export default meta;
 
 // Achievement configuration for the demo
-const achievementConfig = {
+const achievementConfig: AchievementConfiguration = {
   score: [{
-    isConditionMet: (value: number) => value >= 100,
+    isConditionMet: (value: any) => (value as number) >= 100,
     achievementDetails: {
       achievementId: 'score_100',
       achievementTitle: 'Century!',
@@ -68,7 +68,7 @@ const achievementConfig = {
       achievementIconKey: 'trophy'
     }
   }, {
-    isConditionMet: (value: number) => value >= 200,
+    isConditionMet: (value: any) => (value as number) >= 200,
     achievementDetails: {
       achievementId: 'score_200',
       achievementTitle: 'Double Century!',
@@ -77,7 +77,7 @@ const achievementConfig = {
     }
   }],
   login: [{
-    isConditionMet: (value: boolean) => value === true,
+    isConditionMet: (value: any) => (value as boolean) === true,
     achievementDetails: {
       achievementId: 'first_login',
       achievementTitle: 'First Login',
@@ -161,7 +161,7 @@ const DemoComponent = () => {
             });
           });
           return achievement;
-        }).filter(Boolean)}
+        }).filter(Boolean) as unknown as AchievementDetails[]}
       />
       
       <BadgesModal 
@@ -177,7 +177,7 @@ const DemoComponent = () => {
             });
           });
           return achievement;
-        }).filter(Boolean)}
+        }).filter(Boolean) as unknown as AchievementDetails[]}
         icons={icons}
       />
     </div>
@@ -249,7 +249,7 @@ export const CustomAchievements: StoryObj<typeof AchievementProvider> = {
   args: {
     achievements: {
       customMetric: [{
-        isConditionMet: (value: number) => value > 10,
+        isConditionMet: (value: any) => (value as number) > 10,
         achievementDetails: {
           achievementId: 'custom_achievement',
           achievementTitle: 'Custom Achievement',
