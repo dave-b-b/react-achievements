@@ -16,6 +16,19 @@ export const useSimpleAchievements = () => {
     track: (metric: string, value: any) => update({ [metric]: value }),
     
     /**
+     * Increment a numeric metric by a specified amount
+     * @param metric - The metric name (e.g., 'buttonClicks', 'score')
+     * @param amount - The amount to increment by (defaults to 1)
+     */
+    increment: (metric: string, amount: number = 1) => {
+      const currentState = getState();
+      const currentMetricArray = currentState.metrics[metric] || [0];
+      const currentValue = Array.isArray(currentMetricArray) ? currentMetricArray[0] : currentMetricArray;
+      const newValue = (typeof currentValue === 'number' ? currentValue : 0) + amount;
+      update({ [metric]: newValue });
+    },
+    
+    /**
      * Track multiple metrics at once
      * @param metrics - Object with metric names as keys and values
      */

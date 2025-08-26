@@ -30,16 +30,28 @@ import {
 // Define achievements with the new three-tier Builder API - 95% less code!
 import { AchievementBuilder } from 'react-achievements';
 
-const gameAchievements = AchievementBuilder.combine([
-  AchievementBuilder.createScoreAchievements([100, 500]), // Smart defaults
-  AchievementBuilder.createLevelAchievement(5).withAward({ title: 'Leveling Up', icon: '📈' }), // Chainable customization
-  AchievementBuilder.createBooleanAchievement('completedTutorial').withAward({ title: 'Tutorial Master', icon: '📚' })
-]);
+// Simple achievements with the new Simple API
+const gameAchievements = {
+  score: {
+    100: { title: 'Century!', description: 'Score 100 points', icon: '🏆' },
+    500: { title: 'High Scorer!', description: 'Score 500 points', icon: '⭐' }
+  },
+  level: {
+    5: { title: 'Leveling Up', description: 'Reach level 5', icon: '📈' }
+  },
+  completedTutorial: {
+    true: { title: 'Tutorial Master', description: 'Complete the tutorial', icon: '📚' }
+  },
+  buttonClicks: {
+    10: { title: 'Clicker', description: 'Click 10 times', icon: '👆' },
+    100: { title: 'Super Clicker', description: 'Click 100 times', icon: '🖱️' }
+  }
+};
 
 // Demo component with all essential features  
 const DemoComponent = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { track, unlocked, unlockedCount, reset } = useSimpleAchievements();
+  const { track, increment, unlocked, unlockedCount, reset } = useSimpleAchievements();
 
   return (
     <div>
@@ -57,6 +69,14 @@ const DemoComponent = () => {
       </button>      
       <button onClick={() => track('completedTutorial', true)}>
         Complete tutorial
+      </button>
+      
+      {/* Increment tracking - perfect for button clicks */}
+      <button onClick={() => increment('buttonClicks')}>
+        Click Me! (increments by 1)
+      </button>
+      <button onClick={() => increment('score', 10)}>
+        Bonus Points! (+10)
       </button>
       
       {/* Reset button */}
@@ -141,12 +161,17 @@ const achievements = {
   }
 };
 
-const { track, unlocked, unlockedCount, reset } = useSimpleAchievements();
+const { track, increment, unlocked, unlockedCount, reset } = useSimpleAchievements();
 
 // Track achievements easily
 track('score', 100);           // Unlocks "Century!" achievement
 track('completedTutorial', true);  // Unlocks "Tutorial Master"
 track('characterClass', 'wizard'); // Unlocks "Arcane Scholar"
+
+// Increment values - perfect for button clicks, actions, etc.
+increment('buttonClicks');     // Adds 1 each time (great for button clicks)
+increment('score', 50);        // Adds 50 each time (custom amount)
+increment('lives', -1);        // Subtract 1 (negative increment)
 
 // Track multiple metrics for custom conditions
 track('score', 1000);
