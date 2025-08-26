@@ -339,29 +339,25 @@ These components are the recommended way to give users access to their achieveme
 The package comes with a comprehensive set of default icons that you can use in your achievements. These are available through the `defaultAchievementIcons` export:
 
 ```tsx
-import { AchievementProvider, defaultAchievementIcons } from 'react-achievements-core';
+import { AchievementProvider } from 'react-achievements';
 
-// Example achievement configuration using default icons
-const achievementConfig = {
-  pageViews: [
-    {
-      isConditionMet: (value) => value >= 5,
-      achievementDetails: {
-        achievementId: 'views-5',
-        achievementTitle: 'Getting Started',
-        achievementDescription: 'Viewed 5 pages',
-        achievementIconKey: 'firstStep' // This will use the 👣 emoji from defaultAchievementIcons
-      }
+// Example achievement configuration using direct emoji icons
+const achievements = {
+  pageViews: {
+    5: { 
+      title: 'Getting Started', 
+      description: 'Viewed 5 pages', 
+      icon: '👣'
     }
-  ]
+  }
 };
 
 // Create your app component
 const App = () => {
   return (
     <AchievementProvider
-      achievements={achievementConfig}
-      // The provider automatically uses defaultAchievementIcons
+      achievements={achievements}
+      storage="local"
     >
       <Game />
     </AchievementProvider>
@@ -369,109 +365,98 @@ const App = () => {
 };
 ```
 
-### Custom Icons
+### Using Icons
 
-You can also provide your own custom icons that will override or extend the default ones:
+The Simple API makes icon usage straightforward - just include emojis directly in your achievement definitions:
 
 ```tsx
-import { AchievementProvider, defaultAchievementIcons } from 'react-achievements-core';
-
-// Create custom icons by extending the defaults
-const customIcons = {
-  ...defaultAchievementIcons, // Include all default icons
-  levelUp: '🚀', // Override the default for 'levelUp'
-  myCustomIcon: '💻' // Add a new icon not in the defaults
-};
-
-const App = () => {
-  return (
-    <AchievementProvider
-      achievements={achievementConfig}
-      icons={customIcons} // Pass your custom icons to the provider
-    >
-      <Game />
-    </AchievementProvider>
-  );
+const achievements = {
+  score: {
+    100: { title: 'Century!', icon: '🏆' },
+    500: { title: 'High Scorer!', icon: '⭐' },
+    1000: { title: 'Elite Player!', icon: '💎' }
+  },
+  level: {
+    5: { title: 'Getting Started', icon: '🌱' },
+    10: { title: 'Rising Star', icon: '🚀' },
+    25: { title: 'Expert', icon: '👑' }
+  }
 };
 ```
 
-### Available Icons
+### Fallback Icons
 
-The `defaultAchievementIcons` includes icons in these categories:
-
-- General Progress & Milestones (levelUp, questComplete, etc.)
-- Social & Engagement (shared, liked, etc.)
-- Time & Activity (activeDay, streak, etc.)
-- Creativity & Skill (artist, expert, etc.)
-- Achievement Types (bronze, silver, gold, etc.)
-- Numbers & Counters (one, ten, hundred, etc.)
-- Actions & Interactions (clicked, discovered, etc.)
-- Placeholders (default, loading, error, etc.)
-- Miscellaneous (trophy, star, gem, etc.)
+The library provides a small set of essential fallback icons for system use (error states, loading, etc.). These are automatically used when needed and don't require any configuration.
 
 ## Custom Storage
 
 You can implement your own storage solution by implementing the `AchievementStorage` interface:
 
-```typescript
-import { AchievementStorage } from 'react-achievements-core';
+```tsx
+import { AchievementStorage, AchievementMetrics, AchievementProvider } from 'react-achievements';
 
 class CustomStorage implements AchievementStorage {
-  getMetrics() {
+  getMetrics(): AchievementMetrics {
+    // Your implementation
+    return {};
+  }
+
+  setMetrics(metrics: AchievementMetrics): void {
     // Your implementation
   }
 
-  setMetrics(metrics) {
+  getUnlockedAchievements(): string[] {
+    // Your implementation
+    return [];
+  }
+
+  setUnlockedAchievements(achievements: string[]): void {
     // Your implementation
   }
 
-  getUnlockedAchievements() {
-    // Your implementation
-  }
-
-  setUnlockedAchievements(achievements) {
-    // Your implementation
-  }
-
-  clear() {
+  clear(): void {
     // Your implementation
   }
 }
 
 // Use your custom storage
-const App = () => {
-  return (
-    <AchievementProvider
-      achievements={achievements}
-      storage={new CustomStorage()}
-    >
-      <Game />
-    </AchievementProvider>
-  );
+const gameAchievements = {
+  score: {
+    100: { title: 'Century!', icon: '🏆' }
+  }
 };
+
+const App = () => {
+    return (
+        <AchievementProvider
+            achievements={gameAchievements}
+            storage={new CustomStorage()} // Use your custom storage implementation
+        >
+        </AchievementProvider>
+    );
+};
+
+export default App;
 ```
 
 ## Styling
 
-You can customize the appearance of the achievement components:
+The achievement components use default styling that works well out of the box. For custom styling, you can override the CSS classes or customize individual component props:
 
 ```tsx
-const App = () => {
-  return (
-    <AchievementProvider
-      achievements={achievements}
-      theme={{
-        colors: {
-          primary: '#ff0000',
-          background: '#f0f0f0'
-        },
-        position: 'top-right'
-      }}
-    >
-      <Game />
-    </AchievementProvider>
-  );
-};
+// Individual component styling
+<BadgesButton 
+  position="bottom-right"
+  style={{ backgroundColor: '#ff0000' }}
+  unlockedAchievements={achievements.unlocked}
+/>
+
+<BadgesModal 
+  isOpen={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  achievements={achievements.unlocked}
+  style={{ backgroundColor: '#f0f0f0' }}
+/>
 ```
 
 

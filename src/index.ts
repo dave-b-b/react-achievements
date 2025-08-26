@@ -20,6 +20,7 @@ export type {
 
 // Core Storage Interface
 export { LocalStorage } from './core/storage/LocalStorage';
+export { MemoryStorage } from './core/storage/MemoryStorage';
 export { StorageType } from './core/types';
 
 // Core UI Components
