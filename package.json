@@ -1,6 +1,6 @@
 {
   "name": "react-achievements",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "description": "Core achievement system for React applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,6 +13,7 @@
     "type-check:src": "tsc --noEmit",
     "type-check:stories": "find stories -name '*.tsx' -o -name '*.ts' | xargs tsc --noEmit --jsx react --esModuleInterop --skipLibCheck",
     "prepare": "npm run build",
+    "install-hooks": "sh scripts/install-hooks.sh",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },

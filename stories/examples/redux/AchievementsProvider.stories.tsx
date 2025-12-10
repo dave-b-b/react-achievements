@@ -92,7 +92,7 @@ const DemoComponent = () => {
         achievements={unlockedAchievementDetails}
         icons={{
           trophy: defaultAchievementIcons.trophy,
-          login: defaultAchievementIcons.badge,
+          login: '⭐',
           default: defaultAchievementIcons.default
         }}
       />

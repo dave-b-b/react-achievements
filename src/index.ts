@@ -43,7 +43,32 @@ export { defaultAchievementIcons } from './core/icons/defaultIcons';
 export { normalizeAchievements, isSimpleConfig } from './core/utils/configNormalizer';
 
 // Helper utilities for easier achievement creation
-export { 
+export {
     AchievementBuilder,
     type AwardDetails,
 } from './utils/achievementHelpers';
+
+// Error Handling System (NEW in v3.3.0)
+export {
+    AchievementError,
+    StorageQuotaError,
+    ImportValidationError,
+    StorageError,
+    ConfigurationError,
+    SyncError,
+    isAchievementError,
+    isRecoverableError
+} from './core/errors/AchievementErrors';
+
+// Data Export/Import (NEW in v3.3.0)
+export {
+    exportAchievementData,
+    createConfigHash,
+    type ExportedData
+} from './core/utils/dataExport';
+
+export {
+    importAchievementData,
+    type ImportOptions,
+    type ImportResult
+} from './core/utils/dataImport';

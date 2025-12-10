@@ -5,7 +5,7 @@ import { useAchievements } from './useAchievements';
  * Provides an easier API for common use cases while maintaining access to advanced features.
  */
 export const useSimpleAchievements = () => {
-  const { update, achievements, reset, getState } = useAchievements();
+  const { update, achievements, reset, getState, exportData, importData } = useAchievements();
   
   return {
     /**
@@ -58,5 +58,19 @@ export const useSimpleAchievements = () => {
      * Get current state (advanced usage)
      */
     getState,
+
+    /**
+     * Export achievement data to JSON string
+     * @returns JSON string containing all achievement data
+     */
+    exportData,
+
+    /**
+     * Import achievement data from JSON string
+     * @param jsonString - JSON string containing exported achievement data
+     * @param options - Import options (merge strategy, validation)
+     * @returns Import result with success status and any errors
+     */
+    importData,
   };
 };

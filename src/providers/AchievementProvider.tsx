@@ -6,6 +6,9 @@ import { MemoryStorage } from '../core/storage/MemoryStorage';
 import { ConfettiWrapper } from '../core/components/ConfettiWrapper';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { exportAchievementData, createConfigHash } from '../core/utils/dataExport';
+import { importAchievementData, ImportOptions, ImportResult } from '../core/utils/dataImport';
+import { AchievementError } from '../core/errors/AchievementErrors';
 
 interface AchievementDetails {
   achievementId?: string;
@@ -25,6 +28,8 @@ export interface AchievementContextType {
     metrics: AchievementMetrics;
     unlocked: string[];
   };
+  exportData: () => string;
+  importData: (jsonString: string, options?: ImportOptions) => ImportResult;
 }
 
 export const AchievementContext = createContext<AchievementContextType | undefined>(undefined);
@@ -34,6 +39,7 @@ interface AchievementProviderProps {
   storage?: AchievementStorage | StorageType;
   children: React.ReactNode;
   icons?: Record<string, string>;
+  onError?: (error: AchievementError) => void;
 }
 
 export const AchievementProvider: React.FC<AchievementProviderProps> = ({
@@ -41,6 +47,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   storage = StorageType.Local,
   children,
   icons = {},
+  onError,
 }) => {
   // Normalize the configuration to the complex format
   const achievements = normalizeAchievements(achievementsConfig);
@@ -249,19 +256,31 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     metricsUpdatedRef.current = true;
 
     const updatedMetrics = { ...metrics };
-    
+
     Object.entries(newMetrics).forEach(([key, value]) => {
       updatedMetrics[key] = value;
     });
-    
+
     setMetrics(updatedMetrics);
-    
+
     const storageMetrics = Object.entries(updatedMetrics).reduce((acc, [key, value]) => ({
       ...acc,
       [key]: Array.isArray(value) ? value : [value]
     }), {});
-    
-    storageImpl.setMetrics(storageMetrics);
+
+    try {
+      storageImpl.setMetrics(storageMetrics);
+    } catch (error) {
+      if (error instanceof AchievementError) {
+        if (onError) {
+          onError(error);
+        } else {
+          console.error('Achievement storage error:', error.message, error.remedy);
+        }
+      } else {
+        console.error('Unexpected error saving metrics:', error);
+      }
+    }
   };
 
   const reset = () => {
@@ -290,11 +309,65 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
       ...acc,
       [key]: Array.isArray(value) ? value : [value]
     }), {});
-    
+
     return {
       metrics: metricsInArrayFormat,
       unlocked: achievementState.unlocked,
     };
+  };
+
+  const exportData = (): string => {
+    const state = getState();
+    const configHash = createConfigHash(achievementsConfig);
+    return exportAchievementData(state.metrics, state.unlocked, configHash);
+  };
+
+  const importData = (jsonString: string, options?: ImportOptions): ImportResult => {
+    const state = getState();
+    const configHash = createConfigHash(achievementsConfig);
+
+    const result = importAchievementData(
+      jsonString,
+      state.metrics,
+      state.unlocked,
+      { ...options, expectedConfigHash: configHash }
+    );
+
+    if (result.success && 'mergedMetrics' in result && 'mergedUnlocked' in result) {
+      // Apply the imported data
+      const mergedResult = result as ImportResult & {
+        mergedMetrics: AchievementMetrics;
+        mergedUnlocked: string[]
+      };
+
+      // Update metrics state
+      const metricsFromArrayFormat = Object.entries(mergedResult.mergedMetrics).reduce(
+        (acc, [key, value]) => ({
+          ...acc,
+          [key]: Array.isArray(value) ? value[0] : value
+        }),
+        {}
+      );
+      setMetrics(metricsFromArrayFormat);
+
+      // Update unlocked achievements state
+      setAchievementState(prev => ({
+        ...prev,
+        unlocked: mergedResult.mergedUnlocked,
+      }));
+
+      // Persist to storage
+      storageImpl.setMetrics(mergedResult.mergedMetrics);
+      storageImpl.setUnlockedAchievements(mergedResult.mergedUnlocked);
+
+      // Update seen achievements to prevent duplicate notifications
+      mergedResult.mergedUnlocked.forEach(id => {
+        seenAchievementsRef.current.add(id);
+      });
+      saveNotifiedAchievements(seenAchievementsRef.current);
+    }
+
+    return result;
   };
 
   return (
@@ -304,6 +377,8 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         achievements: achievementState,
         reset,
         getState,
+        exportData,
+        importData,
       }}
     >
       {children}
