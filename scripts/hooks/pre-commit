@@ -1,0 +1,44 @@
+#!/bin/sh
+# Pre-commit hook to run tests before allowing commit
+# This ensures all tests pass before code is committed
+#
+# To install: cp scripts/hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+# Or run: npm run install-hooks
+
+echo "🔍 Running pre-commit checks..."
+echo ""
+
+# Run type check first (faster than full tests)
+echo "📝 Type checking..."
+npm run type-check
+TYPECHECK_EXIT_CODE=$?
+
+if [ $TYPECHECK_EXIT_CODE -ne 0 ]; then
+  echo ""
+  echo "❌ TypeScript errors detected!"
+  echo "   Fix type errors before committing."
+  echo ""
+  exit 1
+fi
+
+echo "✅ Type check passed"
+echo ""
+
+# Run full test suite
+echo "🧪 Running tests..."
+npm run test:unit
+TEST_EXIT_CODE=$?
+
+if [ $TEST_EXIT_CODE -ne 0 ]; then
+  echo ""
+  echo "❌ Tests failed!"
+  echo "   Fix failing tests before committing."
+  echo ""
+  exit 1
+fi
+
+echo ""
+echo "✅ All tests passed!"
+echo "✅ Pre-commit checks complete"
+echo ""
+exit 0
