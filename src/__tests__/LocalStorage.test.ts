@@ -151,14 +151,12 @@ describe('LocalStorage', () => {
         clicks: Array(1000000).fill(1) // Large array to trigger quota error
       };
 
-      // The operation should fail silently
-      storage.setMetrics(testMetrics);
+      // The operation should throw StorageQuotaError
+      expect(() => storage.setMetrics(testMetrics)).toThrow();
+      expect(() => storage.setMetrics(testMetrics)).toThrow('Browser storage quota exceeded');
 
       // Should have attempted to save
       expect(mockSetItem).toHaveBeenCalled();
-
-      // Storage should remain unchanged
-      expect(storage.getMetrics()).toEqual({});
     });
 
     it('should handle concurrent storage operations', async () => {

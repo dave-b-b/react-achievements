@@ -118,7 +118,7 @@ const DemoComponent = () => {
         }).filter(Boolean) as unknown as AchievementDetails[]}
         icons={{
           trophy: defaultAchievementIcons.trophy,
-          login: defaultAchievementIcons.master,
+          login: '🏆',
           default: '🎖️'
         }}
       />

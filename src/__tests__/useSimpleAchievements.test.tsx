@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, act, screen } from '@testing-library/react';
+import { render, act, screen, fireEvent } from '@testing-library/react';
 import { AchievementProvider } from '../providers/AchievementProvider';
 import { useSimpleAchievements } from '../hooks/useSimpleAchievements';
 import { SimpleAchievementConfig, StorageType } from '../core/types';
@@ -184,7 +184,7 @@ describe('useSimpleAchievements', () => {
       return (
         <div>
           <div data-testid="unlocked-count">{unlockedCount}</div>
-          <div data-testid="current-clicks">{getState().metrics.buttonClicks || 0}</div>
+          <div data-testid="current-clicks">{getState().metrics.buttonClicks ? String(getState().metrics.buttonClicks[0]) : '0'}</div>
           <button 
             onClick={() => increment('buttonClicks')} 
             data-testid="increment-clicks"
@@ -212,7 +212,7 @@ describe('useSimpleAchievements', () => {
     };
 
     render(
-      <AchievementProvider achievements={simpleAchievements} storage="memory">
+      <AchievementProvider achievements={simpleAchievements} storage={StorageType.Memory}>
         <TestComponentForIncrement />
       </AchievementProvider>
     );
@@ -222,9 +222,13 @@ describe('useSimpleAchievements', () => {
 
     // Click 3 times - should unlock first achievement
     await act(async () => {
-      screen.getByTestId('increment-clicks').click();
-      screen.getByTestId('increment-clicks').click();
-      screen.getByTestId('increment-clicks').click();
+      fireEvent.click(screen.getByTestId('increment-clicks'));
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('increment-clicks'));
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('increment-clicks'));
     });
 
     await act(async () => {
@@ -236,8 +240,10 @@ describe('useSimpleAchievements', () => {
 
     // Click 2 more times - should unlock second achievement
     await act(async () => {
-      screen.getByTestId('increment-clicks').click();
-      screen.getByTestId('increment-clicks').click();
+      fireEvent.click(screen.getByTestId('increment-clicks'));
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('increment-clicks'));
     });
 
     await act(async () => {
@@ -249,8 +255,10 @@ describe('useSimpleAchievements', () => {
 
     // Test custom increment amount
     await act(async () => {
-      screen.getByTestId('increment-score').click(); // +50
-      screen.getByTestId('increment-score').click(); // +50 (total 100)
+      fireEvent.click(screen.getByTestId('increment-score')); // +50
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('increment-score')); // +50 (total 100)
     });
 
     await act(async () => {

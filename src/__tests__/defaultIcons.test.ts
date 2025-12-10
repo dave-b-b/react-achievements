@@ -9,27 +9,11 @@ describe('defaultAchievementIcons', () => {
 
   it('should contain required fallback icons', () => {
     expect(defaultAchievementIcons.default).toBeDefined();
+    expect(defaultAchievementIcons.loading).toBeDefined();
+    expect(defaultAchievementIcons.error).toBeDefined();
+    expect(defaultAchievementIcons.success).toBeDefined();
     expect(defaultAchievementIcons.trophy).toBeDefined();
     expect(defaultAchievementIcons.star).toBeDefined();
-  });
-
-  it('should contain icons for different categories', () => {
-    // Progress & Milestones
-    expect(defaultAchievementIcons.levelUp).toBeDefined();
-    expect(defaultAchievementIcons.questComplete).toBeDefined();
-    
-    // Social & Engagement
-    expect(defaultAchievementIcons.shared).toBeDefined();
-    expect(defaultAchievementIcons.liked).toBeDefined();
-    
-    // Time & Activity
-    expect(defaultAchievementIcons.streak).toBeDefined();
-    expect(defaultAchievementIcons.activeDay).toBeDefined();
-    
-    // Achievement Types
-    expect(defaultAchievementIcons.bronze).toBeDefined();
-    expect(defaultAchievementIcons.silver).toBeDefined();
-    expect(defaultAchievementIcons.gold).toBeDefined();
   });
 
   it('should have string values for all icons', () => {

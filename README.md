@@ -322,6 +322,9 @@ See the [examples directory](./stories/examples) for detailed implementations an
 - Toast notifications
 - Confetti animations
 - TypeScript support
+- **NEW in v3.3.0**: Comprehensive error handling system
+- **NEW in v3.3.0**: Data export/import for achievement portability
+- **NEW in v3.3.0**: Type-safe error classes with recovery guidance
 
 ## Achievement Notifications & History
 
@@ -464,6 +467,608 @@ const App = () => {
 export default App;
 ```
 
+## Error Handling
+
+React Achievements v3.3.0 introduces a comprehensive error handling system with specialized error types, recovery guidance, and graceful degradation.
+
+### Error Types
+
+The library provides 6 specialized error classes for different failure scenarios:
+
+```tsx
+import {
+  StorageQuotaError,
+  ImportValidationError,
+  StorageError,
+  ConfigurationError,
+  SyncError,
+  isAchievementError,
+  isRecoverableError
+} from 'react-achievements';
+```
+
+| Error Type | When It Occurs | Recoverable | Use Case |
+|-----------|----------------|-------------|----------|
+| `StorageQuotaError` | Browser storage quota exceeded | Yes | Prompt user to clear storage or export data |
+| `ImportValidationError` | Invalid data during import | Yes | Show validation errors to user |
+| `StorageError` | Storage read/write failures | Maybe | Retry operation or fallback to memory storage |
+| `ConfigurationError` | Invalid achievement config | No | Fix configuration during development |
+| `SyncError` | Multi-device sync failures | Yes | Retry sync or use local data |
+
+### Using the onError Callback
+
+Handle errors gracefully by providing an `onError` callback to the `AchievementProvider`:
+
+```tsx
+import { AchievementProvider, AchievementError, StorageQuotaError } from 'react-achievements';
+
+const App = () => {
+  const handleAchievementError = (error: AchievementError) => {
+    // Check error type
+    if (error instanceof StorageQuotaError) {
+      console.error(`Storage quota exceeded! Need ${error.bytesNeeded} bytes`);
+      console.log('Remedy:', error.remedy);
+
+      // Offer user the option to export and clear data
+      if (confirm('Storage full. Export your achievements?')) {
+        // Export data before clearing (see Data Export/Import section)
+        exportAndClearData();
+      }
+    }
+
+    // Use type guards
+    if (isRecoverableError(error)) {
+      // Show user-friendly error message with remedy
+      showNotification({
+        type: 'error',
+        message: error.message,
+        remedy: error.remedy
+      });
+    } else {
+      // Log non-recoverable errors
+      console.error('Non-recoverable error:', error);
+    }
+  };
+
+  return (
+    <AchievementProvider
+      achievements={gameAchievements}
+      storage="local"
+      onError={handleAchievementError}
+    >
+      <Game />
+    </AchievementProvider>
+  );
+};
+```
+
+### Error Properties
+
+All achievement errors include helpful properties:
+
+```tsx
+try {
+  // Some operation that might fail
+  storage.setMetrics(metrics);
+} catch (error) {
+  if (isAchievementError(error)) {
+    console.log(error.code);        // Machine-readable: "STORAGE_QUOTA_EXCEEDED"
+    console.log(error.message);     // Human-readable: "Browser storage quota exceeded"
+    console.log(error.recoverable); // true/false - can this be recovered?
+    console.log(error.remedy);      // Guidance: "Clear browser storage or..."
+
+    // Error-specific properties
+    if (error instanceof StorageQuotaError) {
+      console.log(error.bytesNeeded); // How much space is needed
+    }
+  }
+}
+```
+
+### Graceful Degradation
+
+If no `onError` callback is provided, errors are automatically logged to the console with full details:
+
+```tsx
+// Without onError callback
+<AchievementProvider achievements={gameAchievements} storage="local">
+  <Game />
+</AchievementProvider>
+
+// Errors are automatically logged:
+// "Achievement storage error: Browser storage quota exceeded.
+//  Remedy: Clear browser storage, reduce the number of achievements..."
+```
+
+### Type Guards
+
+Use type guards for type-safe error handling:
+
+```tsx
+import { isAchievementError, isRecoverableError } from 'react-achievements';
+
+try {
+  await syncAchievements();
+} catch (error) {
+  if (isAchievementError(error)) {
+    // TypeScript knows this is an AchievementError
+    console.log(error.code, error.remedy);
+
+    if (isRecoverableError(error)) {
+      // Attempt recovery
+      retryOperation();
+    }
+  } else {
+    // Handle non-achievement errors
+    console.error('Unexpected error:', error);
+  }
+}
+```
+
+## Data Export/Import
+
+Transfer achievements between devices, create backups, or migrate data with the export/import system. Export to local files or cloud storage providers like AWS S3 and Azure Blob Storage.
+
+### Exporting Achievement Data
+
+Export all achievement data including metrics, unlocked achievements, and configuration:
+
+```tsx
+import { useAchievements, exportAchievementData } from 'react-achievements';
+
+const MyComponent = () => {
+  const { getState } = useAchievements();
+
+  const exportData = () => {
+    const state = getState();
+    return exportAchievementData(
+      state.metrics,
+      state.unlockedAchievements,
+      achievements // Your achievement configuration
+    );
+  };
+
+  return (
+    <>
+      <button onClick={handleExportToFile}>Export to File</button>
+      <button onClick={handleExportToAWS}>Export to AWS S3</button>
+      <button onClick={handleExportToAzure}>Export to Azure</button>
+    </>
+  );
+};
+```
+
+### Export to Local File
+
+Download achievement data as a JSON file:
+
+```tsx
+const handleExportToFile = () => {
+  const exportedData = exportData();
+
+  const blob = new Blob([JSON.stringify(exportedData)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `achievements-${Date.now()}.json`;
+  link.click();
+  URL.revokeObjectURL(url);
+};
+```
+
+### Export to AWS S3
+
+Upload achievement data to Amazon S3 for cloud backup and cross-device sync:
+
+```tsx
+import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+
+const handleExportToAWS = async () => {
+  const exportedData = exportData();
+
+  const s3Client = new S3Client({
+    region: 'us-east-1',
+    credentials: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    },
+  });
+
+  const userId = getCurrentUserId(); // Your user identification logic
+  const key = `achievements/${userId}/data.json`;
+
+  try {
+    await s3Client.send(new PutObjectCommand({
+      Bucket: 'my-app-achievements',
+      Key: key,
+      Body: JSON.stringify(exportedData),
+      ContentType: 'application/json',
+      Metadata: {
+        version: exportedData.version,
+        timestamp: exportedData.timestamp,
+      },
+    }));
+
+    console.log('Achievements backed up to S3 successfully!');
+  } catch (error) {
+    console.error('Failed to upload to S3:', error);
+  }
+};
+```
+
+### Import from AWS S3
+
+```tsx
+const MyComponent = () => {
+  const { update } = useAchievements(); // Get update from hook
+
+  const handleImportFromAWS = async () => {
+    const s3Client = new S3Client({ /* config */ });
+    const userId = getCurrentUserId();
+
+    try {
+      const response = await s3Client.send(new GetObjectCommand({
+        Bucket: 'my-app-achievements',
+        Key: `achievements/${userId}/data.json`,
+      }));
+
+      const data = JSON.parse(await response.Body.transformToString());
+
+      const result = importAchievementData(data, {
+        strategy: 'merge',
+        achievements: gameAchievements
+      });
+
+      if (result.success) {
+        update(result.mergedMetrics);
+        console.log('Achievements restored from S3!');
+      }
+    } catch (error) {
+      console.error('Failed to import from S3:', error);
+    }
+  };
+
+  return <button onClick={handleImportFromAWS}>Restore from AWS</button>;
+};
+```
+
+### Export to Microsoft Azure Blob Storage
+
+Upload achievement data to Azure for enterprise cloud backup:
+
+```tsx
+import { BlobServiceClient } from '@azure/storage-blob';
+
+const handleExportToAzure = async () => {
+  const exportedData = exportData();
+
+  const blobServiceClient = BlobServiceClient.fromConnectionString(
+    process.env.AZURE_STORAGE_CONNECTION_STRING
+  );
+
+  const containerClient = blobServiceClient.getContainerClient('achievements');
+  const userId = getCurrentUserId();
+  const blobName = `${userId}/achievements-${Date.now()}.json`;
+  const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+  try {
+    await blockBlobClient.upload(
+      JSON.stringify(exportedData),
+      JSON.stringify(exportedData).length,
+      {
+        blobHTTPHeaders: {
+          blobContentType: 'application/json',
+        },
+        metadata: {
+          version: exportedData.version,
+          timestamp: exportedData.timestamp,
+          configHash: exportedData.configHash,
+        },
+      }
+    );
+
+    console.log('Achievements backed up to Azure successfully!');
+  } catch (error) {
+    console.error('Failed to upload to Azure:', error);
+  }
+};
+```
+
+
+
+### Import from Azure Blob Storage
+
+```tsx
+const MyComponent = () => {
+  const { update } = useAchievements(); // Get update from hook
+
+  const handleImportFromAzure = async () => {
+    const blobServiceClient = BlobServiceClient.fromConnectionString(
+      process.env.AZURE_STORAGE_CONNECTION_STRING
+    );
+
+    const containerClient = blobServiceClient.getContainerClient('achievements');
+    const userId = getCurrentUserId();
+
+    try {
+      // List blobs to find the latest backup
+      const blobs = containerClient.listBlobsFlat({ prefix: `${userId}/` });
+      let latestBlob = null;
+
+      for await (const blob of blobs) {
+        if (!latestBlob || blob.properties.createdOn > latestBlob.properties.createdOn) {
+          latestBlob = blob;
+        }
+      }
+
+      if (latestBlob) {
+        const blockBlobClient = containerClient.getBlockBlobClient(latestBlob.name);
+        const downloadResponse = await blockBlobClient.download(0);
+        const data = JSON.parse(await streamToString(downloadResponse.readableStreamBody));
+
+        const result = importAchievementData(data, {
+          strategy: 'merge',
+          achievements: gameAchievements
+        });
+
+        if (result.success) {
+          update(result.mergedMetrics);
+          console.log('Achievements restored from Azure!');
+        }
+      }
+    } catch (error) {
+      console.error('Failed to import from Azure:', error);
+    }
+  };
+
+  return <button onClick={handleImportFromAzure}>Restore from Azure</button>;
+};
+
+// Helper function to convert stream to string
+async function streamToString(readableStream) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    readableStream.on('data', (data) => chunks.push(data.toString()));
+    readableStream.on('end', () => resolve(chunks.join('')));
+    readableStream.on('error', reject);
+  });
+}
+```
+
+### Cloud Storage Best Practices
+
+When using cloud storage for achievements:
+
+**Security**:
+```tsx
+// Never expose credentials in client-side code
+// Use environment variables or secure credential management
+const credentials = {
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,  // Server-side only
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,  // Server-side only
+};
+
+// For client-side apps, use temporary credentials via STS or Cognito
+import { CognitoIdentityClient } from '@aws-sdk/client-cognito-identity';
+import { fromCognitoIdentityPool } from '@aws-sdk/credential-provider-cognito-identity';
+
+const s3Client = new S3Client({
+  region: 'us-east-1',
+  credentials: fromCognitoIdentityPool({
+    client: new CognitoIdentityClient({ region: 'us-east-1' }),
+    identityPoolId: 'us-east-1:xxxxx-xxxx-xxxx',
+  }),
+});
+```
+
+**File Naming**:
+```tsx
+// Use consistent naming for easy retrieval
+const generateKey = (userId: string) => {
+  const timestamp = new Date().toISOString();
+  return `achievements/${userId}/${timestamp}.json`;
+};
+
+// Or use latest.json for current data + timestamped backups
+const keys = {
+  current: `achievements/${userId}/latest.json`,
+  backup: `achievements/${userId}/backups/${Date.now()}.json`
+};
+```
+
+**Error Handling**:
+```tsx
+const uploadWithRetry = async (data: ExportedData, maxRetries = 3) => {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      await uploadToCloud(data);
+      return { success: true };
+    } catch (error) {
+      if (i === maxRetries - 1) throw error;
+      await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)));
+    }
+  }
+};
+```
+
+### Importing Achievement Data
+
+Import previously exported data with validation and merge strategies:
+
+```tsx
+import { useAchievements, importAchievementData } from 'react-achievements';
+
+const MyComponent = () => {
+  const { update } = useAchievements();
+
+  const handleImport = async (file: File) => {
+    try {
+      const text = await file.text();
+      const importedData = JSON.parse(text);
+
+      const result = importAchievementData(importedData, {
+        strategy: 'merge', // 'replace', 'merge', or 'preserve'
+        achievements: gameAchievements
+      });
+
+      if (result.success) {
+        // Apply merged data
+        update(result.mergedMetrics);
+        console.log(`Imported ${result.importedCount} achievements`);
+      } else {
+        // Handle validation errors
+        console.error('Import failed:', result.errors);
+      }
+    } catch (error) {
+      if (error instanceof ImportValidationError) {
+        console.error('Invalid import file:', error.remedy);
+      }
+    }
+  };
+
+  return (
+    <input
+      type="file"
+      accept=".json"
+      onChange={(e) => e.target.files?.[0] && handleImport(e.target.files[0])}
+    />
+  );
+};
+```
+
+### Merge Strategies
+
+Control how imported data is merged with existing data:
+
+```tsx
+// Replace: Completely replace all existing data
+const result = importAchievementData(data, {
+  strategy: 'replace',
+  achievements
+});
+
+// Merge: Combine imported and existing data
+// - Takes maximum values for metrics
+// - Combines unlocked achievements
+const result = importAchievementData(data, {
+  strategy: 'merge',
+  achievements
+});
+
+// Preserve: Only import new achievements, keep existing data
+const result = importAchievementData(data, {
+  strategy: 'preserve',
+  achievements
+});
+```
+
+### Export Data Structure
+
+The exported data includes:
+
+```
+{
+  version: "1.0",                    // Export format version
+  timestamp: "2024-12-10T...",       // When data was exported
+  configHash: "abc123...",           // Hash of achievement config
+  metrics: {                         // All tracked metrics
+    score: 1000,
+    level: 5
+  },
+  unlockedAchievements: [           // All unlocked achievement IDs
+    "score_100",
+    "level_5"
+  ]
+}
+```
+
+### Configuration Validation
+
+Import validation ensures data compatibility:
+
+```tsx
+try {
+  const result = importAchievementData(importedData, {
+    strategy: 'replace',
+    achievements
+  });
+
+  if (!result.success) {
+    // Check for configuration mismatch
+    if (result.configMismatch) {
+      console.warn('Achievement configuration has changed since export');
+      console.log('You can still import with strategy: merge or preserve');
+    }
+
+    // Check for validation errors
+    console.error('Validation errors:', result.errors);
+  }
+} catch (error) {
+  if (error instanceof ImportValidationError) {
+    console.error('Import failed:', error.message, error.remedy);
+  }
+}
+```
+
+### Use Cases
+
+**Backup Before Clearing Storage**:
+```tsx
+const MyComponent = () => {
+  const { getState, reset } = useAchievements();
+
+  // Storage quota exceeded - export before clearing
+  const handleStorageQuotaError = (error: StorageQuotaError) => {
+    const state = getState();
+    const backup = exportAchievementData(state.metrics, state.unlockedAchievements, achievements);
+
+    // Save backup
+    localStorage.setItem('achievement-backup', JSON.stringify(backup));
+
+    // Clear storage
+    reset();
+
+    alert('Data backed up and storage cleared!');
+  };
+
+  return <button onClick={() => handleStorageQuotaError(new StorageQuotaError(1000))}>Test Backup</button>;
+};
+```
+
+**Cross-Device Transfer**:
+```tsx
+const MyComponent = () => {
+  const { getState, update } = useAchievements();
+
+  // Device 1: Export data
+  const exportData = () => {
+    const state = getState();
+    const data = exportAchievementData(state.metrics, state.unlockedAchievements, achievements);
+    // Upload to cloud or save to file
+    return data;
+  };
+
+  // Device 2: Import data
+  const importData = async (cloudData) => {
+    const result = importAchievementData(cloudData, {
+      strategy: 'merge', // Combine with any local progress
+      achievements
+    });
+
+    if (result.success) {
+      update(result.mergedMetrics);
+    }
+  };
+
+  return (
+    <>
+      <button onClick={() => exportData()}>Export for Transfer</button>
+      <button onClick={() => importData(/* cloudData */)}>Import from Other Device</button>
+    </>
+  );
+};
+```
+
 ## Styling
 
 The achievement components use default styling that works well out of the box. For custom styling, you can override the CSS classes or customize individual component props:
@@ -495,6 +1100,7 @@ The achievement components use default styling that works well out of the box. F
 | storage | 'local' \| 'memory' \| AchievementStorage | Storage implementation |
 | theme | ThemeConfig | Custom theme configuration |
 | onUnlock | (achievement: Achievement) => void | Callback when achievement is unlocked |
+| onError | (error: AchievementError) => void | **NEW in v3.3.0**: Callback when errors occur |
 
 ### useAchievements Hook
 
@@ -573,6 +1179,88 @@ const Game = () => {
 ```
 
 This API provides maximum flexibility for complex achievement logic but requires more verbose configuration. Most users should use the Simple API or Builder API instead.
+
+## Contributing
+
+We welcome contributions to React Achievements! This project includes quality controls to ensure code reliability.
+
+### Git Hooks
+
+The project uses pre-commit hooks to maintain code quality. After cloning the repository, install the hooks:
+
+```bash
+npm run install-hooks
+```
+
+This will install a pre-commit hook that automatically:
+- Runs TypeScript type checking
+- Runs the full test suite (154 tests)
+- Blocks commits if checks fail
+
+### What the Hook Does
+
+When you run `git commit`, the hook will:
+1. Run type checking (~2-5 seconds)
+2. Run all tests (~2-3 seconds)
+3. Block the commit if either fails
+4. Allow the commit if all checks pass
+
+### Bypassing the Hook
+
+Not recommended, but if needed:
+
+```bash
+git commit --no-verify
+```
+
+Only use this when:
+- Committing work-in-progress intentionally
+- Reverting a commit that broke tests
+- You have a valid reason to skip checks
+
+Never bypass for:
+- Failing tests (fix them first!)
+- TypeScript errors (fix them first!)
+
+### Running Tests Manually
+
+Before committing, you can run tests manually:
+
+```bash
+# Run type checking
+npm run type-check
+
+# Run tests
+npm run test:unit
+
+# Run both (same as git hook)
+npm test
+```
+
+### Test Coverage
+
+The library has comprehensive test coverage:
+- 154 total tests
+- Unit tests for all core functionality
+- Integration tests for React components
+- Error handling tests (43 tests)
+- Data export/import tests
+
+### Troubleshooting
+
+If the hook isn't running:
+
+1. Check if it's installed:
+   ```bash
+   ls -la .git/hooks/pre-commit
+   ```
+
+2. Reinstall if needed:
+   ```bash
+   npm run install-hooks
+   ```
+
+For more details, see [`docs/git-hooks.md`](./docs/git-hooks.md).
 
 ## License
 

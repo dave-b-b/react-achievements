@@ -1,4 +1,5 @@
 import { AchievementStorage, AchievementMetrics, AchievementMetricValue, isDate } from '../types';
+import { StorageQuotaError, StorageError } from '../errors/AchievementErrors';
 
 export class LocalStorage implements AchievementStorage {
     private storageKey: string;
@@ -58,16 +59,34 @@ export class LocalStorage implements AchievementStorage {
                 metrics: this.serializeMetrics(data.metrics),
                 unlockedAchievements: data.unlockedAchievements
             };
-            localStorage.setItem(this.storageKey, JSON.stringify(serialized));
+            const jsonString = JSON.stringify(serialized);
+            localStorage.setItem(this.storageKey, jsonString);
         } catch (error) {
-            // Silently fail on quota exceeded errors
-            if (error instanceof Error && 
-                (error.name === 'QuotaExceededError' || 
-                 error.name === 'NS_ERROR_DOM_QUOTA_REACHED' ||
-                 error.message.includes('QuotaExceeded'))) {
-                return;
+            // Throw proper error instead of silently failing
+            if (error instanceof DOMException &&
+                (error.name === 'QuotaExceededError' ||
+                 error.name === 'NS_ERROR_DOM_QUOTA_REACHED')) {
+                const serialized = {
+                    metrics: this.serializeMetrics(data.metrics),
+                    unlockedAchievements: data.unlockedAchievements
+                };
+                const bytesNeeded = JSON.stringify(serialized).length;
+                throw new StorageQuotaError(bytesNeeded);
             }
-            throw error;
+
+            if (error instanceof Error) {
+                if (error.message && error.message.includes('QuotaExceeded')) {
+                    const serialized = {
+                        metrics: this.serializeMetrics(data.metrics),
+                        unlockedAchievements: data.unlockedAchievements
+                    };
+                    const bytesNeeded = JSON.stringify(serialized).length;
+                    throw new StorageQuotaError(bytesNeeded);
+                }
+                throw new StorageError(`Failed to save achievement data: ${error.message}`, error);
+            }
+
+            throw new StorageError('Failed to save achievement data');
         }
     }
 
