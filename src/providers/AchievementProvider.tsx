@@ -1,14 +1,17 @@
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
-import { AchievementConfiguration, AchievementConfigurationType, AchievementStorage, InitialAchievementMetrics, AchievementMetrics, StorageType } from '../core/types';
+import { AchievementConfiguration, AchievementConfigurationType, AchievementStorage, AsyncAchievementStorage, isAsyncStorage, InitialAchievementMetrics, AchievementMetrics, StorageType } from '../core/types';
 import { normalizeAchievements } from '../core/utils/configNormalizer';
 import { LocalStorage } from '../core/storage/LocalStorage';
 import { MemoryStorage } from '../core/storage/MemoryStorage';
+import { AsyncStorageAdapter } from '../core/storage/AsyncStorageAdapter';
+import { IndexedDBStorage } from '../core/storage/IndexedDBStorage';
+import { RestApiStorage, RestApiStorageConfig } from '../core/storage/RestApiStorage';
 import { ConfettiWrapper } from '../core/components/ConfettiWrapper';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { exportAchievementData, createConfigHash } from '../core/utils/dataExport';
 import { importAchievementData, ImportOptions, ImportResult } from '../core/utils/dataImport';
-import { AchievementError } from '../core/errors/AchievementErrors';
+import { AchievementError, ConfigurationError } from '../core/errors/AchievementErrors';
 
 interface AchievementDetails {
   achievementId?: string;
@@ -36,10 +39,11 @@ export const AchievementContext = createContext<AchievementContextType | undefin
 
 interface AchievementProviderProps {
   achievements: AchievementConfigurationType;
-  storage?: AchievementStorage | StorageType;
+  storage?: AchievementStorage | AsyncAchievementStorage | StorageType;
   children: React.ReactNode;
   icons?: Record<string, string>;
   onError?: (error: AchievementError) => void;
+  restApiConfig?: RestApiStorageConfig;
 }
 
 export const AchievementProvider: React.FC<AchievementProviderProps> = ({
@@ -48,6 +52,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   children,
   icons = {},
   onError,
+  restApiConfig,
 }) => {
   // Normalize the configuration to the complex format
   const achievements = normalizeAchievements(achievementsConfig);
@@ -69,15 +74,38 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 
   if (!storageRef.current) {
     if (typeof storage === 'string') {
-      if (storage === StorageType.Local) {
-        storageRef.current = new LocalStorage('achievements');
-      } else if (storage === StorageType.Memory) {
-        storageRef.current = new MemoryStorage();
-      } else {
-        throw new Error(`Unsupported storage type: ${storage}`);
+      // StorageType enum
+      switch (storage) {
+        case StorageType.Local:
+          storageRef.current = new LocalStorage('achievements');
+          break;
+        case StorageType.Memory:
+          storageRef.current = new MemoryStorage();
+          break;
+        case StorageType.IndexedDB:
+          // Wrap async storage with adapter
+          const indexedDB = new IndexedDBStorage('react-achievements');
+          storageRef.current = new AsyncStorageAdapter(indexedDB, { onError });
+          break;
+        case StorageType.RestAPI:
+          if (!restApiConfig) {
+            throw new ConfigurationError('restApiConfig is required when using StorageType.RestAPI');
+          }
+          // Wrap async storage with adapter
+          const restApi = new RestApiStorage(restApiConfig);
+          storageRef.current = new AsyncStorageAdapter(restApi, { onError });
+          break;
+        default:
+          throw new ConfigurationError(`Unsupported storage type: ${storage}`);
       }
     } else {
-      storageRef.current = storage;
+      // Custom storage instance
+      // Check if it's async storage and wrap with adapter
+      if (isAsyncStorage(storage)) {
+        storageRef.current = new AsyncStorageAdapter(storage, { onError });
+      } else {
+        storageRef.current = storage;
+      }
     }
   }
 

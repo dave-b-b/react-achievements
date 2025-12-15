@@ -154,19 +154,18 @@ describe('Error Handling System', () => {
       expect(error.name).toBe('SyncError');
     });
 
-    it('should store original error', () => {
-      const originalError = new Error('Network error');
-      const error = new SyncError('Sync failed', originalError);
+    it('should store statusCode and timeout details', () => {
+      const error = new SyncError('HTTP Error', { statusCode: 500, timeout: 10000 });
 
-      expect(error.originalError).toBe(originalError);
+      expect(error.statusCode).toBe(500);
+      expect(error.timeout).toBe(10000);
     });
 
     it('should include remedy guidance', () => {
       const error = new SyncError('Test error');
       expect(error.remedy).toBeDefined();
       expect(error.remedy).toContain('network connection');
-      expect(error.remedy).toContain('backend server');
-      expect(error.remedy).toContain('retried automatically');
+      expect(error.remedy).toContain('sync when connection is restored');
     });
   });
 

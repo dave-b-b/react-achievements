@@ -322,6 +322,10 @@ See the [examples directory](./stories/examples) for detailed implementations an
 - Toast notifications
 - Confetti animations
 - TypeScript support
+- **NEW in v3.4.0**: Async storage support (IndexedDB, REST API, Offline Queue)
+- **NEW in v3.4.0**: 50MB+ storage capacity with IndexedDB
+- **NEW in v3.4.0**: Server-side sync with REST API storage
+- **NEW in v3.4.0**: Offline-first capabilities with automatic queue sync
 - **NEW in v3.3.0**: Comprehensive error handling system
 - **NEW in v3.3.0**: Data export/import for achievement portability
 - **NEW in v3.3.0**: Type-safe error classes with recovery guidance
@@ -416,9 +420,185 @@ const achievements = {
 
 The library provides a small set of essential fallback icons for system use (error states, loading, etc.). These are automatically used when needed and don't require any configuration.
 
+## Async Storage (NEW in v3.4.0)
+
+React Achievements now supports async storage backends for modern applications that need large data capacity, server sync, or offline-first capabilities.
+
+### IndexedDB Storage
+
+Browser-native storage with 50MB+ capacity (vs localStorage's 5-10MB limit):
+
+```tsx
+import { AchievementProvider, StorageType } from 'react-achievements';
+
+const App = () => {
+  return (
+    <AchievementProvider
+      achievements={gameAchievements}
+      storage={StorageType.IndexedDB}  // Use IndexedDB for large data
+    >
+      <Game />
+    </AchievementProvider>
+  );
+};
+```
+
+**Benefits:**
+- ✅ 10x larger capacity than localStorage
+- ✅ Structured data storage
+- ✅ Better performance for large datasets
+- ✅ Non-blocking async operations
+
+### REST API Storage
+
+Sync achievements with your backend server:
+
+```tsx
+import { AchievementProvider, StorageType } from 'react-achievements';
+
+const App = () => {
+  return (
+    <AchievementProvider
+      achievements={gameAchievements}
+      storage={StorageType.RestAPI}
+      restApiConfig={{
+        baseUrl: 'https://api.example.com',
+        userId: getCurrentUserId(),
+        headers: {
+          'Authorization': `Bearer ${getAuthToken()}`
+        },
+        timeout: 10000  // Optional, default 10s
+      }}
+    >
+      <Game />
+    </AchievementProvider>
+  );
+};
+```
+
+**API Endpoints Expected:**
+```
+GET    /users/:userId/achievements/metrics
+PUT    /users/:userId/achievements/metrics
+GET    /users/:userId/achievements/unlocked
+PUT    /users/:userId/achievements/unlocked
+DELETE /users/:userId/achievements
+```
+
+**Benefits:**
+- ✅ Cross-device synchronization
+- ✅ Server-side backup
+- ✅ User authentication support
+- ✅ Centralized data management
+
+### Offline Queue Storage
+
+Offline-first storage with automatic sync when back online:
+
+```tsx
+import {
+  AchievementProvider,
+  OfflineQueueStorage,
+  RestApiStorage
+} from 'react-achievements';
+
+// Wrap REST API storage with offline queue
+const restApi = new RestApiStorage({
+  baseUrl: 'https://api.example.com',
+  userId: 'user123',
+  headers: { 'Authorization': 'Bearer token' }
+});
+
+const offlineStorage = new OfflineQueueStorage(restApi);
+
+const App = () => {
+  return (
+    <AchievementProvider
+      achievements={gameAchievements}
+      storage={offlineStorage}
+    >
+      <Game />
+    </AchievementProvider>
+  );
+};
+```
+
+**Benefits:**
+- ✅ Works offline - queues operations locally
+- ✅ Automatic sync when connection restored
+- ✅ Persistent queue survives page refreshes
+- ✅ Graceful degradation for poor connectivity
+
+### Custom Async Storage
+
+You can create custom async storage by implementing the `AsyncAchievementStorage` interface:
+
+```tsx
+import {
+  AsyncAchievementStorage,
+  AchievementMetrics,
+  AsyncStorageAdapter,
+  AchievementProvider
+} from 'react-achievements';
+
+class MyCustomAsyncStorage implements AsyncAchievementStorage {
+  async getMetrics(): Promise<AchievementMetrics> {
+    // Your async implementation (e.g., fetch from database)
+    const response = await fetch('/my-api/metrics');
+    return response.json();
+  }
+
+  async setMetrics(metrics: AchievementMetrics): Promise<void> {
+    await fetch('/my-api/metrics', {
+      method: 'PUT',
+      body: JSON.stringify(metrics)
+    });
+  }
+
+  async getUnlockedAchievements(): Promise<string[]> {
+    const response = await fetch('/my-api/unlocked');
+    return response.json();
+  }
+
+  async setUnlockedAchievements(achievements: string[]): Promise<void> {
+    await fetch('/my-api/unlocked', {
+      method: 'PUT',
+      body: JSON.stringify(achievements)
+    });
+  }
+
+  async clear(): Promise<void> {
+    await fetch('/my-api/clear', { method: 'DELETE' });
+  }
+}
+
+// Wrap with adapter for optimistic updates
+const customStorage = new MyCustomAsyncStorage();
+const adapter = new AsyncStorageAdapter(customStorage, {
+  onError: (error) => console.error('Storage error:', error)
+});
+
+const App = () => {
+  return (
+    <AchievementProvider
+      achievements={gameAchievements}
+      storage={adapter}
+    >
+      <Game />
+    </AchievementProvider>
+  );
+};
+```
+
+**How AsyncStorageAdapter Works:**
+- **Optimistic Updates**: Returns cached data immediately (no waiting)
+- **Eager Loading**: Preloads data during initialization
+- **Background Writes**: All writes happen async without blocking UI
+- **Error Handling**: Optional error callback for failed operations
+
 ## Custom Storage
 
-You can implement your own storage solution by implementing the `AchievementStorage` interface:
+You can implement your own synchronous storage solution by implementing the `AchievementStorage` interface:
 
 ```tsx
 import { AchievementStorage, AchievementMetrics, AchievementProvider } from 'react-achievements';
@@ -946,7 +1126,9 @@ const result = importAchievementData(data, {
   strategy: 'replace',
   achievements
 });
+```
 
+```tsx
 // Merge: Combine imported and existing data
 // - Takes maximum values for metrics
 // - Combines unlocked achievements
@@ -954,6 +1136,9 @@ const result = importAchievementData(data, {
   strategy: 'merge',
   achievements
 });
+```
+
+```tsx
 
 // Preserve: Only import new achievements, keep existing data
 const result = importAchievementData(data, {
