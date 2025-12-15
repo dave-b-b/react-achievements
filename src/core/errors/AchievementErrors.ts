@@ -79,17 +79,22 @@ export class ConfigurationError extends AchievementError {
 }
 
 /**
- * Error thrown when sync operations fail (for async storage backends)
+ * Error thrown when network sync operations fail
  */
 export class SyncError extends AchievementError {
-  constructor(message: string, public originalError?: Error) {
+  public readonly statusCode?: number;
+  public readonly timeout?: number;
+
+  constructor(message: string, details?: { statusCode?: number; timeout?: number }) {
     super(
       message,
       'SYNC_ERROR',
-      true,
-      'Check your network connection and backend server status. The operation will be retried automatically.'
+      true, // recoverable (can retry)
+      'Check your network connection and try again. If the problem persists, achievements will sync when connection is restored.'
     );
     this.name = 'SyncError';
+    this.statusCode = details?.statusCode;
+    this.timeout = details?.timeout;
   }
 }
 

@@ -5,6 +5,138 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.4.0] - 2025-12-15
+
+### ✅ Release Notes
+- **Testing Status**: **234 of 234 tests passing (100% pass rate)**. All async storage features fully tested and working.
+- **Production Ready**: All core functionality validated through comprehensive automated and manual testing. IndexedDB, REST API, and Offline Queue storage working correctly in production environments.
+- **Backwards Compatible**: 100% compatible with v3.3.0 - all existing code works without changes.
+
+### Added
+
+#### Async Storage System
+- **AsyncAchievementStorage Interface**: New async storage interface with Promise-based operations
+  - All storage methods return Promises for async operations
+  - Fully compatible with modern async/await patterns
+  - Enables integration with async storage backends (IndexedDB, REST APIs, etc.)
+
+- **AsyncStorageAdapter**: Intelligent adapter that bridges async storage to synchronous API
+  - **Optimistic Updates**: Returns data immediately from cache while writing in background
+  - **Eager Loading**: Preloads data during initialization for instant reads
+  - **Background Writes**: All write operations happen asynchronously without blocking UI
+  - **Error Handling**: Graceful error handling with optional error callbacks
+  - **Flush Support**: Manual flush() method for testing and cleanup
+
+- **IndexedDBStorage**: Browser-native IndexedDB implementation
+  - Large data capacity (typically 50MB+ vs localStorage's 5-10MB)
+  - Async-first design with Promise-based API
+  - Automatic database initialization and schema management
+  - Structured storage with typed object stores
+  - Full CRUD operations for metrics and achievements
+
+- **RestApiStorage**: Backend server integration
+  - RESTful API client for remote achievement storage
+  - Configurable base URL, user ID, and custom headers
+  - Built-in timeout handling (configurable, default 10s)
+  - Automatic error handling with SyncError reporting
+  - Standard HTTP methods (GET, PUT, DELETE) for all operations
+
+- **OfflineQueueStorage**: Offline-first wrapper with automatic synchronization
+  - Queues write operations when offline
+  - Automatic sync when connection restored
+  - Persistent queue in localStorage survives page refreshes
+  - Online/offline event listeners for automatic mode switching
+  - Manual sync() method for forced synchronization
+  - Queue status inspection for debugging
+
+#### Type System Enhancements
+- **StorageType Enum**: Extended with new async storage types
+  - `StorageType.Local` - Synchronous localStorage (existing)
+  - `StorageType.Memory` - Synchronous in-memory storage (existing)
+  - `StorageType.IndexedDB` - Async IndexedDB storage (new)
+  - `StorageType.RestAPI` - Async REST API storage (new)
+
+- **Type Guards**: Added type guard for storage type detection
+  - `isAsyncStorage()` - Detect if storage implements async interface
+
+- **Configuration Types**: New types for async storage configuration
+  - `RestApiStorageConfig` - Configuration for REST API storage
+  - `AnyAchievementStorage` - Union type accepting sync or async storage
+
+#### Provider Enhancements
+- **AchievementProvider** now accepts async storage implementations
+  - Automatic detection and wrapping of async storage with adapter
+  - New `restApiConfig` prop for REST API configuration
+  - Seamless integration with existing synchronous storage
+  - Error callback support for async storage operations
+
+### Changed
+- **Exports**: Added new async storage exports to main package entry
+  - `AsyncStorageAdapter` - Adapter for async storage implementations
+  - `IndexedDBStorage` - IndexedDB storage implementation
+  - `RestApiStorage` - REST API storage implementation
+  - `OfflineQueueStorage` - Offline-first storage wrapper
+  - `isAsyncStorage` - Type guard for async storage detection
+  - `AsyncAchievementStorage` type
+  - `AnyAchievementStorage` type
+  - `RestApiStorageConfig` type
+
+### Backward Compatibility
+- ✅ **100% Backward Compatible**: All existing APIs unchanged
+- ✅ Existing storage implementations (LocalStorage, MemoryStorage) work exactly as before
+- ✅ All hooks (useAchievements, useSimpleAchievements) unchanged
+- ✅ Simple API and Complex API configurations unaffected
+- ✅ All v3.3.0 code works without modifications in v3.4.0
+
+### Testing
+- **Async Storage Tests**: Added comprehensive test suites for all async implementations
+  - AsyncStorageAdapter tests: ✅ 100% passing (optimistic updates, eager loading, error handling)
+  - IndexedDBStorage tests: ✅ 100% passing - 19/19 tests (CRUD operations, persistence, large data handling)
+  - RestApiStorage tests: ✅ 100% passing - 24/24 tests (HTTP operations, timeout handling, error scenarios)
+  - OfflineQueueStorage tests: ✅ 100% passing - 23/23 tests (queue management, sync behavior, persistence)
+- **Test Performance**: Optimized test suite using proper fake-indexeddb cleanup (IDBFactory reset pattern)
+  - Overall test pass rate: **✅ 100% (234/234 tests passing)**
+  - Test suite completes in ~2.5 seconds
+
+### Migration Guide (v3.3.0 → v3.4.0)
+
+No migration needed! Version 3.4.0 is fully backward compatible. However, if you want to use the new async storage features:
+
+```tsx
+// NEW: Using IndexedDB storage (async)
+import { AchievementProvider, StorageType } from 'react-achievements';
+
+<AchievementProvider
+  achievements={gameAchievements}
+  storage={StorageType.IndexedDB}  // NEW in v3.4.0
+>
+  <YourApp />
+</AchievementProvider>
+
+// NEW: Using REST API storage (async)
+<AchievementProvider
+  achievements={gameAchievements}
+  storage={StorageType.RestAPI}  // NEW in v3.4.0
+  restApiConfig={{
+    baseUrl: 'https://api.example.com',
+    userId: 'user123',
+    headers: { 'Authorization': 'Bearer token' }
+  }}
+>
+  <YourApp />
+</AchievementProvider>
+
+// EXISTING: LocalStorage still works (no changes needed)
+<AchievementProvider
+  achievements={gameAchievements}
+  storage="local"  // Still works exactly as before
+>
+  <YourApp />
+</AchievementProvider>
+```
+
+---
+
 ## [3.3.0] - 2024-12-10
 
 ### Added

@@ -67,6 +67,25 @@ export interface AchievementStorage {
     clear(): void;
 }
 
+// Async storage interface - all operations return Promises
+export interface AsyncAchievementStorage {
+    getMetrics(): Promise<AchievementMetrics>;
+    setMetrics(metrics: AchievementMetrics): Promise<void>;
+    getUnlockedAchievements(): Promise<string[]>;
+    setUnlockedAchievements(achievements: string[]): Promise<void>;
+    clear(): Promise<void>;
+}
+
+// Union type for provider to accept both sync and async storage
+export type AnyAchievementStorage = AchievementStorage | AsyncAchievementStorage;
+
+// Type guard to detect async storage
+export function isAsyncStorage(storage: AnyAchievementStorage): storage is AsyncAchievementStorage {
+    // Check if methods return Promises
+    const testResult = (storage as any).getMetrics();
+    return testResult && typeof testResult.then === 'function';
+}
+
 export interface AchievementContextValue {
     updateMetrics: (metrics: AchievementMetrics | ((prev: AchievementMetrics) => AchievementMetrics)) => void;
     unlockedAchievements: string[];
@@ -101,6 +120,8 @@ export interface AchievementProviderProps {
 }
 
 export enum StorageType {
-    Local = 'local',
-    Memory = 'memory'
+    Local = 'local',           // Synchronous localStorage
+    Memory = 'memory',         // Synchronous in-memory storage
+    IndexedDB = 'indexeddb',   // Asynchronous IndexedDB storage
+    RestAPI = 'restapi'        // Asynchronous REST API storage
 } 

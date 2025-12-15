@@ -1,27 +1,38 @@
 // Core Types
-export type { 
-    AchievementMetrics, 
-    AchievementConfiguration, 
+export type {
+    AchievementMetrics,
+    AchievementConfiguration,
     AchievementConfigurationType,
     SimpleAchievementConfig,
     SimpleAchievementDetails,
     CustomAchievementDetails,
-    AchievementDetails, 
+    AchievementDetails,
     AchievementCondition,
-    AchievementMetricValue, 
+    AchievementMetricValue,
     AchievementMetricArrayValue,
     InitialAchievementMetrics,
     AchievementState,
     AchievementStorage,
+    AsyncAchievementStorage,
+    AnyAchievementStorage,
     AchievementContextValue,
     StylesProps,
     AchievementProviderProps,
 } from './core/types';
 
-// Core Storage Interface
+// Type Guards
+export { isAsyncStorage } from './core/types';
+
+// Core Storage Interface (Synchronous)
 export { LocalStorage } from './core/storage/LocalStorage';
 export { MemoryStorage } from './core/storage/MemoryStorage';
 export { StorageType } from './core/types';
+
+// Async Storage Implementations (NEW in v3.3.0)
+export { AsyncStorageAdapter } from './core/storage/AsyncStorageAdapter';
+export { IndexedDBStorage } from './core/storage/IndexedDBStorage';
+export { RestApiStorage, type RestApiStorageConfig } from './core/storage/RestApiStorage';
+export { OfflineQueueStorage } from './core/storage/OfflineQueueStorage';
 
 // Core UI Components
 export { BadgesButton } from './core/components/BadgesButton';
