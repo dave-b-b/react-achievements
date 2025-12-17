@@ -108,7 +108,7 @@ describe('configNormalizer', () => {
             title: 'Perfect Combo',
             description: 'Score 1000+ with perfect accuracy',
             icon: 'diamond',
-            condition: (metrics) => metrics.score >= 1000 && metrics.accuracy === 100
+            condition: (_metrics) => _metrics.score >= 1000 && _metrics.accuracy === 100
           }
         }
       };

@@ -63,14 +63,14 @@ export function importAchievementData(
     expectedConfigHash
   } = options;
 
-  const errors: string[] = [];
+  const _errors: string[] = [];
   const warnings: string[] = [];
 
   // Parse JSON
   let data: ExportedData;
   try {
     data = JSON.parse(jsonString);
-  } catch (error) {
+  } catch {
     return {
       success: false,
       imported: { metrics: 0, achievements: 0 },

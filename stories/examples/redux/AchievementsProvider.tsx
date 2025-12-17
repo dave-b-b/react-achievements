@@ -6,7 +6,7 @@ import { store, RootState, unlockAchievement, updateProgress, resetAchievements 
 // Example achievement configuration
 const achievementConfig: AchievementConfiguration = {
   score: [{
-    isConditionMet: (value: AchievementMetricArrayValue, state: AchievementState): boolean => {
+    isConditionMet: (value: AchievementMetricArrayValue, _state: AchievementState): boolean => {
       const numValue = Array.isArray(value) ? value[0] : value;
       return typeof numValue === 'number' && numValue >= 100;
     },
@@ -18,7 +18,7 @@ const achievementConfig: AchievementConfiguration = {
     }
   }],
   login: [{
-    isConditionMet: (value: AchievementMetricArrayValue, state: AchievementState): boolean => {
+    isConditionMet: (value: AchievementMetricArrayValue, _state: AchievementState): boolean => {
       const boolValue = Array.isArray(value) ? value[0] : value;
       return typeof boolValue === 'boolean' && boolValue === true;
     },

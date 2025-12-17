@@ -1,4 +1,3 @@
-import React from 'react';
 import { ToastContent, ToastOptions } from 'react-toastify';
 
 const mockToast = jest.fn();

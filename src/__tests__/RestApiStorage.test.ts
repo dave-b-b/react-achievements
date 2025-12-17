@@ -357,8 +357,8 @@ describe('RestApiStorage', () => {
             const storage1 = new RestApiStorage({ ...config, userId: 'user1' });
             const storage2 = new RestApiStorage({ ...config, userId: 'user2' });
 
-            const metrics1 = await storage1.getMetrics();
-            const metrics2 = await storage2.getMetrics();
+            const _metrics1 = await storage1.getMetrics();
+            const _metrics2 = await storage2.getMetrics();
 
             expect(fetch).toHaveBeenCalledWith(
                 'https://api.test.com/users/user1/achievements/metrics',
@@ -386,7 +386,7 @@ describe('RestApiStorage', () => {
 
             try {
                 await storage.getMetrics();
-            } catch (error) {
+            } catch {
                 // Expected to fail
             }
 

@@ -256,7 +256,7 @@ export const CustomConditionAchievements: StoryObj<typeof AchievementProvider> =
           title: 'Perfect Combo',
           description: 'Score 1000+ with 100% accuracy',
           icon: '💎',
-          condition: (metrics) => metrics.score >= 1000 && metrics.accuracy === 100
+          condition: (_metrics) => _metrics.score >= 1000 && _metrics.accuracy === 100
         }
       },
       gameplay: {
@@ -264,7 +264,7 @@ export const CustomConditionAchievements: StoryObj<typeof AchievementProvider> =
           title: 'Speed Runner',
           description: 'Complete level 10 in under 5 minutes',
           icon: '⚡',
-          condition: (metrics) => metrics.level >= 10 && metrics.completionTime < 300
+          condition: (_metrics) => _metrics.level >= 10 && _metrics.completionTime < 300
         }
       }
     } as SimpleAchievementConfig,

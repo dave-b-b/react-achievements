@@ -4,7 +4,6 @@ import '@testing-library/jest-dom';
 import { AchievementProvider, AchievementContext } from '../providers/AchievementProvider';
 import { toast } from 'react-toastify';
 import { StorageType, AchievementConfiguration } from '../core/types';
-import { MemoryStorage } from '../core/storage/MemoryStorage';
 
 // Mock react-toastify
 jest.mock('react-toastify');

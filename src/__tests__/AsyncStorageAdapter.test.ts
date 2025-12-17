@@ -156,7 +156,7 @@ describe('AsyncStorageAdapter', () => {
                 throw new Error('Init error');
             };
 
-            const adapter = new AsyncStorageAdapter(mockStorage, {
+            const _adapter = new AsyncStorageAdapter(mockStorage, {
                 onError: (error) => errors.push(error)
             });
 

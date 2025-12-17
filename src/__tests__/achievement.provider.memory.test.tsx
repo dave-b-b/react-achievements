@@ -1,13 +1,11 @@
 import React from 'react';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
-import { 
-  AchievementProvider, 
+import {
+  AchievementProvider,
   AchievementContext,
-  AchievementConfiguration, 
-  AchievementMetricValue, 
-  AchievementState, 
+  AchievementConfiguration,
+  AchievementState,
   AchievementMetricArrayValue,
-  LocalStorage,
   StorageType
 } from '../index';
 import { MemoryStorage } from '../core/storage/MemoryStorage';
@@ -50,7 +48,7 @@ const TestComponent = () => {
 describe('AchievementProvider with Memory Storage', () => {
   const achievementConfig: AchievementConfiguration = {
     score: [{
-      isConditionMet: (value: AchievementMetricArrayValue, state: AchievementState) => {
+      isConditionMet: (value: AchievementMetricArrayValue, _state: AchievementState) => {
         const numValue = Array.isArray(value) ? value[0] : value;
         return typeof numValue === 'number' && numValue >= 100;
       },
@@ -62,7 +60,7 @@ describe('AchievementProvider with Memory Storage', () => {
       }
     }],
     multiValue: [{
-      isConditionMet: (value: AchievementMetricArrayValue, state: AchievementState) => {
+      isConditionMet: (value: AchievementMetricArrayValue, _state: AchievementState) => {
         if (!Array.isArray(value)) return false;
         return value.length >= 3 && value.every(v => typeof v === 'number');
       },
@@ -188,7 +186,7 @@ describe('AchievementProvider with Memory Storage', () => {
   it('should handle multi-value metrics', async () => {
     const storage = new MemoryStorage();
     
-    const { container } = render(
+    render(
       <AchievementProvider
         achievements={achievementConfig}
         storage={storage}

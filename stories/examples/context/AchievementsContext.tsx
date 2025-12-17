@@ -46,7 +46,7 @@ function achievementsReducer(state: AchievementsState, action: AchievementsActio
 // Example achievement configuration
 const achievementConfig: AchievementConfiguration = {
   score: [{
-    isConditionMet: (value: AchievementMetricArrayValue, state: AchievementState) => {
+    isConditionMet: (value: AchievementMetricArrayValue, _state: AchievementState) => {
       const numValue = Array.isArray(value) ? value[0] : value;
       return typeof numValue === 'number' && numValue >= 100;
     },
@@ -58,7 +58,7 @@ const achievementConfig: AchievementConfiguration = {
     }
   }],
   login: [{
-    isConditionMet: (value: AchievementMetricArrayValue, state: AchievementState) => {
+    isConditionMet: (value: AchievementMetricArrayValue, _state: AchievementState) => {
       const boolValue = Array.isArray(value) ? value[0] : value;
       return typeof boolValue === 'boolean' && boolValue === true;
     },
@@ -85,11 +85,11 @@ export const ContextAchievementsProvider: React.FC<{ children: ReactNode }> = ({
     progress: {},
   });
 
-  const handleUnlock = (achievement: AchievementDetails) => {
+  const _handleUnlock = (achievement: AchievementDetails) => {
     dispatch({ type: 'UNLOCK_ACHIEVEMENT', achievement });
   };
 
-  const handleProgress = (achievementId: string, progress: number) => {
+  const _handleProgress = (achievementId: string, progress: number) => {
     dispatch({ type: 'UPDATE_PROGRESS', achievementId, progress });
   };
 

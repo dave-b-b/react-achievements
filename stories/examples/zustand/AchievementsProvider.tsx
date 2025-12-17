@@ -1,11 +1,11 @@
 import React from 'react';
-import { AchievementProvider, AchievementConfiguration, AchievementMetricArrayValue, AchievementState, StorageType, AchievementDetails, AchievementStorage } from '../../../src';
+import { AchievementProvider, AchievementConfiguration, AchievementMetricArrayValue, AchievementState, AchievementDetails, AchievementStorage } from '../../../src';
 import { useAchievementsStore } from './store';
 
 // Example achievement configuration
 const achievementConfig: AchievementConfiguration = {
   score: [{
-    isConditionMet: (value: AchievementMetricArrayValue, state: AchievementState) => {
+    isConditionMet: (value: AchievementMetricArrayValue, _state: AchievementState) => {
       const numValue = Array.isArray(value) ? value[0] : value;
       return typeof numValue === 'number' && numValue >= 100;
     },
@@ -17,7 +17,7 @@ const achievementConfig: AchievementConfiguration = {
     }
   }],
   login: [{
-    isConditionMet: (value: AchievementMetricArrayValue, state: AchievementState) => {
+    isConditionMet: (value: AchievementMetricArrayValue, _state: AchievementState) => {
       const boolValue = Array.isArray(value) ? value[0] : value;
       return typeof boolValue === 'boolean' && boolValue === true;
     },

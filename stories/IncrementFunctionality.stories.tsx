@@ -53,7 +53,7 @@ const incrementAchievements: SimpleAchievementConfig = {
 // Demo component showcasing increment functionality
 const IncrementDemo = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const { increment, track, unlocked, unlockedCount, reset, getState } = useSimpleAchievements();
+  const { increment, unlocked, unlockedCount, reset, getState } = useSimpleAchievements();
   const [metrics, setMetrics] = React.useState({ buttonClicks: 0, score: 0, coins: 0 });
 
   // Update local metrics display when state changes

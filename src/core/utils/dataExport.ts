@@ -21,7 +21,7 @@ export interface ExportedData {
  *
  * @example
  * ```typescript
- * const json = exportAchievementData(metrics, ['score_100', 'level_5']);
+ * const json = exportAchievementData(_metrics, ['score_100', 'level_5']);
  * // Save json to file or send to server
  * ```
  */

@@ -47,10 +47,10 @@ export function normalizeAchievements(config: AchievementConfigurationType): Ach
             if (hasCustomCondition(achievement)) {
                 // Custom condition function
                 return {
-                    isConditionMet: (value, state) => {
+                    isConditionMet: (_value, _state) => {
                         // Convert internal metrics format (arrays) to simple format for custom conditions
                         const simpleMetrics: Record<string, any> = {};
-                        Object.entries(state.metrics).forEach(([key, val]) => {
+                        Object.entries(_state.metrics).forEach(([key, val]) => {
                             simpleMetrics[key] = Array.isArray(val) ? val[0] : val;
                         });
                         return achievement.condition(simpleMetrics);

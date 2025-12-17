@@ -1,13 +1,12 @@
 import React from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import { create } from 'zustand';
-import { 
-  AchievementProvider, 
+import {
+  AchievementProvider,
   useAchievements,
-  AchievementConfiguration, 
-  AchievementMetricValue,
+  AchievementConfiguration,
   AchievementMetricArrayValue,
-  AchievementState 
+  AchievementState
 } from '../index';
 import '@testing-library/jest-dom';
 
@@ -34,7 +33,7 @@ interface GameStore {
 
 const useStore = create<GameStore>((set) => ({
   score: 0,
-  incrementScore: () => set((state) => ({ score: state.score + 100 })),
+  incrementScore: () => set((_state) => ({ score: _state.score + 100 })),
 }));
 
 // Test component using Zustand
@@ -62,7 +61,7 @@ describe('Achievement System with Zustand', () => {
   const mockStorage = new MockStorage();
   const achievementConfig: AchievementConfiguration = {
     score: [{
-      isConditionMet: (value: AchievementMetricArrayValue, state: AchievementState) => typeof value === 'number' && value >= 100,
+      isConditionMet: (value: AchievementMetricArrayValue, _state: AchievementState) => typeof value === 'number' && value >= 100,
       achievementDetails: {
         achievementId: 'score_100',
         achievementTitle: 'Century!',

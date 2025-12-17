@@ -143,7 +143,7 @@ describe('useSimpleAchievements', () => {
           title: 'Perfect Combo',
           description: 'Score 1000+ with perfect accuracy',
           icon: '💎',
-          condition: (metrics) => metrics.score >= 1000 && metrics.accuracy === 100
+          condition: (_metrics) => _metrics.score >= 1000 && _metrics.accuracy === 100
         }
       }
     };
@@ -179,7 +179,7 @@ describe('useSimpleAchievements', () => {
 
   it('should handle increment functionality', async () => {
     const TestComponentForIncrement: React.FC = () => {
-      const { increment, unlocked, unlockedCount, getState } = useSimpleAchievements();
+      const { increment, unlockedCount, getState } = useSimpleAchievements();
 
       return (
         <div>

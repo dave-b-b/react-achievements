@@ -4,9 +4,7 @@ import {
     AchievementProvider,
     useAchievements,
     StorageType,
-    IndexedDBStorage,
     RestApiStorage,
-    AsyncStorageAdapter,
     OfflineQueueStorage
 } from '../src/index';
 

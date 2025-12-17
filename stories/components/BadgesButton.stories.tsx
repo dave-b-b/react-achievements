@@ -1,4 +1,4 @@
-import React from 'react';
+import _React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { BadgesButton } from '../../src/core/components/BadgesButton';
 import { AchievementDetails } from '../../src/core/types';
