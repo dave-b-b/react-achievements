@@ -48,7 +48,7 @@ export class LocalStorage implements AchievementStorage {
                 metrics: this.deserializeMetrics(parsed.metrics || {}),
                 unlockedAchievements: parsed.unlockedAchievements || []
             };
-        } catch (e) {
+        } catch {
             return { metrics: {}, unlockedAchievements: [] };
         }
     }

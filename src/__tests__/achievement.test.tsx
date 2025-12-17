@@ -1,14 +1,9 @@
 import React from 'react';
-import { render, screen, fireEvent, act, cleanup } from '@testing-library/react';
-import { 
-  AchievementProvider, 
-  useAchievements, 
-  LocalStorage, 
-  BadgesButton, 
-  BadgesModal, 
-  ConfettiWrapper,
-  AchievementConfiguration,
-  AchievementMetricValue 
+import { render, screen, fireEvent, act } from '@testing-library/react';
+import {
+  AchievementProvider,
+  useAchievements,
+  AchievementConfiguration
 } from '../index';
 import Modal from 'react-modal';
 import '@testing-library/jest-dom';
@@ -85,7 +80,7 @@ describe('Achievement System', () => {
       }
     }],
     lastLogin: [{
-      isConditionMet: (value, state) => {
+      isConditionMet: (value, _state) => {
         if (!(value instanceof Date)) return false;
         const today = new Date();
         return value.getDate() === today.getDate() &&

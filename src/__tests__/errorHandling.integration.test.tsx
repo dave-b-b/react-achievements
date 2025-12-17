@@ -16,7 +16,7 @@ describe('Error Handling Integration', () => {
           return {};
         }
 
-        setMetrics(metrics: AchievementMetrics): void {
+        setMetrics(_metrics: AchievementMetrics): void {
           throw new StorageQuotaError(1000);
         }
 
@@ -24,7 +24,7 @@ describe('Error Handling Integration', () => {
           return [];
         }
 
-        setUnlockedAchievements(achievements: string[]): void {
+        setUnlockedAchievements(_achievements: string[]): void {
           // OK
         }
 
@@ -83,7 +83,7 @@ describe('Error Handling Integration', () => {
           return {};
         }
 
-        setMetrics(metrics: AchievementMetrics): void {
+        setMetrics(_metrics: AchievementMetrics): void {
           throw new StorageQuotaError(5000);
         }
 
@@ -91,7 +91,7 @@ describe('Error Handling Integration', () => {
           return [];
         }
 
-        setUnlockedAchievements(achievements: string[]): void {
+        setUnlockedAchievements(_achievements: string[]): void {
           // OK
         }
 
@@ -159,7 +159,7 @@ describe('Error Handling Integration', () => {
           return [];
         }
 
-        setUnlockedAchievements(achievements: string[]): void {
+        setUnlockedAchievements(_achievements: string[]): void {
           // OK
         }
 
@@ -259,7 +259,7 @@ describe('Error Handling Integration', () => {
           return {};
         }
 
-        setMetrics(metrics: AchievementMetrics): void {
+        setMetrics(_metrics: AchievementMetrics): void {
           throw new StorageQuotaError(1000);
         }
 
@@ -267,7 +267,7 @@ describe('Error Handling Integration', () => {
           return [];
         }
 
-        setUnlockedAchievements(achievements: string[]): void {
+        setUnlockedAchievements(_achievements: string[]): void {
           // OK
         }
 
@@ -317,7 +317,7 @@ describe('Error Handling Integration', () => {
           return {};
         }
 
-        setMetrics(metrics: AchievementMetrics): void {
+        setMetrics(_metrics: AchievementMetrics): void {
           throw new StorageQuotaError(1000);
         }
 
@@ -325,7 +325,7 @@ describe('Error Handling Integration', () => {
           return [];
         }
 
-        setUnlockedAchievements(achievements: string[]): void {
+        setUnlockedAchievements(_achievements: string[]): void {
           // OK
         }
 
@@ -377,7 +377,7 @@ describe('Error Handling Integration', () => {
           return {};
         }
 
-        setMetrics(metrics: AchievementMetrics): void {
+        setMetrics(_metrics: AchievementMetrics): void {
           throw new StorageQuotaError(10000);
         }
 
@@ -385,7 +385,7 @@ describe('Error Handling Integration', () => {
           return [];
         }
 
-        setUnlockedAchievements(achievements: string[]): void {
+        setUnlockedAchievements(_achievements: string[]): void {
           // OK
         }
 

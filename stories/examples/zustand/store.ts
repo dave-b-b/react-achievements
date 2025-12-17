@@ -13,29 +13,29 @@ interface AchievementsState {
   reset: () => void;
 }
 
-export const useAchievementsStore = create<AchievementsState>((set, get) => ({
+export const useAchievementsStore = create<AchievementsState>((set, _get) => ({
   unlockedAchievements: [],
   progress: {},
   unlockAchievement: (achievement) =>
-    set((state) => {
+    set((_state) => {
       // Check if achievement is already unlocked
-      const isUnlocked = state.unlockedAchievements.some(
+      const isUnlocked = _state.unlockedAchievements.some(
         (a) => a.achievementId === achievement.achievementId
       );
 
       if (isUnlocked) {
-        return state;
+        return _state;
       }
 
       return {
-        ...state,
-        unlockedAchievements: [...state.unlockedAchievements, achievement],
+        ..._state,
+        unlockedAchievements: [..._state.unlockedAchievements, achievement],
       };
     }),
   updateProgress: (achievementId, value) =>
-    set((state) => ({
+    set((_state) => ({
       progress: {
-        ...state.progress,
+        ..._state.progress,
         [achievementId]: value,
       },
     })),

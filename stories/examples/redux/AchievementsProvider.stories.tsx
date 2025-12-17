@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { ReduxAchievementsProvider } from './AchievementsProvider';
-import { useAchievements, BadgesButton, BadgesModal, AchievementDetails, defaultAchievementIcons } from '../../../src';
+import { useAchievements, BadgesButton, BadgesModal, defaultAchievementIcons } from '../../../src';
 import { useDispatch, useSelector } from 'react-redux';
 import { resetAchievements } from './store';
 import type { RootState } from './store';

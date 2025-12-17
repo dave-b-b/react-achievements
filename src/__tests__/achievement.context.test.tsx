@@ -75,7 +75,7 @@ describe('Achievement System with Context', () => {
   const mockStorage = new MockStorage();
   const achievementConfig: AchievementConfiguration = {
     score: [{
-      isConditionMet: (value: any, state: any) => typeof value === 'number' && value >= 100,
+      isConditionMet: (value: any, _state: any) => typeof value === 'number' && value >= 100,
       achievementDetails: {
         achievementId: 'score_100',
         achievementTitle: 'Century!',

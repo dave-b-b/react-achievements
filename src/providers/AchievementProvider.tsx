@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
-import { AchievementConfiguration, AchievementConfigurationType, AchievementStorage, AsyncAchievementStorage, isAsyncStorage, InitialAchievementMetrics, AchievementMetrics, StorageType } from '../core/types';
+import React, { createContext, useEffect, useState, useRef } from 'react';
+import { AchievementConfigurationType, AchievementStorage, AsyncAchievementStorage, isAsyncStorage, AchievementMetrics, StorageType } from '../core/types';
 import { normalizeAchievements } from '../core/utils/configNormalizer';
 import { LocalStorage } from '../core/storage/LocalStorage';
 import { MemoryStorage } from '../core/storage/MemoryStorage';
@@ -70,7 +70,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   const storageRef = useRef<AchievementStorage | null>(null);
   const metricsUpdatedRef = useRef<boolean>(false);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [currentAchievement, setCurrentAchievement] = useState<AchievementDetails | null>(null);
+  const [_currentAchievement, setCurrentAchievement] = useState<AchievementDetails | null>(null);
 
   if (!storageRef.current) {
     if (typeof storage === 'string') {
@@ -82,12 +82,13 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         case StorageType.Memory:
           storageRef.current = new MemoryStorage();
           break;
-        case StorageType.IndexedDB:
+        case StorageType.IndexedDB: {
           // Wrap async storage with adapter
           const indexedDB = new IndexedDBStorage('react-achievements');
           storageRef.current = new AsyncStorageAdapter(indexedDB, { onError });
           break;
-        case StorageType.RestAPI:
+        }
+        case StorageType.RestAPI: {
           if (!restApiConfig) {
             throw new ConfigurationError('restApiConfig is required when using StorageType.RestAPI');
           }
@@ -95,6 +96,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
           const restApi = new RestApiStorage(restApiConfig);
           storageRef.current = new AsyncStorageAdapter(restApi, { onError });
           break;
+        }
         default:
           throw new ConfigurationError(`Unsupported storage type: ${storage}`);
       }
@@ -185,7 +187,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     
     metricsUpdatedRef.current = false;
     
-    let newlyUnlockedAchievements: string[] = [];
+    const newlyUnlockedAchievements: string[] = [];
     let achievementToShow: AchievementDetails | null = null;
 
     Object.entries(achievements).forEach(([metricName, metricAchievements]) => {

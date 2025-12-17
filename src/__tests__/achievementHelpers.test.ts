@@ -235,7 +235,7 @@ describe('AchievementBuilder - Three-Tier API', () => {
         const config = AchievementBuilder.create()
           .withId('weekly_login')
           .withMetric('lastLoginDate')
-          .withCondition((value, state) => {
+          .withCondition((value, _state) => {
             if (value instanceof Date) {
               return value.getTime() > Date.now() - (7 * 24 * 60 * 60 * 1000);
             }
