@@ -5,6 +5,43 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.4.2] - 2025-12-17
+
+### Changed
+- **Documentation**: Added missing changelog entry for version 3.4.1
+  - Documented CI/CD pipeline addition
+  - Documented ESLint configuration and linting fixes
+  - No code changes in this release
+
+---
+
+## [3.4.1] - 2025-12-17
+
+### Added
+- **GitHub Actions CI/CD Pipeline**: Automated continuous integration workflow
+  - Lint job: Runs ESLint checks on every push and pull request
+  - Test job: Executes full test suite with type checking (234 tests)
+  - Build job: Validates package builds successfully
+  - Runs on Node.js 18 with npm caching for faster builds
+  - Triggers on push to main branch and all pull requests
+
+- **ESLint Configuration**: Modern ESLint flat config setup
+  - Migrated to `eslint.config.mjs` format
+  - TypeScript and React plugin support
+  - Consistent code quality standards across the project
+
+### Changed
+- **Code Quality**: Fixed linting issues across 20+ files
+  - Updated test files to comply with ESLint rules
+  - Fixed linting issues in source code and stories
+  - Improved code consistency and maintainability
+
+### Developer Experience
+- **Automated Quality Gates**: CI now catches linting and test failures before merge
+- **Version**: Bumped to 3.4.1 in package.json
+
+---
+
 ## [3.4.0] - 2025-12-15
 
 ### ✅ Release Notes
