@@ -2,7 +2,7 @@ import _React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Modal from 'react-modal';
 import { BadgesModal } from '../../src/core/components/BadgesModal';
-import { AchievementDetails } from '../../src/core/types';
+import { AchievementDetails, AchievementWithStatus } from '../../src/core/types';
 import { defaultAchievementIcons } from '../../src/core/icons/defaultIcons';
 
 // Set up Modal for Storybook environment
@@ -147,5 +147,75 @@ export const CustomStyling: Story = {
         color: '#aaaaaa',
       },
     },
+  },
+};
+
+// Sample achievements with unlock status for the new feature
+const achievementsWithStatus: AchievementWithStatus[] = [
+  {
+    achievementId: '1',
+    achievementTitle: 'First Login',
+    achievementDescription: 'Logged in for the first time',
+    achievementIconKey: 'firstStep',
+    isUnlocked: true,
+  },
+  {
+    achievementId: '2',
+    achievementTitle: 'Profile Complete',
+    achievementDescription: 'Completed your profile information',
+    achievementIconKey: 'achievement',
+    isUnlocked: true,
+  },
+  {
+    achievementId: '3',
+    achievementTitle: 'First Post',
+    achievementDescription: 'Created your first post',
+    achievementIconKey: 'writer',
+    isUnlocked: false,
+  },
+  {
+    achievementId: '4',
+    achievementTitle: 'Social Butterfly',
+    achievementDescription: 'Follow 10 other users',
+    achievementIconKey: 'community',
+    isUnlocked: false,
+  },
+  {
+    achievementId: '5',
+    achievementTitle: 'Master Contributor',
+    achievementDescription: 'Create 100 posts',
+    achievementIconKey: 'winner',
+    isUnlocked: false,
+  },
+];
+
+/**
+ * Shows all achievements including locked ones.
+ * Locked achievements are displayed with reduced opacity and a lock icon.
+ */
+export const ShowAllAchievements: Story = {
+  args: {
+    isOpen: true,
+    onClose: () => {},
+    achievements: [],
+    showAllAchievements: true,
+    allAchievements: achievementsWithStatus,
+    icons: defaultAchievementIcons,
+  },
+};
+
+/**
+ * Shows all achievements with unlock condition hints.
+ * This helps users understand what they need to do to unlock each achievement.
+ */
+export const WithUnlockConditions: Story = {
+  args: {
+    isOpen: true,
+    onClose: () => {},
+    achievements: [],
+    showAllAchievements: true,
+    showUnlockConditions: true,
+    allAchievements: achievementsWithStatus,
+    icons: defaultAchievementIcons,
   },
 }; 

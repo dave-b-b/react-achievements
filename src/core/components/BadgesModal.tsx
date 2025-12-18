@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from 'react-modal';
-import { AchievementDetails, StylesProps } from '../types';
+import { AchievementDetails, AchievementWithStatus, StylesProps } from '../types';
 import { defaultAchievementIcons } from '../icons/defaultIcons';
 
 interface BadgesModalProps {
@@ -9,6 +9,9 @@ interface BadgesModalProps {
     achievements: AchievementDetails[];
     styles?: StylesProps['badgesModal'];
     icons?: Record<string, string>;
+    showAllAchievements?: boolean;
+    showUnlockConditions?: boolean;
+    allAchievements?: AchievementWithStatus[];
 }
 
 export const BadgesModal: React.FC<BadgesModalProps> = ({
@@ -16,11 +19,14 @@ export const BadgesModal: React.FC<BadgesModalProps> = ({
     onClose,
     achievements,
     styles = {},
-    icons = {}
+    icons = {},
+    showAllAchievements = false,
+    showUnlockConditions = false,
+    allAchievements,
 }) => {
     // Merge custom icons with default icons, with custom icons taking precedence
     const mergedIcons: Record<string, string> = { ...defaultAchievementIcons, ...icons };
-    
+
     const defaultOverlayStyle: React.CSSProperties = {
         position: 'fixed',
         top: 0,
@@ -93,6 +99,20 @@ export const BadgesModal: React.FC<BadgesModalProps> = ({
         justifyContent: 'center',
     };
 
+    const defaultLockedAchievementItemStyle: React.CSSProperties = {
+        ...defaultAchievementItemStyle,
+        opacity: 0.5,
+        backgroundColor: '#e0e0e0',
+    };
+
+    const defaultLockIconStyle: React.CSSProperties = {
+        fontSize: '24px',
+        position: 'absolute',
+        top: '50%',
+        right: '16px',
+        transform: 'translateY(-50%)',
+    };
+
     return (
         <Modal
             isOpen={isOpen}
@@ -114,33 +134,83 @@ export const BadgesModal: React.FC<BadgesModalProps> = ({
                 </button>
             </div>
             <div style={{ ...defaultAchievementListStyle, ...styles?.achievementList }}>
-                {achievements.map((achievement) => (
-                    <div
-                        key={achievement.achievementId}
-                        style={{ ...defaultAchievementItemStyle, ...styles?.achievementItem }}
-                    >
-                        {achievement.achievementIconKey && (
-                            <div style={{ ...defaultAchievementIconStyle, ...styles?.achievementIcon }}>
-                                {achievement.achievementIconKey in mergedIcons 
-                                    ? mergedIcons[achievement.achievementIconKey]
-                                    : mergedIcons.default || '⭐'}
-                            </div>
-                        )}
-                        <div>
-                            <h3 style={{ ...defaultAchievementTitleStyle, ...styles?.achievementTitle }}>
-                                {achievement.achievementTitle}
-                            </h3>
-                            <p style={{ ...defaultAchievementDescriptionStyle, ...styles?.achievementDescription }}>
-                                {achievement.achievementDescription}
-                            </p>
-                        </div>
-                    </div>
-                ))}
-                {achievements.length === 0 && (
-                    <p style={{ textAlign: 'center', color: '#666' }}>
-                        No achievements unlocked yet. Keep going!
-                    </p>
-                )}
+                {(() => {
+                    // Determine which achievements to display
+                    const achievementsToDisplay = showAllAchievements && allAchievements
+                        ? allAchievements
+                        : achievements.map(a => ({ ...a, isUnlocked: true }));
+
+                    return (
+                        <>
+                            {achievementsToDisplay.map((achievement) => {
+                                const isLocked = !achievement.isUnlocked;
+
+                                return (
+                                    <div
+                                        key={achievement.achievementId}
+                                        style={{
+                                            ...(isLocked
+                                                ? { ...defaultLockedAchievementItemStyle, ...styles?.lockedAchievementItem }
+                                                : defaultAchievementItemStyle
+                                            ),
+                                            ...styles?.achievementItem,
+                                            position: 'relative',
+                                        }}
+                                    >
+                                        {achievement.achievementIconKey && (
+                                            <div style={{
+                                                ...defaultAchievementIconStyle,
+                                                ...styles?.achievementIcon,
+                                                opacity: isLocked ? 0.4 : 1,
+                                            }}>
+                                                {achievement.achievementIconKey in mergedIcons
+                                                    ? mergedIcons[achievement.achievementIconKey]
+                                                    : mergedIcons.default || '⭐'}
+                                            </div>
+                                        )}
+                                        <div style={{ flex: 1 }}>
+                                            <h3 style={{
+                                                ...defaultAchievementTitleStyle,
+                                                ...styles?.achievementTitle,
+                                                color: isLocked ? '#999' : undefined,
+                                            }}>
+                                                {achievement.achievementTitle}
+                                            </h3>
+                                            <p style={{
+                                                ...defaultAchievementDescriptionStyle,
+                                                ...styles?.achievementDescription,
+                                                color: isLocked ? '#aaa' : '#666',
+                                            }}>
+                                                {achievement.achievementDescription}
+                                                {showUnlockConditions && isLocked && achievement.achievementDescription && (
+                                                    <span style={{
+                                                        display: 'block',
+                                                        fontSize: '12px',
+                                                        marginTop: '4px',
+                                                        fontStyle: 'italic',
+                                                        color: '#888'
+                                                    }}>
+                                                        🔓 {achievement.achievementDescription}
+                                                    </span>
+                                                )}
+                                            </p>
+                                        </div>
+                                        {isLocked && (
+                                            <div style={{ ...defaultLockIconStyle, ...styles?.lockIcon }}>
+                                                🔒
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                            {achievementsToDisplay.length === 0 && (
+                                <p style={{ textAlign: 'center', color: '#666' }}>
+                                    No achievements configured.
+                                </p>
+                            )}
+                        </>
+                    );
+                })()}
             </div>
         </Modal>
     );

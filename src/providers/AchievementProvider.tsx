@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState, useRef } from 'react';
-import { AchievementConfigurationType, AchievementStorage, AsyncAchievementStorage, isAsyncStorage, AchievementMetrics, StorageType } from '../core/types';
+import { AchievementConfigurationType, AchievementStorage, AsyncAchievementStorage, isAsyncStorage, AchievementMetrics, StorageType, AchievementWithStatus } from '../core/types';
 import { normalizeAchievements } from '../core/utils/configNormalizer';
 import { LocalStorage } from '../core/storage/LocalStorage';
 import { MemoryStorage } from '../core/storage/MemoryStorage';
@@ -33,6 +33,7 @@ export interface AchievementContextType {
   };
   exportData: () => string;
   importData: (jsonString: string, options?: ImportOptions) => ImportResult;
+  getAllAchievements: () => AchievementWithStatus[];
 }
 
 export const AchievementContext = createContext<AchievementContextType | undefined>(undefined);
@@ -282,6 +283,28 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     }
   }, [metrics, achievementState.unlocked, achievements, icons]);
 
+  const getAllAchievements = (): AchievementWithStatus[] => {
+    const result: AchievementWithStatus[] = [];
+
+    // Iterate through all normalized achievements
+    Object.entries(achievements).forEach(([_metricName, metricAchievements]) => {
+      metricAchievements.forEach((achievement) => {
+        const { achievementDetails } = achievement;
+        const isUnlocked = achievementState.unlocked.includes(achievementDetails.achievementId);
+
+        result.push({
+          achievementId: achievementDetails.achievementId,
+          achievementTitle: achievementDetails.achievementTitle,
+          achievementDescription: achievementDetails.achievementDescription,
+          achievementIconKey: achievementDetails.achievementIconKey,
+          isUnlocked,
+        });
+      });
+    });
+
+    return result;
+  };
+
   const update = (newMetrics: Record<string, any>) => {
     metricsUpdatedRef.current = true;
 
@@ -409,6 +432,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         getState,
         exportData,
         importData,
+        getAllAchievements,
       }}
     >
       {children}

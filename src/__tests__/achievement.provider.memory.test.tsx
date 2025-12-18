@@ -246,4 +246,67 @@ describe('AchievementProvider with Memory Storage', () => {
     // Toast should not be called for already unlocked achievement
     expect(toast.success).not.toHaveBeenCalled();
   });
+
+  it('should return all achievements with unlock status via getAllAchievements', async () => {
+    const TestComponentWithGetAll = () => {
+      const context = React.useContext(AchievementContext);
+
+      if (!context) {
+        throw new Error('TestComponent must be used within an AchievementProvider');
+      }
+
+      const { update, getAllAchievements } = context;
+      const [allAchievements, setAllAchievements] = React.useState<any[]>([]);
+
+      return (
+        <div>
+          <button onClick={() => update({ score: 100 })}>Update Score</button>
+          <button onClick={() => setAllAchievements(getAllAchievements())}>Get All</button>
+          <div data-testid="all-achievements">
+            {JSON.stringify(allAchievements)}
+          </div>
+        </div>
+      );
+    };
+
+    render(
+      <AchievementProvider
+        achievements={achievementConfig}
+        storage={StorageType.Memory}
+        icons={customIcons}
+      >
+        <TestComponentWithGetAll />
+      </AchievementProvider>
+    );
+
+    // Get all achievements initially (should all be locked)
+    await act(async () => {
+      fireEvent.click(screen.getByText('Get All'));
+    });
+
+    let allAchievements = JSON.parse(screen.getByTestId('all-achievements').textContent || '[]');
+    expect(allAchievements).toHaveLength(2);
+    expect(allAchievements.every((a: any) => a.isUnlocked === false)).toBe(true);
+    expect(allAchievements.find((a: any) => a.achievementId === 'score_100')).toBeDefined();
+    expect(allAchievements.find((a: any) => a.achievementId === 'multi_value')).toBeDefined();
+
+    // Unlock one achievement
+    await act(async () => {
+      fireEvent.click(screen.getByText('Update Score'));
+    });
+
+    // Get all achievements again
+    await act(async () => {
+      fireEvent.click(screen.getByText('Get All'));
+    });
+
+    allAchievements = JSON.parse(screen.getByTestId('all-achievements').textContent || '[]');
+    expect(allAchievements).toHaveLength(2);
+
+    const scoreAchievement = allAchievements.find((a: any) => a.achievementId === 'score_100');
+    const multiAchievement = allAchievements.find((a: any) => a.achievementId === 'multi_value');
+
+    expect(scoreAchievement?.isUnlocked).toBe(true);
+    expect(multiAchievement?.isUnlocked).toBe(false);
+  });
 }); 

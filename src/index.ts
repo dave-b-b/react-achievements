@@ -7,6 +7,7 @@ export type {
     SimpleAchievementDetails,
     CustomAchievementDetails,
     AchievementDetails,
+    AchievementWithStatus,
     AchievementCondition,
     AchievementMetricValue,
     AchievementMetricArrayValue,

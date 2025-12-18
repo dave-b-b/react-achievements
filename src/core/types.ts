@@ -16,6 +16,10 @@ export interface AchievementDetails {
     achievementIconKey?: string;
 }
 
+export interface AchievementWithStatus extends AchievementDetails {
+    isUnlocked: boolean;
+}
+
 export interface AchievementCondition {
     isConditionMet: (value: AchievementMetricArrayValue, state: AchievementState) => boolean;
     achievementDetails: {
@@ -104,6 +108,8 @@ export interface StylesProps {
         achievementTitle?: React.CSSProperties;
         achievementDescription?: React.CSSProperties;
         achievementIcon?: React.CSSProperties;
+        lockIcon?: React.CSSProperties;
+        lockedAchievementItem?: React.CSSProperties;
     };
 }
 
