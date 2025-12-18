@@ -5,8 +5,8 @@ import { useAchievements } from './useAchievements';
  * Provides an easier API for common use cases while maintaining access to advanced features.
  */
 export const useSimpleAchievements = () => {
-  const { update, achievements, reset, getState, exportData, importData } = useAchievements();
-  
+  const { update, achievements, reset, getState, exportData, importData, getAllAchievements } = useAchievements();
+
   return {
     /**
      * Track a metric value for achievements
@@ -72,5 +72,11 @@ export const useSimpleAchievements = () => {
      * @returns Import result with success status and any errors
      */
     importData,
+
+    /**
+     * Get all achievements with their unlock status
+     * @returns Array of achievements with isUnlocked boolean property
+     */
+    getAllAchievements,
   };
 };

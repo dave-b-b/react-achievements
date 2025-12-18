@@ -354,14 +354,57 @@ To allow users to view their achievement history, the package provides two essen
 ```
 
 2. `BadgesModal`: A modal dialog that displays all unlocked achievements with their details
+
+**Basic Usage** (shows only unlocked achievements):
 ```tsx
-<BadgesModal 
+<BadgesModal
   isOpen={isModalOpen}
   onClose={() => setIsModalOpen(false)}
   achievements={achievements.unlocked}
   icons={customIcons} // Optional custom icons
 />
 ```
+
+**Show All Achievements** (NEW in v3.5.0): Display both locked and unlocked achievements to motivate users and show them what's available:
+
+```tsx
+import { useAchievements, BadgesModal } from 'react-achievements';
+
+function MyComponent() {
+  const { getAllAchievements } = useAchievements();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Get all achievements with their unlock status
+  const allAchievements = getAllAchievements();
+
+  return (
+    <BadgesModal
+      isOpen={isModalOpen}
+      onClose={() => setIsModalOpen(false)}
+      showAllAchievements={true}           // Enable showing locked achievements
+      showUnlockConditions={true}          // Show hints on how to unlock
+      allAchievements={allAchievements}    // Pass all achievements with status
+    />
+  );
+}
+```
+
+**Props for Show All Achievements:**
+- `showAllAchievements` (boolean): When `true`, displays both locked and unlocked achievements. Default: `false`
+- `showUnlockConditions` (boolean): When `true`, shows unlock requirement hints for locked achievements. Default: `false`
+- `allAchievements` (AchievementWithStatus[]): Array of all achievements with their `isUnlocked` status
+
+**Visual Features:**
+- Locked achievements appear grayed out with reduced opacity
+- Lock icon (🔒) displayed on locked achievements
+- Optional unlock condition hints guide users on how to progress
+- Fully customizable via the style system
+
+**Use Cases:**
+- Show users a roadmap of available achievements
+- Motivate progression by revealing future rewards
+- Provide clear guidance on unlock requirements
+- Create achievement-based progression systems
 
 These components are the recommended way to give users access to their achievement history. While you could build custom UI using the `useAchievements` hook data, these components provide a polished, ready-to-use interface for achievement history.
 
