@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.5.0] - 2025-12-18
+
+### Added
+
+#### Show All Achievements Feature
+- **BadgesModal Enhancement**: New optional props to display both locked and unlocked achievements
+  - `showAllAchievements` (boolean): Enable display of all achievements including locked ones (default: `false`)
+  - `showUnlockConditions` (boolean): Show unlock requirement hints for locked achievements (default: `false`)
+  - `allAchievements` (AchievementWithStatus[]): Array of all achievements with their unlock status
+
+- **Visual Distinction for Locked Achievements**: Clear UI differentiation between locked and unlocked states
+  - Grayed out appearance with 50% opacity
+  - Lock icon (🔒) displayed on locked achievements
+  - Dimmed achievement icons (40% opacity)
+  - Lighter text colors for better visual hierarchy
+  - Optional unlock condition hints to guide users
+
+- **Provider Enhancement**: New `getAllAchievements()` method
+  - Returns all configured achievements with their unlock status
+  - Works with both Simple API and Complex API
+  - Available through `useAchievements()` and `useSimpleAchievements()` hooks
+
+- **Styling Support**: Extended style customization options
+  - `lockIcon`: Custom styles for the lock icon
+  - `lockedAchievementItem`: Custom styles for locked achievement items
+
+---
+
 ## [3.4.2] - 2025-12-17
 
 ### Changed
