@@ -74,5 +74,21 @@ export const defaultStyles: Required<StylesProps> = {
             alignItems: 'center',
             justifyContent: 'center',
         },
+        lockIcon: {
+            fontSize: '24px',
+            position: 'absolute',
+            top: '50%',
+            right: '16px',
+            transform: 'translateY(-50%)',
+        },
+        lockedAchievementItem: {
+            display: 'flex',
+            gap: '16px',
+            padding: '16px',
+            borderRadius: '8px',
+            backgroundColor: '#e0e0e0',
+            alignItems: 'center',
+            opacity: 0.5,
+        },
     },
 }; 

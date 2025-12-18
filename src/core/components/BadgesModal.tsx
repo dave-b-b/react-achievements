@@ -2,6 +2,7 @@ import React from 'react';
 import Modal from 'react-modal';
 import { AchievementDetails, AchievementWithStatus, StylesProps } from '../types';
 import { defaultAchievementIcons } from '../icons/defaultIcons';
+import { defaultStyles } from '../styles/defaultStyles';
 
 interface BadgesModalProps {
     isOpen: boolean;
@@ -27,113 +28,27 @@ export const BadgesModal: React.FC<BadgesModalProps> = ({
     // Merge custom icons with default icons, with custom icons taking precedence
     const mergedIcons: Record<string, string> = { ...defaultAchievementIcons, ...icons };
 
-    const defaultOverlayStyle: React.CSSProperties = {
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.75)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        zIndex: 1000,
-    };
-
-    const defaultContentStyle: React.CSSProperties = {
-        position: 'relative',
-        background: '#fff',
-        borderRadius: '8px',
-        padding: '20px',
-        maxWidth: '500px',
-        width: '90%',
-        maxHeight: '80vh',
-        overflow: 'auto',
-    };
-
-    const defaultHeaderStyle: React.CSSProperties = {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '20px',
-    };
-
-    const defaultCloseButtonStyle: React.CSSProperties = {
-        background: 'none',
-        border: 'none',
-        fontSize: '24px',
-        cursor: 'pointer',
-        padding: '0',
-    };
-
-    const defaultAchievementListStyle: React.CSSProperties = {
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '16px',
-    };
-
-    const defaultAchievementItemStyle: React.CSSProperties = {
-        display: 'flex',
-        gap: '16px',
-        padding: '16px',
-        borderRadius: '8px',
-        backgroundColor: '#f5f5f5',
-        alignItems: 'center',
-    };
-
-    const defaultAchievementTitleStyle: React.CSSProperties = {
-        margin: '0',
-        fontSize: '18px',
-        fontWeight: 'bold',
-    };
-
-    const defaultAchievementDescriptionStyle: React.CSSProperties = {
-        margin: '4px 0 0 0',
-        color: '#666',
-    };
-
-    const defaultAchievementIconStyle: React.CSSProperties = {
-        fontSize: '32px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    };
-
-    const defaultLockedAchievementItemStyle: React.CSSProperties = {
-        ...defaultAchievementItemStyle,
-        opacity: 0.5,
-        backgroundColor: '#e0e0e0',
-    };
-
-    const defaultLockIconStyle: React.CSSProperties = {
-        fontSize: '24px',
-        position: 'absolute',
-        top: '50%',
-        right: '16px',
-        transform: 'translateY(-50%)',
-    };
-
     return (
         <Modal
             isOpen={isOpen}
             onRequestClose={onClose}
             style={{
-                overlay: { ...defaultOverlayStyle, ...styles?.overlay },
-                content: { ...defaultContentStyle, ...styles?.content }
+                overlay: { ...defaultStyles.badgesModal.overlay, ...styles?.overlay },
+                content: { ...defaultStyles.badgesModal.content, ...styles?.content }
             }}
             contentLabel="Achievements"
         >
-            <div style={{ ...defaultHeaderStyle, ...styles?.header }}>
+            <div style={{ ...defaultStyles.badgesModal.header, ...styles?.header }}>
                 <h2 style={{ margin: 0 }}>🏆 Achievements</h2>
                 <button
                     onClick={onClose}
-                    style={{ ...defaultCloseButtonStyle, ...styles?.closeButton }}
+                    style={{ ...defaultStyles.badgesModal.closeButton, ...styles?.closeButton }}
                     aria-label="Close"
                 >
                     ×
                 </button>
             </div>
-            <div style={{ ...defaultAchievementListStyle, ...styles?.achievementList }}>
+            <div style={{ ...defaultStyles.badgesModal.achievementList, ...styles?.achievementList }}>
                 {(() => {
                     // Determine which achievements to display
                     const achievementsToDisplay = showAllAchievements && allAchievements
@@ -150,8 +65,8 @@ export const BadgesModal: React.FC<BadgesModalProps> = ({
                                         key={achievement.achievementId}
                                         style={{
                                             ...(isLocked
-                                                ? { ...defaultLockedAchievementItemStyle, ...styles?.lockedAchievementItem }
-                                                : defaultAchievementItemStyle
+                                                ? { ...defaultStyles.badgesModal.lockedAchievementItem, ...styles?.lockedAchievementItem }
+                                                : defaultStyles.badgesModal.achievementItem
                                             ),
                                             ...styles?.achievementItem,
                                             position: 'relative',
@@ -159,7 +74,7 @@ export const BadgesModal: React.FC<BadgesModalProps> = ({
                                     >
                                         {achievement.achievementIconKey && (
                                             <div style={{
-                                                ...defaultAchievementIconStyle,
+                                                ...defaultStyles.badgesModal.achievementIcon,
                                                 ...styles?.achievementIcon,
                                                 opacity: isLocked ? 0.4 : 1,
                                             }}>
@@ -170,14 +85,14 @@ export const BadgesModal: React.FC<BadgesModalProps> = ({
                                         )}
                                         <div style={{ flex: 1 }}>
                                             <h3 style={{
-                                                ...defaultAchievementTitleStyle,
+                                                ...defaultStyles.badgesModal.achievementTitle,
                                                 ...styles?.achievementTitle,
                                                 color: isLocked ? '#999' : undefined,
                                             }}>
                                                 {achievement.achievementTitle}
                                             </h3>
                                             <p style={{
-                                                ...defaultAchievementDescriptionStyle,
+                                                ...defaultStyles.badgesModal.achievementDescription,
                                                 ...styles?.achievementDescription,
                                                 color: isLocked ? '#aaa' : '#666',
                                             }}>
@@ -196,7 +111,7 @@ export const BadgesModal: React.FC<BadgesModalProps> = ({
                                             </p>
                                         </div>
                                         {isLocked && (
-                                            <div style={{ ...defaultLockIconStyle, ...styles?.lockIcon }}>
+                                            <div style={{ ...defaultStyles.badgesModal.lockIcon, ...styles?.lockIcon }}>
                                                 🔒
                                             </div>
                                         )}
