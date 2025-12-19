@@ -1,6 +1,6 @@
 import React from 'react';
 import Confetti from 'react-confetti';
-import { useWindowSize } from 'react-use';
+import { useWindowSize } from '../hooks/useWindowSize';
 
 interface ConfettiWrapperProps {
     show: boolean;

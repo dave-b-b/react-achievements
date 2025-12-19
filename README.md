@@ -8,11 +8,19 @@ A flexible and extensible achievement system for React applications. This packag
 
 ## Installation
 
+**NEW in v3.6.0**: External UI dependencies are now **optional**! The library includes modern built-in UI components.
+
+### Option 1: Built-in UI (Recommended for new projects)
+```bash
+npm install react-achievements react react-dom
+```
+
+### Option 2: With External UI Libraries (Legacy)
 ```bash
 npm install react-achievements react react-dom react-confetti react-modal react-toastify react-use
 ```
 
-Note: React and React DOM should be version 16.8.0 or higher. If you already have some of these packages installed, npm will skip them automatically.
+**Note**: External UI dependencies (react-toastify, react-modal, react-confetti, react-use) are **deprecated** and will become fully optional in v4.0.0. The library now includes beautiful built-in UI components with modern themes. See the [Built-in UI System](#built-in-ui-system-new-in-v360) section below.
 
 ## Quick Start
 
@@ -121,9 +129,371 @@ export default App;
 
 When you click "Score 100 points":
 1. A toast notification appears automatically
-2. Confetti animation plays  
+2. Confetti animation plays
 3. The achievement is stored and visible in the badges modal
 4. The badges button updates to show the new count
+
+## Built-in UI System (NEW in v3.6.0)
+
+React Achievements v3.6.0 introduces a modern, lightweight UI system with **zero external dependencies**. The built-in components provide beautiful notifications, modals, and confetti animations with full theme customization.
+
+### Key Benefits
+
+- **40KB Bundle Reduction**: Built-in UI is only ~8KB vs ~50KB for external dependencies
+- **Modern Design**: Sleek gradients, smooth animations, and polished components
+- **Theme System**: 3 built-in themes + extensible registry for custom themes
+- **Component Injection**: Replace any UI component with your own implementation
+- **Backwards Compatible**: Existing apps work without changes
+- **SSR Safe**: Proper window checks for server-side rendering
+
+### Quick Migration
+
+**For new projects** - just use built-in UI automatically:
+```tsx
+<AchievementProvider achievements={config} storage="local">
+  {/* Built-in UI is used automatically if no external deps installed */}
+</AchievementProvider>
+```
+
+**For existing projects** - opt-in with one prop:
+```tsx
+<AchievementProvider
+  achievements={config}
+  useBuiltInUI={true}  // Force built-in UI, ignore external dependencies
+>
+  <YourApp />
+</AchievementProvider>
+```
+
+### Built-in Theme Presets
+
+Choose from 3 professionally designed themes:
+
+#### Modern Theme (Default)
+```tsx
+<AchievementProvider
+  achievements={config}
+  useBuiltInUI={true}
+  ui={{ theme: 'modern' }}
+>
+```
+- Dark gradients with smooth animations
+- Green accent colors
+- Professional and polished look
+- Perfect for productivity apps and games
+
+#### Minimal Theme
+```tsx
+<AchievementProvider
+  achievements={config}
+  useBuiltInUI={true}
+  ui={{ theme: 'minimal' }}
+>
+```
+- Light, clean design
+- Subtle shadows and simple borders
+- Reduced motion for accessibility
+- Perfect for professional and corporate apps
+
+#### Gamified Theme
+```tsx
+<AchievementProvider
+  achievements={config}
+  useBuiltInUI={true}
+  ui={{ theme: 'gamified' }}
+>
+```
+- Vibrant purple and gold colors
+- Glowing effects and bold animations
+- 100 confetti particles (vs 50 in modern)
+- Perfect for games and engaging experiences
+
+### Notification Positions
+
+Place notifications anywhere on screen:
+
+```tsx
+<AchievementProvider
+  achievements={config}
+  useBuiltInUI={true}
+  ui={{
+    theme: 'modern',
+    notificationPosition: 'top-center',  // Default
+    // Options: 'top-left', 'top-center', 'top-right',
+    //          'bottom-left', 'bottom-center', 'bottom-right'
+  }}
+>
+```
+
+### Creating Custom Themes
+
+**NEW**: Create and share custom themes using the theme registry:
+
+```tsx
+import { registerTheme } from 'react-achievements';
+
+// Define your custom theme
+const cyberpunkTheme = {
+  name: 'cyberpunk',
+  notification: {
+    background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%)',
+    textColor: '#00ffff',
+    accentColor: '#ff00ff',
+    borderRadius: '4px',
+    boxShadow: '0 0 20px rgba(255, 0, 255, 0.5)',
+  },
+  modal: {
+    overlayColor: 'rgba(15, 15, 35, 0.95)',
+    background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%)',
+    textColor: '#00ffff',
+    accentColor: '#ff00ff',
+    borderRadius: '4px',
+  },
+  confetti: {
+    colors: ['#00ffff', '#ff00ff', '#ffff00'],
+    particleCount: 80,
+  },
+};
+
+// Register your theme globally
+registerTheme(cyberpunkTheme);
+
+// Use it in your app
+<AchievementProvider
+  achievements={config}
+  useBuiltInUI={true}
+  ui={{ theme: 'cyberpunk' }}
+>
+  <YourApp />
+</AchievementProvider>
+```
+
+### Shareable Theme Packages
+
+Create npm packages to share themes with the community:
+
+```tsx
+// my-theme-package/index.js
+import { registerTheme } from 'react-achievements';
+
+export const oceanTheme = {
+  name: 'ocean',
+  notification: {
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    textColor: '#ffffff',
+    accentColor: '#4ecdc4',
+    borderRadius: '12px',
+    boxShadow: '0 8px 32px rgba(102, 126, 234, 0.4)',
+  },
+  modal: {
+    overlayColor: 'rgba(0, 0, 0, 0.85)',
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    textColor: '#ffffff',
+    accentColor: '#4ecdc4',
+    borderRadius: '16px',
+  },
+  confetti: {
+    colors: ['#4ecdc4', '#667eea', '#764ba2', '#f7b733'],
+    particleCount: 60,
+  },
+};
+
+// Auto-register on import
+registerTheme(oceanTheme);
+```
+
+**Using a theme package:**
+```bash
+npm install react-achievements-theme-ocean
+```
+
+```tsx
+import 'react-achievements-theme-ocean';  // Auto-registers the theme
+
+<AchievementProvider ui={{ theme: 'ocean' }}>
+  <YourApp />
+</AchievementProvider>
+```
+
+### Theme Registry API
+
+Manage custom themes programmatically:
+
+```tsx
+import { registerTheme, getTheme, listThemes } from 'react-achievements';
+
+// Register a theme
+registerTheme(myCustomTheme);
+
+// Retrieve a theme (checks built-in first, then custom registry)
+const theme = getTheme('cyberpunk');
+
+// List all available themes (built-in + custom)
+const allThemes = listThemes();  // ['modern', 'minimal', 'gamified', 'cyberpunk', ...]
+```
+
+### Custom Component Injection
+
+Replace any UI component with your own implementation:
+
+```tsx
+import { AchievementProvider, NotificationProps } from 'react-achievements';
+
+// Create your custom notification component
+const MyCustomNotification: React.FC<NotificationProps> = ({
+  achievement,
+  onClose,
+  duration,
+}) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, duration);
+    return () => clearTimeout(timer);
+  }, [duration, onClose]);
+
+  return (
+    <div className="my-custom-notification">
+      <h3>{achievement.title}</h3>
+      <p>{achievement.description}</p>
+      <span>{achievement.icon}</span>
+    </div>
+  );
+};
+
+// Inject your component
+<AchievementProvider
+  achievements={config}
+  ui={{
+    NotificationComponent: MyCustomNotification,
+    // ModalComponent: MyCustomModal,  // Optional
+    // ConfettiComponent: MyCustomConfetti,  // Optional
+  }}
+>
+  <YourApp />
+</AchievementProvider>
+```
+
+### BadgesButton Placement Modes
+
+**NEW**: BadgesButton now supports both fixed positioning and inline mode:
+
+#### Fixed Positioning (Default)
+Traditional floating button:
+```tsx
+import { BadgesButton } from 'react-achievements';
+
+<BadgesButton
+  placement="fixed"  // Default
+  position="bottom-right"  // Corner position
+  onClick={() => setModalOpen(true)}
+  unlockedAchievements={achievements}
+/>
+```
+
+#### Inline Mode (NEW)
+Embed the badge button in drawers, navbars, sidebars:
+```tsx
+function MyDrawer() {
+  const [modalOpen, setModalOpen] = useState(false);
+
+  return (
+    <Drawer>
+      <nav>
+        <NavItem>Home</NavItem>
+        <NavItem>Settings</NavItem>
+
+        {/* Badge button inside drawer - no fixed positioning */}
+        <BadgesButton
+          placement="inline"
+          onClick={() => setModalOpen(true)}
+          unlockedAchievements={achievements}
+          theme="modern"  // Matches your app theme
+        />
+      </nav>
+    </Drawer>
+  );
+}
+```
+
+**Inline mode benefits:**
+- Works in drawers, sidebars, navigation bars
+- Flows with your layout (no fixed positioning)
+- Themeable to match surrounding UI
+- Fully customizable with `styles` prop
+
+### UI Configuration Options
+
+Complete UI configuration reference:
+
+```tsx
+<AchievementProvider
+  achievements={config}
+  useBuiltInUI={true}
+  ui={{
+    // Theme configuration
+    theme: 'modern',  // 'modern' | 'minimal' | 'gamified' | custom theme name
+
+    // Component overrides
+    NotificationComponent: MyCustomNotification,  // Optional
+    ModalComponent: MyCustomModal,  // Optional
+    ConfettiComponent: MyCustomConfetti,  // Optional
+
+    // Notification settings
+    notificationPosition: 'top-center',  // Position on screen
+    enableNotifications: true,  // Default: true
+
+    // Confetti settings
+    enableConfetti: true,  // Default: true
+
+    // Direct theme object (bypasses registry)
+    customTheme: {
+      name: 'inline-theme',
+      notification: { /* ... */ },
+      modal: { /* ... */ },
+      confetti: { /* ... */ },
+    },
+  }}
+>
+  <YourApp />
+</AchievementProvider>
+```
+
+### Migration Guide
+
+#### Existing Users (v3.5.0 and earlier)
+
+**Option 1: No changes (keep using external dependencies)**
+- Your code works exactly as before
+- You'll see a deprecation warning in console (once per session)
+- Plan to migrate before v4.0.0
+
+**Option 2: Migrate to built-in UI**
+1. Add `useBuiltInUI={true}` to your AchievementProvider
+2. Test your app (UI will change to modern theme)
+3. Optionally customize with `ui={{ theme: 'minimal' }}` if you prefer lighter styling
+4. Remove external dependencies:
+   ```bash
+   npm uninstall react-toastify react-modal react-confetti react-use
+   ```
+
+#### New Projects
+
+For new projects, just install react-achievements without external UI libraries. The built-in UI will be used automatically:
+
+```bash
+npm install react-achievements react react-dom
+```
+
+```tsx
+<AchievementProvider achievements={config}>
+  {/* Beautiful built-in UI works out of the box */}
+</AchievementProvider>
+```
+
+### Deprecation Timeline
+
+- **v3.6.0 (current)**: Built-in UI available, external deps optional with deprecation warning
+- **v3.7.0-v3.9.0**: Continued support for both systems, refinements based on feedback
+- **v4.0.0**: External dependencies fully optional, built-in UI becomes default
 
 ## Simple API (Recommended)
 
@@ -322,6 +692,12 @@ See the [examples directory](./stories/examples) for detailed implementations an
 - Toast notifications
 - Confetti animations
 - TypeScript support
+- **NEW in v3.6.0**: Built-in UI components with zero external dependencies
+- **NEW in v3.6.0**: Extensible theme system with 3 built-in themes (modern, minimal, gamified)
+- **NEW in v3.6.0**: Theme registry for creating and sharing custom themes
+- **NEW in v3.6.0**: Component injection for full UI customization
+- **NEW in v3.6.0**: BadgesButton inline mode for drawers and sidebars
+- **NEW in v3.6.0**: 40KB bundle reduction for new projects
 - **NEW in v3.4.0**: Async storage support (IndexedDB, REST API, Offline Queue)
 - **NEW in v3.4.0**: 50MB+ storage capacity with IndexedDB
 - **NEW in v3.4.0**: Server-side sync with REST API storage

@@ -1,17 +1,21 @@
 import React, { createContext, useEffect, useState, useRef } from 'react';
-import { AchievementConfigurationType, AchievementStorage, AsyncAchievementStorage, isAsyncStorage, AchievementMetrics, StorageType, AchievementWithStatus } from '../core/types';
+import { AchievementConfigurationType, AchievementStorage, AsyncAchievementStorage, isAsyncStorage, AchievementMetrics, StorageType, AchievementWithStatus, UIConfig } from '../core/types';
 import { normalizeAchievements } from '../core/utils/configNormalizer';
 import { LocalStorage } from '../core/storage/LocalStorage';
 import { MemoryStorage } from '../core/storage/MemoryStorage';
 import { AsyncStorageAdapter } from '../core/storage/AsyncStorageAdapter';
 import { IndexedDBStorage } from '../core/storage/IndexedDBStorage';
 import { RestApiStorage, RestApiStorageConfig } from '../core/storage/RestApiStorage';
-import { ConfettiWrapper } from '../core/components/ConfettiWrapper';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { exportAchievementData, createConfigHash } from '../core/utils/dataExport';
 import { importAchievementData, ImportOptions, ImportResult } from '../core/utils/dataImport';
 import { AchievementError, ConfigurationError } from '../core/errors/AchievementErrors';
+
+// New UI system (v3.6.0)
+import { BuiltInNotification } from '../core/ui/BuiltInNotification';
+import { BuiltInConfetti } from '../core/ui/BuiltInConfetti';
+import { detectLegacyLibraries, LegacyLibraries } from '../core/ui/legacyDetector';
+import { createLegacyToastNotification, createLegacyConfettiWrapper } from '../core/ui/LegacyWrappers';
+import type { NotificationComponent, ConfettiComponent } from '../core/types';
 
 interface AchievementDetails {
   achievementId?: string;
@@ -45,6 +49,21 @@ interface AchievementProviderProps {
   icons?: Record<string, string>;
   onError?: (error: AchievementError) => void;
   restApiConfig?: RestApiStorageConfig;
+
+  /**
+   * UI configuration for notifications, modal, and confetti
+   * NEW in v3.6.0
+   */
+  ui?: UIConfig;
+
+  /**
+   * Force use of built-in UI components (opt-in for v3.x)
+   * Set to true to skip legacy library detection and use built-in UI
+   * In v4.0.0, this will become the default behavior
+   * NEW in v3.6.0
+   * @default false
+   */
+  useBuiltInUI?: boolean;
 }
 
 export const AchievementProvider: React.FC<AchievementProviderProps> = ({
@@ -54,6 +73,8 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   icons = {},
   onError,
   restApiConfig,
+  ui = {},
+  useBuiltInUI = false,
 }) => {
   // Normalize the configuration to the complex format
   const achievements = normalizeAchievements(achievementsConfig);
@@ -72,6 +93,13 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   const metricsUpdatedRef = useRef<boolean>(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [_currentAchievement, setCurrentAchievement] = useState<AchievementDetails | null>(null);
+
+  // NEW: UI component resolution state (v3.6.0)
+  const [legacyLibraries, setLegacyLibraries] = useState<LegacyLibraries | null>(null);
+  const [uiReady, setUiReady] = useState(useBuiltInUI); // Ready immediately if forcing built-in
+  const [currentNotification, setCurrentNotification] = useState<{
+    achievement: { id: string; title: string; description: string; icon: string };
+  } | null>(null);
 
   if (!storageRef.current) {
     if (typeof storage === 'string') {
@@ -158,6 +186,36 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     }
   };
 
+  // NEW: Detect legacy UI libraries on mount (v3.6.0)
+  useEffect(() => {
+    if (useBuiltInUI) {
+      // User explicitly wants built-in UI, skip detection
+      setUiReady(true);
+      return;
+    }
+
+    // Attempt to detect legacy libraries
+    detectLegacyLibraries().then((libs) => {
+      setLegacyLibraries(libs);
+      setUiReady(true);
+    });
+  }, [useBuiltInUI]);
+
+  // NEW: Resolve UI components based on detection and config (v3.6.0)
+  const NotificationComponent: NotificationComponent =
+    ui.NotificationComponent ||
+    (useBuiltInUI ? BuiltInNotification :
+     legacyLibraries && Object.keys(legacyLibraries).length > 0 && legacyLibraries.toast
+       ? createLegacyToastNotification(legacyLibraries)
+       : BuiltInNotification);
+
+  const ConfettiComponentResolved: ConfettiComponent =
+    ui.ConfettiComponent ||
+    (useBuiltInUI ? BuiltInConfetti :
+     legacyLibraries && Object.keys(legacyLibraries).length > 0 && legacyLibraries.Confetti
+       ? createLegacyConfettiWrapper(legacyLibraries)
+       : BuiltInConfetti);
+
   useEffect(() => {
     if (!initialLoadRef.current) {
       const savedUnlocked = storageImpl.getUnlockedAchievements() || [];
@@ -227,40 +285,24 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
       }));
       storageImpl.setUnlockedAchievements(allUnlocked);
 
-      if (achievementToShow) {
+      if (achievementToShow && (ui.enableNotifications !== false)) {
         const achievement: AchievementDetails = achievementToShow;
-        
-        // Show toast notification
+
+        // Get icon to display
         let iconToDisplay = '🏆';
-        
         if (achievement.achievementIconKey && achievement.achievementIconKey in icons) {
           iconToDisplay = icons[achievement.achievementIconKey];
         }
 
-        const toastId = achievement.achievementId 
-          ? `achievement-${achievement.achievementId}` 
-          : `achievement-${Date.now()}`;
-
-        toast.success(
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <span style={{ fontSize: '2em', marginRight: '10px' }}>{iconToDisplay}</span>
-            <div>
-              <h4 style={{ margin: '0 0 8px 0' }}>Achievement Unlocked! 🎉</h4>
-              <div style={{ fontWeight: 'bold' }}>{achievement.achievementTitle}</div>
-              <div style={{ color: '#666' }}>{achievement.achievementDescription}</div>
-            </div>
-          </div>,
-          {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            toastId
-          }
-        );
+        // NEW: Use resolved notification component (v3.6.0)
+        setCurrentNotification({
+          achievement: {
+            id: achievement.achievementId || `achievement-${Date.now()}`,
+            title: achievement.achievementTitle || 'Achievement Unlocked!',
+            description: achievement.achievementDescription || '',
+            icon: iconToDisplay,
+          },
+        });
 
         // Update seen achievements
         if (achievement.achievementId) {
@@ -436,19 +478,25 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
       }}
     >
       {children}
-      <ToastContainer 
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={true}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-      <ConfettiWrapper show={showConfetti} />
+
+      {/* NEW: Notification component (v3.6.0) */}
+      {uiReady && currentNotification && ui.enableNotifications !== false && (
+        <NotificationComponent
+          achievement={currentNotification.achievement}
+          onClose={() => setCurrentNotification(null)}
+          duration={5000}
+          position={ui.notificationPosition || 'top-center'}
+          theme={ui.theme || 'modern'}
+        />
+      )}
+
+      {/* NEW: Confetti component (v3.6.0) */}
+      {uiReady && ui.enableConfetti !== false && (
+        <ConfettiComponentResolved
+          show={showConfetti}
+          duration={5000}
+        />
+      )}
     </AchievementContext.Provider>
   );
 }; 
