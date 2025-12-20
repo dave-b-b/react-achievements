@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Backwards Compatible**: 100% compatible with v3.5.0 - all existing code works without changes
 - **Deprecation Warning**: External UI dependencies (react-toastify, react-modal, react-confetti, react-use) are deprecated and will be fully optional in v4.0.0
 
+### Documentation
+- Simplified theme system to 3 built-in themes only
+  - Users can choose from 'modern', 'minimal', or 'gamified' themes
+  - Removed theme registry API (registerTheme, listThemes) for flexibility
+  - Advanced users can replace UI components entirely via component injection
+  - No custom theme support to avoid maintenance burden (can add later if user demand)
+
 ### Added
 
 #### Built-in UI Components
@@ -86,7 +93,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Custom Hooks
 - **useWindowSize**: Replaces react-use dependency
-  - Simple implementation (~10 lines)
   - SSR-safe with window checks
   - Resize event listener with cleanup
   - Used by BuiltInConfetti component

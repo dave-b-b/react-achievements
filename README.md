@@ -203,10 +203,8 @@ Choose from 3 professionally designed themes:
   ui={{ theme: 'gamified' }}
 >
 ```
-- Vibrant purple and gold colors
-- Glowing effects and bold animations
-- 100 confetti particles (vs 50 in modern)
 - Perfect for games and engaging experiences
+- Badges instead of rectangular displays
 
 ### Notification Positions
 
@@ -225,116 +223,9 @@ Place notifications anywhere on screen:
 >
 ```
 
-### Creating Custom Themes
-
-**NEW**: Create and share custom themes using the theme registry:
-
-```tsx
-import { registerTheme } from 'react-achievements';
-
-// Define your custom theme
-const cyberpunkTheme = {
-  name: 'cyberpunk',
-  notification: {
-    background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%)',
-    textColor: '#00ffff',
-    accentColor: '#ff00ff',
-    borderRadius: '4px',
-    boxShadow: '0 0 20px rgba(255, 0, 255, 0.5)',
-  },
-  modal: {
-    overlayColor: 'rgba(15, 15, 35, 0.95)',
-    background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%)',
-    textColor: '#00ffff',
-    accentColor: '#ff00ff',
-    borderRadius: '4px',
-  },
-  confetti: {
-    colors: ['#00ffff', '#ff00ff', '#ffff00'],
-    particleCount: 80,
-  },
-};
-
-// Register your theme globally
-registerTheme(cyberpunkTheme);
-
-// Use it in your app
-<AchievementProvider
-  achievements={config}
-  useBuiltInUI={true}
-  ui={{ theme: 'cyberpunk' }}
->
-  <YourApp />
-</AchievementProvider>
-```
-
-### Shareable Theme Packages
-
-Create npm packages to share themes with the community:
-
-```tsx
-// my-theme-package/index.js
-import { registerTheme } from 'react-achievements';
-
-export const oceanTheme = {
-  name: 'ocean',
-  notification: {
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    textColor: '#ffffff',
-    accentColor: '#4ecdc4',
-    borderRadius: '12px',
-    boxShadow: '0 8px 32px rgba(102, 126, 234, 0.4)',
-  },
-  modal: {
-    overlayColor: 'rgba(0, 0, 0, 0.85)',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    textColor: '#ffffff',
-    accentColor: '#4ecdc4',
-    borderRadius: '16px',
-  },
-  confetti: {
-    colors: ['#4ecdc4', '#667eea', '#764ba2', '#f7b733'],
-    particleCount: 60,
-  },
-};
-
-// Auto-register on import
-registerTheme(oceanTheme);
-```
-
-**Using a theme package:**
-```bash
-npm install react-achievements-theme-ocean
-```
-
-```tsx
-import 'react-achievements-theme-ocean';  // Auto-registers the theme
-
-<AchievementProvider ui={{ theme: 'ocean' }}>
-  <YourApp />
-</AchievementProvider>
-```
-
-### Theme Registry API
-
-Manage custom themes programmatically:
-
-```tsx
-import { registerTheme, getTheme, listThemes } from 'react-achievements';
-
-// Register a theme
-registerTheme(myCustomTheme);
-
-// Retrieve a theme (checks built-in first, then custom registry)
-const theme = getTheme('cyberpunk');
-
-// List all available themes (built-in + custom)
-const allThemes = listThemes();  // ['modern', 'minimal', 'gamified', 'cyberpunk', ...]
-```
-
 ### Custom Component Injection
 
-Replace any UI component with your own implementation:
+For advanced users who need full customization beyond the 3 built-in themes, you can replace any UI component with your own implementation:
 
 ```tsx
 import { AchievementProvider, NotificationProps } from 'react-achievements';
