@@ -47,26 +47,40 @@ import {
   BadgesModal 
 } from 'react-achievements';
 
-// Define achievements with the new three-tier Builder API - 95% less code!
+// Define achievements with the Builder API for easy configuration
 import { AchievementBuilder } from 'react-achievements';
 
-// Simple achievements with the new Simple API
-const gameAchievements = {
-  score: {
-    100: { title: 'Century!', description: 'Score 100 points', icon: '🏆' },
-    500: { title: 'High Scorer!', description: 'Score 500 points', icon: '⭐' }
+const gameAchievements = AchievementBuilder.combine([
+  // Score achievements with custom awards
+  AchievementBuilder.createScoreAchievement(100)
+    .withAward({ title: 'Century!', description: 'Score 100 points', icon: '🏆' }),
+  AchievementBuilder.createScoreAchievement(500)
+    .withAward({ title: 'High Scorer!', description: 'Score 500 points', icon: '⭐' }),
+
+  // Level achievement
+  AchievementBuilder.createLevelAchievement(5)
+    .withAward({ title: 'Leveling Up', description: 'Reach level 5', icon: '📈' }),
+
+  // Boolean achievement
+  AchievementBuilder.createBooleanAchievement('completedTutorial')
+    .withAward({ title: 'Tutorial Master', description: 'Complete the tutorial', icon: '📚' }),
+
+  // For custom numeric metrics, use Simple API syntax (easiest)
+  {
+    buttonClicks: {
+      10: { title: 'Clicker', description: 'Click 10 times', icon: '👆' },
+      100: { title: 'Super Clicker', description: 'Click 100 times', icon: '🖱️' }
+    }
   },
-  level: {
-    5: { title: 'Leveling Up', description: 'Reach level 5', icon: '📈' }
-  },
-  completedTutorial: {
-    true: { title: 'Tutorial Master', description: 'Complete the tutorial', icon: '📚' }
-  },
-  buttonClicks: {
-    10: { title: 'Clicker', description: 'Click 10 times', icon: '👆' },
-    100: { title: 'Super Clicker', description: 'Click 100 times', icon: '🖱️' }
-  }
-};
+
+  // Or use the full builder for complex conditions (Tier 3)
+  AchievementBuilder.create()
+    .withId('speed_demon')
+    .withMetric('buttonClicks')
+    .withCondition((clicks) => typeof clicks === 'number' && clicks >= 50)
+    .withAward({ title: 'Speed Demon', description: 'Click 50 times quickly', icon: '⚡' })
+    .build()
+]);
 
 // Demo component with all essential features  
 const DemoComponent = () => {
@@ -151,12 +165,12 @@ React Achievements v3.6.0 introduces a modern, lightweight UI system with **zero
 
 ### Key Benefits
 
-- **40KB Bundle Reduction**: Built-in UI is only ~8KB vs ~50KB for external dependencies
 - **Modern Design**: Sleek gradients, smooth animations, and polished components
-- **Theme System**: 3 built-in themes + extensible registry for custom themes
+- **Theme System**: 3 built-in themes (modern, minimal, gamified)
 - **Component Injection**: Replace any UI component with your own implementation
 - **Backwards Compatible**: Existing apps work without changes
 - **SSR Safe**: Proper window checks for server-side rendering
+- **Lightweight**: Built-in UI with zero external dependencies
 
 ### Quick Migration
 
@@ -596,10 +610,8 @@ See the [examples directory](./stories/examples) for detailed implementations an
 - TypeScript support
 - **NEW in v3.6.0**: Built-in UI components with zero external dependencies
 - **NEW in v3.6.0**: Extensible theme system with 3 built-in themes (modern, minimal, gamified)
-- **NEW in v3.6.0**: Theme registry for creating and sharing custom themes
 - **NEW in v3.6.0**: Component injection for full UI customization
 - **NEW in v3.6.0**: BadgesButton inline mode for drawers and sidebars
-- **NEW in v3.6.0**: 40KB bundle reduction for new projects
 - **NEW in v3.4.0**: Async storage support (IndexedDB, REST API, Offline Queue)
 - **NEW in v3.4.0**: 50MB+ storage capacity with IndexedDB
 - **NEW in v3.4.0**: Server-side sync with REST API storage
