@@ -4,7 +4,7 @@ import { BuiltInNotification } from '../../src/core/ui/BuiltInNotification';
 import { BuiltInModal } from '../../src/core/ui/BuiltInModal';
 import { BuiltInConfetti } from '../../src/core/ui/BuiltInConfetti';
 import { BadgesButton } from '../../src/core/components/BadgesButton';
-import { registerTheme, listThemes, builtInThemes } from '../../src/core/ui/themes';
+// Theme system - built-in themes only (modern, minimal, gamified)
 import type { AchievementWithStatus } from '../../src/core/types';
 
 const meta: Meta = {
@@ -365,78 +365,34 @@ export const BadgesButtonPlacements: StoryObj = {
   },
 };
 
-// Story 6: Theme Registry Demo
-export const ThemeRegistryDemo: StoryObj = {
+// Story 6: Built-in Themes Demo
+export const BuiltInThemesDemo: StoryObj = {
   render: () => {
-    const [customThemeRegistered, setCustomThemeRegistered] = useState(false);
     const [showNotification, setShowNotification] = useState(false);
     const [currentTheme, setCurrentTheme] = useState('modern');
 
-    const registerCustomTheme = () => {
-      registerTheme({
-        name: 'cyberpunk',
-        notification: {
-          background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%)',
-          textColor: '#00ffff',
-          accentColor: '#ff00ff',
-          borderRadius: '4px',
-          boxShadow: '0 0 20px rgba(255, 0, 255, 0.5)',
-        },
-        modal: {
-          overlayColor: 'rgba(15, 15, 35, 0.95)',
-          background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%)',
-          textColor: '#00ffff',
-          accentColor: '#ff00ff',
-          borderRadius: '8px',
-        },
-        confetti: {
-          colors: ['#00ffff', '#ff00ff', '#ffff00', '#00ff00'],
-          particleCount: 80,
-        },
-      });
-      setCustomThemeRegistered(true);
-    };
-
-    const themes = customThemeRegistered ? listThemes() : ['modern', 'minimal', 'gamified'];
+    const themes = ['modern', 'minimal', 'gamified'];
 
     return (
       <div style={{ padding: '20px', minHeight: '100vh', background: '#f5f5f5' }}>
-        <h1>Theme Registry System</h1>
-        <p>Register custom themes at runtime</p>
+        <h1>Built-in Theme System</h1>
+        <p>Choose from 3 professionally designed themes</p>
 
         <div style={{ background: 'white', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
-          <h3>Built-in Themes</h3>
+          <h3>Available Themes</h3>
           <ul>
-            <li><strong>modern</strong> - Dark gradients with vibrant accents</li>
-            <li><strong>minimal</strong> - Clean, light design</li>
-            <li><strong>gamified</strong> - Bold, playful aesthetics</li>
+            <li><strong>modern</strong> - Dark gradients with vibrant green accents</li>
+            <li><strong>minimal</strong> - Clean, light design with subtle styling</li>
+            <li><strong>gamified</strong> - Bold sci-fi aesthetics with cyan and orange</li>
           </ul>
-
-          <h3>Custom Theme</h3>
-          {!customThemeRegistered ? (
-            <button
-              onClick={registerCustomTheme}
-              style={{
-                padding: '10px 20px',
-                background: '#9c27b0',
-                color: 'white',
-                border: 'none',
-                borderRadius: '8px',
-                cursor: 'pointer',
-                fontWeight: 'bold',
-              }}
-            >
-              Register "cyberpunk" Theme
-            </button>
-          ) : (
-            <div style={{ color: '#4CAF50', fontWeight: 'bold' }}>
-              ✓ Cyberpunk theme registered!
-            </div>
-          )}
+          <p style={{ marginTop: '15px', color: '#666', fontSize: '14px' }}>
+            <em>Note: Custom theme support removed to maintain flexibility.
+            Advanced users can replace UI components via component injection.</em>
+          </p>
         </div>
 
         <div style={{ background: 'white', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
-          <h3>Available Themes ({themes.length})</h3>
+          <h3>Try Each Theme ({themes.length} total)</h3>
           <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             {themes.map((theme) => (
               <button
@@ -449,10 +405,12 @@ export const ThemeRegistryDemo: StoryObj = {
                 style={{
                   padding: '10px 20px',
                   background: currentTheme === theme ? '#4CAF50' : '#ddd',
+                  color: currentTheme === theme ? 'white' : '#333',
                   border: 'none',
                   borderRadius: '8px',
                   cursor: 'pointer',
                   textTransform: 'capitalize',
+                  fontWeight: currentTheme === theme ? 'bold' : 'normal',
                 }}
               >
                 {theme}
@@ -465,8 +423,8 @@ export const ThemeRegistryDemo: StoryObj = {
           <BuiltInNotification
             achievement={{
               id: '1',
-              title: `${currentTheme} Theme`,
-              description: 'Custom themes can be registered and shared!',
+              title: `${currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1)} Theme`,
+              description: `Switched to ${currentTheme} theme!`,
               icon: '🎨',
             }}
             theme={currentTheme}
