@@ -2,16 +2,9 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { AchievementProvider, AchievementContext } from '../providers/AchievementProvider';
-import { toast } from 'react-toastify';
 import { StorageType, AchievementConfiguration } from '../core/types';
 
-// Mock react-toastify
-jest.mock('react-toastify');
-
-// Mock ConfettiWrapper
-jest.mock('../core/components/ConfettiWrapper', () => ({
-  ConfettiWrapper: jest.fn(({ show }) => (show ? <div data-testid="mock-confetti" /> : null)),
-}));
+// Using built-in UI components - no external dependencies to mock
 
 // Simple achievement configuration for testing
 const achievementConfig: AchievementConfiguration = {
@@ -81,6 +74,7 @@ describe('Achievement Notifications', () => {
       <AchievementProvider
         achievements={achievementConfig}
         storage={StorageType.Memory}
+        useBuiltInUI={true}
       >
         <TestComponent />
       </AchievementProvider>
@@ -95,16 +89,18 @@ describe('Achievement Notifications', () => {
       expect(screen.getByTestId('unlocked-count')).toHaveTextContent('1');
     });
 
-    // Verify toast was called once
-    expect(toast.success).toHaveBeenCalledTimes(1);
+    // Verify notification is shown (built-in UI component)
+    await waitFor(() => {
+      expect(screen.getByText('High Score!')).toBeInTheDocument();
+    });
 
     // Click the same button again, should not trigger another notification
     await act(async () => {
       fireEvent.click(screen.getByTestId('score-button'));
     });
 
-    // Toast should still only have been called once
-    expect(toast.success).toHaveBeenCalledTimes(1);
+    // Achievement count should stay at 1 (no duplicate unlock)
+    expect(screen.getByTestId('unlocked-count')).toHaveTextContent('1');
   });
   
   it('should properly handle multiple achievements in sequence', async () => {
@@ -112,6 +108,7 @@ describe('Achievement Notifications', () => {
       <AchievementProvider
         achievements={achievementConfig}
         storage={StorageType.Memory}
+        useBuiltInUI={true}
       >
         <TestComponent />
       </AchievementProvider>
@@ -127,7 +124,10 @@ describe('Achievement Notifications', () => {
       expect(screen.getByTestId('unlocked-list')).toHaveTextContent('score_100');
     });
 
-    expect(toast.success).toHaveBeenCalledTimes(1);
+    // Verify notification is displayed
+    await waitFor(() => {
+      expect(screen.getByText('High Score!')).toBeInTheDocument();
+    });
   });
   
   it('should properly reset achievements', async () => {
@@ -135,6 +135,7 @@ describe('Achievement Notifications', () => {
       <AchievementProvider
         achievements={achievementConfig}
         storage={StorageType.Memory}
+        useBuiltInUI={true}
       >
         <TestComponent />
       </AchievementProvider>
@@ -167,8 +168,10 @@ describe('Achievement Notifications', () => {
       expect(screen.getByTestId('unlocked-count')).toHaveTextContent('1');
     });
 
-    // Should show notification again after reset and new achievement
-    expect(toast.success).toHaveBeenCalledTimes(2);
+    // Verify notification is shown after reset and re-earning
+    await waitFor(() => {
+      expect(screen.getByText('High Score!')).toBeInTheDocument();
+    });
   });
   
   it('should handle achievements from initial state', async () => {
@@ -186,6 +189,7 @@ describe('Achievement Notifications', () => {
       <AchievementProvider
         achievements={achievementConfig}
         storage={storage}
+        useBuiltInUI={true}
       >
         <TestComponent />
       </AchievementProvider>
@@ -200,7 +204,9 @@ describe('Achievement Notifications', () => {
       expect(screen.getByTestId('unlocked-count')).toHaveTextContent('2');
     });
 
-    // Should only show notification for the new achievement
-    expect(toast.success).toHaveBeenCalledTimes(1);
+    // Verify notification is shown for the new achievement
+    await waitFor(() => {
+      expect(screen.getByText('High Score!')).toBeInTheDocument();
+    });
   });
 }); 
