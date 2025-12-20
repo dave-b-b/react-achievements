@@ -7,192 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.6.0] - 2025-12-18
 
-### ✅ Release Notes
-- **Major Feature**: Built-in UI system with zero external dependencies
-- **Bundle Reduction**: ~40KB savings for new projects (50KB external → 8KB built-in)
-- **Backwards Compatible**: 100% compatible with v3.5.0 - all existing code works without changes
-- **Deprecation Warning**: External UI dependencies (react-toastify, react-modal, react-confetti, react-use) are deprecated and will be fully optional in v4.0.0
-
-### Documentation
-- Simplified theme system to 3 built-in themes only
-  - Users can choose from 'modern', 'minimal', or 'gamified' themes
-  - Removed theme registry API (registerTheme, listThemes) for flexibility
-  - Advanced users can replace UI components entirely via component injection
-  - No custom theme support to avoid maintenance burden (can add later if user demand)
-
 ### Added
-
-#### Built-in UI Components
-- **BuiltInNotification**: Modern notification component with smooth animations
-  - Supports 6 positions: top/bottom × left/center/right
-  - Theme-aware with gradient backgrounds
-  - Auto-dismiss with manual close button
-  - Slide-in animations with proper timing
-  - Zero external dependencies
-
-- **BuiltInModal**: Modern achievement modal with locked/unlocked states
-  - Dark overlay with centered content
-  - Theme-based styling (modern, minimal, gamified)
-  - Body scroll lock when open
-  - Scale animation on open/close
-  - Lock icon for locked achievements
-  - Proper accessibility with ARIA labels
-
-- **BuiltInConfetti**: Lightweight CSS-based confetti animation
-  - Configurable particle count and colors per theme
-  - Uses custom useWindowSize hook (no react-use dependency)
-  - Pure CSS @keyframes animations
-  - Performant 60fps animation
-
-#### Theme System
-- **Extensible Theme Registry**: Global theme management system
-  - `registerTheme(theme)`: Register custom themes globally
-  - `getTheme(name)`: Retrieve themes (checks built-in first, then registry)
-  - `listThemes()`: List all available themes (built-in + custom)
-  - `clearCustomThemes()`: Reset custom theme registry (testing utility)
-
-- **Built-in Theme Presets**: Three professionally designed themes
-  - **Modern** (default): Dark gradients, green accents, 50 confetti particles
-  - **Minimal**: Light backgrounds, subtle shadows, 30 particles
-  - **Gamified**: Purple/gold colors, glowing effects, 100 particles
-
-- **Shareable Theme Packages**: Support for npm-published themes
-  - Auto-registration on import for easy distribution
-  - Full TypeScript support with ThemeConfig interface
-  - Community theme ecosystem enabled
-
-#### Component Customization
-- **UIConfig Interface**: Comprehensive UI configuration
-  - `NotificationComponent`: Inject custom notification component
-  - `ModalComponent`: Inject custom modal component
-  - `ConfettiComponent`: Inject custom confetti component
-  - `theme`: Select theme by name (built-in or registered)
-  - `customTheme`: Provide inline theme object
-  - `notificationPosition`: Position on screen
-  - `enableNotifications`: Toggle notifications (default: true)
-  - `enableConfetti`: Toggle confetti (default: true)
-
-- **BadgesButton Enhancement**: New placement modes
-  - `placement="fixed"`: Traditional floating button (default)
-  - `placement="inline"`: Embeddable in drawers, sidebars, navbars
-  - `theme`: Theme support for consistent styling
-  - Inline mode removes fixed positioning for layout flexibility
-
-#### Legacy Detection & Migration
-- **Legacy Library Detector**: Automatic detection with graceful fallback
-  - Dynamic imports with try/catch for each external library
-  - Caching to avoid repeated import attempts
-  - Deprecation warning shown once per session
-  - SSR-safe with proper window checks
-
-- **Legacy Wrappers**: Backwards compatibility layer
-  - `createLegacyToastNotification()`: Wraps react-toastify
-  - `createLegacyConfettiWrapper()`: Wraps react-confetti
-  - Automatic fallback to built-in if library missing
-  - Matches existing behavior exactly (no visual changes)
-
-#### Custom Hooks
-- **useWindowSize**: Replaces react-use dependency
-  - SSR-safe with window checks
-  - Resize event listener with cleanup
-  - Used by BuiltInConfetti component
-
-#### Provider Enhancements
-- **AchievementProvider** now supports UI configuration
-  - `ui?: UIConfig`: Complete UI customization
-  - `useBuiltInUI?: boolean`: Force built-in UI (opt-in for v3.x)
-  - Automatic component resolution: custom → useBuiltInUI → legacy → built-in
-  - State management for current notification display
+- Built-in UI components (`BuiltInNotification`, `BuiltInModal`, `BuiltInConfetti`) as alternatives to external dependencies
+- Theme system with 3 built-in presets: `modern`, `minimal`, `gamified`
+- `UIConfig` interface for comprehensive UI customization
+- `useBuiltInUI` prop on `AchievementProvider` to opt-in to built-in UI (v3.6.0 defaults to legacy external deps)
+- `BadgesButton` inline placement mode for embedding in drawers/sidebars
+- Custom `useWindowSize` hook (replaces react-use dependency)
 
 ### Changed
-- **Installation**: External UI dependencies now optional
-  - New projects: `npm install react-achievements react react-dom`
-  - External deps remain as peerDependencies for v3.x compatibility
-  - Will move to peerDependenciesMeta.optional in v4.0.0
-
-- **Exports**: Added new UI exports to main package entry
-  - `BuiltInNotification`, `BuiltInModal`, `BuiltInConfetti` components
-  - `builtInThemes` object with theme presets
-  - `registerTheme`, `getTheme`, `listThemes` theme registry functions
-  - `useWindowSize` custom hook
-  - UI type exports: `NotificationComponent`, `ModalComponent`, `ConfettiComponent`, `UIConfig`, `ThemeConfig`, etc.
-
-- **ConfettiWrapper**: Updated to use custom useWindowSize hook
-  - Removed react-use import dependency
-  - Maintains same functionality with built-in implementation
+- External UI dependencies (`react-confetti`, `react-modal`, `react-toastify`, `react-use`) marked as **optional peerDependencies** via `peerDependenciesMeta`
+- npm will no longer warn if external UI packages are not installed
+- Installation simplified: `npm install react-achievements` (React auto-installed by npm 7+)
 
 ### Deprecated
-- **External UI Dependencies**: Showing deprecation warnings
-  - `react-toastify`: Replaced by BuiltInNotification
-  - `react-modal`: Replaced by BuiltInModal
-  - `react-confetti`: Replaced by BuiltInConfetti
-  - `react-use`: Replaced by custom useWindowSize hook
-  - Warning appears once per session when detected
-  - Will be fully optional in v4.0.0
+- External UI dependencies (`react-toastify`, `react-modal`, `react-confetti`, `react-use`) - will remain optional but built-in UI will become default in v4.0.0
+- Deprecation warning shown once per session when external deps are detected
 
-### Documentation
-- **README.md**: Comprehensive v3.6.0 documentation
-  - Installation options (with/without external deps)
-  - Built-in UI System section with complete examples
-  - Theme preset documentation (modern, minimal, gamified)
-  - Custom theme creation guide
-  - Shareable theme packages guide
-  - Theme registry API reference
-  - Component injection examples
-  - BadgesButton placement modes (fixed vs inline)
-  - Migration guide for existing users
-  - Deprecation timeline
-
-- **Storybook**: New interactive stories
-  - Notification theme demonstrations
-  - Notification position variants
-  - Modal theme demonstrations
-  - Confetti animation demo
-  - BadgesButton placement modes
-  - Theme registry demonstration
-  - Complete integration demo
+### Breaking Changes (Future)
+- **v4.0.0**: Built-in UI will become the default. External UI dependencies will remain supported but require explicit opt-in.
 
 ### Backward Compatibility
-- ✅ **100% Backward Compatible**: All existing v3.5.0 code works without changes
-- ✅ External dependencies detected and used automatically if installed
-- ✅ All hooks (useAchievements, useSimpleAchievements) unchanged
-- ✅ Simple API and Complex API configurations unaffected
-- ✅ All v3.5.0 code works without modifications in v3.6.0
-- ✅ Opt-in migration path with `useBuiltInUI={true}` prop
-
-### Migration Guide (v3.5.0 → v3.6.0)
-
-**For Existing Projects** - Two options:
-
-Option 1: No changes (keep using external dependencies)
-- Your code works exactly as before
-- You'll see a one-time deprecation warning in console
-- Plan to migrate before v4.0.0
-
-Option 2: Migrate to built-in UI
-```tsx
-// Add useBuiltInUI prop
-<AchievementProvider
-  achievements={config}
-  useBuiltInUI={true}  // NEW
-  ui={{ theme: 'modern' }}  // Optional theme
->
-  <YourApp />
-</AchievementProvider>
-
-// Test your app, then remove external dependencies:
-// npm uninstall react-toastify react-modal react-confetti react-use
-```
-
-**For New Projects** - Use built-in UI automatically:
-```bash
-npm install react-achievements react react-dom
-```
-
-### Deprecation Timeline
-- **v3.6.0** (current): Built-in UI available, external deps optional with warning
-- **v3.7.0-v3.9.0**: Continued support for both systems
-- **v4.0.0**: External dependencies fully optional, built-in UI default
+- ✅ 100% compatible with v3.5.0 - all existing code works without changes
+- ✅ External dependencies still used by default if installed
+- ✅ Opt-in migration via `useBuiltInUI={true}` prop
 
 ---
 

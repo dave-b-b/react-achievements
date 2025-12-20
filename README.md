@@ -8,19 +8,31 @@ A flexible and extensible achievement system for React applications. This packag
 
 ## Installation
 
-**NEW in v3.6.0**: External UI dependencies are now **optional**! The library includes modern built-in UI components.
+**NEW in v3.6.0**: Optional built-in UI system available! Choose between the traditional external dependencies or the new lightweight built-in UI.
 
-### Option 1: Built-in UI (Recommended for new projects)
+### Option 1: Traditional External UI (Default)
 ```bash
-npm install react-achievements react react-dom
+npm install react-achievements react-confetti react-modal react-toastify react-use
 ```
 
-### Option 2: With External UI Libraries (Legacy)
+### Option 2: Built-in UI (NEW - Opt-in)
 ```bash
-npm install react-achievements react react-dom react-confetti react-modal react-toastify react-use
+npm install react-achievements
 ```
 
-**Note**: External UI dependencies (react-toastify, react-modal, react-confetti, react-use) are **deprecated** and will become fully optional in v4.0.0. The library now includes beautiful built-in UI components with modern themes. See the [Built-in UI System](#built-in-ui-system-new-in-v360) section below.
+Then explicitly enable built-in UI in your code:
+```tsx
+<AchievementProvider
+  achievements={config}
+  useBuiltInUI={true}  // Required to use built-in UI
+>
+  <YourApp />
+</AchievementProvider>
+```
+
+**Requirements**: React 16.8+ and react-dom are required (defined as peerDependencies).
+
+**Note**: To maintain backwards compatibility, v3.6.0 defaults to external UI dependencies. The built-in UI system is opt-in via the `useBuiltInUI` prop. In v4.0.0, built-in UI will become the default. See the [Built-in UI System](#built-in-ui-system-new-in-v360) section below.
 
 ## Quick Start
 
@@ -148,14 +160,7 @@ React Achievements v3.6.0 introduces a modern, lightweight UI system with **zero
 
 ### Quick Migration
 
-**For new projects** - just use built-in UI automatically:
-```tsx
-<AchievementProvider achievements={config} storage="local">
-  {/* Built-in UI is used automatically if no external deps installed */}
-</AchievementProvider>
-```
-
-**For existing projects** - opt-in with one prop:
+**To use built-in UI** - opt-in with the `useBuiltInUI` prop:
 ```tsx
 <AchievementProvider
   achievements={config}
@@ -368,17 +373,23 @@ Complete UI configuration reference:
 
 #### New Projects
 
-For new projects, just install react-achievements without external UI libraries. The built-in UI will be used automatically:
+For new projects using built-in UI, install react-achievements and explicitly opt-in:
 
 ```bash
-npm install react-achievements react react-dom
+npm install react-achievements
 ```
 
 ```tsx
-<AchievementProvider achievements={config}>
-  {/* Beautiful built-in UI works out of the box */}
+<AchievementProvider
+  achievements={config}
+  useBuiltInUI={true}  // Explicitly enable built-in UI
+  ui={{ theme: 'modern' }}  // Optional theme customization
+>
+  {/* Beautiful built-in UI */}
 </AchievementProvider>
 ```
+
+Without `useBuiltInUI={true}`, you'll need to install the external UI dependencies (default behavior for v3.6.0).
 
 ### Deprecation Timeline
 
