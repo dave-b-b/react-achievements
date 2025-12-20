@@ -8,11 +8,31 @@ A flexible and extensible achievement system for React applications. This packag
 
 ## Installation
 
+**NEW in v3.6.0**: Optional built-in UI system available! Choose between the traditional external dependencies or the new lightweight built-in UI.
+
+### Option 1: Traditional External UI (Default)
 ```bash
-npm install react-achievements react react-dom react-confetti react-modal react-toastify react-use
+npm install react-achievements react-confetti react-modal react-toastify react-use
 ```
 
-Note: React and React DOM should be version 16.8.0 or higher. If you already have some of these packages installed, npm will skip them automatically.
+### Option 2: Built-in UI (NEW - Opt-in)
+```bash
+npm install react-achievements
+```
+
+Then explicitly enable built-in UI in your code:
+```tsx
+<AchievementProvider
+  achievements={config}
+  useBuiltInUI={true}  // Required to use built-in UI
+>
+  <YourApp />
+</AchievementProvider>
+```
+
+**Requirements**: React 16.8+ and react-dom are required (defined as peerDependencies).
+
+**Note**: To maintain backwards compatibility, v3.6.0 defaults to external UI dependencies. The built-in UI system is opt-in via the `useBuiltInUI` prop. In v4.0.0, built-in UI will become the default. See the [Built-in UI System](#built-in-ui-system-new-in-v360) section below.
 
 ## Quick Start
 
@@ -27,26 +47,40 @@ import {
   BadgesModal 
 } from 'react-achievements';
 
-// Define achievements with the new three-tier Builder API - 95% less code!
+// Define achievements with the Builder API for easy configuration
 import { AchievementBuilder } from 'react-achievements';
 
-// Simple achievements with the new Simple API
-const gameAchievements = {
-  score: {
-    100: { title: 'Century!', description: 'Score 100 points', icon: '🏆' },
-    500: { title: 'High Scorer!', description: 'Score 500 points', icon: '⭐' }
+const gameAchievements = AchievementBuilder.combine([
+  // Score achievements with custom awards
+  AchievementBuilder.createScoreAchievement(100)
+    .withAward({ title: 'Century!', description: 'Score 100 points', icon: '🏆' }),
+  AchievementBuilder.createScoreAchievement(500)
+    .withAward({ title: 'High Scorer!', description: 'Score 500 points', icon: '⭐' }),
+
+  // Level achievement
+  AchievementBuilder.createLevelAchievement(5)
+    .withAward({ title: 'Leveling Up', description: 'Reach level 5', icon: '📈' }),
+
+  // Boolean achievement
+  AchievementBuilder.createBooleanAchievement('completedTutorial')
+    .withAward({ title: 'Tutorial Master', description: 'Complete the tutorial', icon: '📚' }),
+
+  // For custom numeric metrics, use Simple API syntax (easiest)
+  {
+    buttonClicks: {
+      10: { title: 'Clicker', description: 'Click 10 times', icon: '👆' },
+      100: { title: 'Super Clicker', description: 'Click 100 times', icon: '🖱️' }
+    }
   },
-  level: {
-    5: { title: 'Leveling Up', description: 'Reach level 5', icon: '📈' }
-  },
-  completedTutorial: {
-    true: { title: 'Tutorial Master', description: 'Complete the tutorial', icon: '📚' }
-  },
-  buttonClicks: {
-    10: { title: 'Clicker', description: 'Click 10 times', icon: '👆' },
-    100: { title: 'Super Clicker', description: 'Click 100 times', icon: '🖱️' }
-  }
-};
+
+  // Or use the full builder for complex conditions (Tier 3)
+  AchievementBuilder.create()
+    .withId('speed_demon')
+    .withMetric('buttonClicks')
+    .withCondition((clicks) => typeof clicks === 'number' && clicks >= 50)
+    .withAward({ title: 'Speed Demon', description: 'Click 50 times quickly', icon: '⚡' })
+    .build()
+]);
 
 // Demo component with all essential features  
 const DemoComponent = () => {
@@ -121,9 +155,261 @@ export default App;
 
 When you click "Score 100 points":
 1. A toast notification appears automatically
-2. Confetti animation plays  
+2. Confetti animation plays
 3. The achievement is stored and visible in the badges modal
 4. The badges button updates to show the new count
+
+## Built-in UI System (NEW in v3.6.0)
+
+React Achievements v3.6.0 introduces a modern, lightweight UI system with **zero external dependencies**. The built-in components provide beautiful notifications, modals, and confetti animations with full theme customization.
+
+### Key Benefits
+
+- **Modern Design**: Sleek gradients, smooth animations, and polished components
+- **Theme System**: 3 built-in themes (modern, minimal, gamified)
+- **Component Injection**: Replace any UI component with your own implementation
+- **Backwards Compatible**: Existing apps work without changes
+- **SSR Safe**: Proper window checks for server-side rendering
+- **Lightweight**: Built-in UI with zero external dependencies
+
+### Quick Migration
+
+**To use built-in UI** - opt-in with the `useBuiltInUI` prop:
+```tsx
+<AchievementProvider
+  achievements={config}
+  useBuiltInUI={true}  // Force built-in UI, ignore external dependencies
+>
+  <YourApp />
+</AchievementProvider>
+```
+
+### Built-in Theme Presets
+
+Choose from 3 professionally designed themes:
+
+#### Modern Theme (Default)
+```tsx
+<AchievementProvider
+  achievements={config}
+  useBuiltInUI={true}
+  ui={{ theme: 'modern' }}
+>
+```
+- Dark gradients with smooth animations
+- Green accent colors
+- Professional and polished look
+- Perfect for productivity apps and games
+
+#### Minimal Theme
+```tsx
+<AchievementProvider
+  achievements={config}
+  useBuiltInUI={true}
+  ui={{ theme: 'minimal' }}
+>
+```
+- Light, clean design
+- Subtle shadows and simple borders
+- Reduced motion for accessibility
+- Perfect for professional and corporate apps
+
+#### Gamified Theme
+```tsx
+<AchievementProvider
+  achievements={config}
+  useBuiltInUI={true}
+  ui={{ theme: 'gamified' }}
+>
+```
+- Perfect for games and engaging experiences
+- Badges instead of rectangular displays
+
+### Notification Positions
+
+Place notifications anywhere on screen:
+
+```tsx
+<AchievementProvider
+  achievements={config}
+  useBuiltInUI={true}
+  ui={{
+    theme: 'modern',
+    notificationPosition: 'top-center',  // Default
+    // Options: 'top-left', 'top-center', 'top-right',
+    //          'bottom-left', 'bottom-center', 'bottom-right'
+  }}
+>
+```
+
+### Custom Component Injection
+
+For advanced users who need full customization beyond the 3 built-in themes, you can replace any UI component with your own implementation:
+
+```tsx
+import { AchievementProvider, NotificationProps } from 'react-achievements';
+
+// Create your custom notification component
+const MyCustomNotification: React.FC<NotificationProps> = ({
+  achievement,
+  onClose,
+  duration,
+}) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, duration);
+    return () => clearTimeout(timer);
+  }, [duration, onClose]);
+
+  return (
+    <div className="my-custom-notification">
+      <h3>{achievement.title}</h3>
+      <p>{achievement.description}</p>
+      <span>{achievement.icon}</span>
+    </div>
+  );
+};
+
+// Inject your component
+<AchievementProvider
+  achievements={config}
+  ui={{
+    NotificationComponent: MyCustomNotification,
+    // ModalComponent: MyCustomModal,  // Optional
+    // ConfettiComponent: MyCustomConfetti,  // Optional
+  }}
+>
+  <YourApp />
+</AchievementProvider>
+```
+
+### BadgesButton Placement Modes
+
+**NEW**: BadgesButton now supports both fixed positioning and inline mode:
+
+#### Fixed Positioning (Default)
+Traditional floating button:
+```tsx
+import { BadgesButton } from 'react-achievements';
+
+<BadgesButton
+  placement="fixed"  // Default
+  position="bottom-right"  // Corner position
+  onClick={() => setModalOpen(true)}
+  unlockedAchievements={achievements}
+/>
+```
+
+#### Inline Mode (NEW)
+Embed the badge button in drawers, navbars, sidebars:
+```tsx
+function MyDrawer() {
+  const [modalOpen, setModalOpen] = useState(false);
+
+  return (
+    <Drawer>
+      <nav>
+        <NavItem>Home</NavItem>
+        <NavItem>Settings</NavItem>
+
+        {/* Badge button inside drawer - no fixed positioning */}
+        <BadgesButton
+          placement="inline"
+          onClick={() => setModalOpen(true)}
+          unlockedAchievements={achievements}
+          theme="modern"  // Matches your app theme
+        />
+      </nav>
+    </Drawer>
+  );
+}
+```
+
+**Inline mode benefits:**
+- Works in drawers, sidebars, navigation bars
+- Flows with your layout (no fixed positioning)
+- Themeable to match surrounding UI
+- Fully customizable with `styles` prop
+
+### UI Configuration Options
+
+Complete UI configuration reference:
+
+```tsx
+<AchievementProvider
+  achievements={config}
+  useBuiltInUI={true}
+  ui={{
+    // Theme configuration
+    theme: 'modern',  // 'modern' | 'minimal' | 'gamified' | custom theme name
+
+    // Component overrides
+    NotificationComponent: MyCustomNotification,  // Optional
+    ModalComponent: MyCustomModal,  // Optional
+    ConfettiComponent: MyCustomConfetti,  // Optional
+
+    // Notification settings
+    notificationPosition: 'top-center',  // Position on screen
+    enableNotifications: true,  // Default: true
+
+    // Confetti settings
+    enableConfetti: true,  // Default: true
+
+    // Direct theme object (bypasses registry)
+    customTheme: {
+      name: 'inline-theme',
+      notification: { /* ... */ },
+      modal: { /* ... */ },
+      confetti: { /* ... */ },
+    },
+  }}
+>
+  <YourApp />
+</AchievementProvider>
+```
+
+### Migration Guide
+
+#### Existing Users (v3.5.0 and earlier)
+
+**Option 1: No changes (keep using external dependencies)**
+- Your code works exactly as before
+- You'll see a deprecation warning in console (once per session)
+- Plan to migrate before v4.0.0
+
+**Option 2: Migrate to built-in UI**
+1. Add `useBuiltInUI={true}` to your AchievementProvider
+2. Test your app (UI will change to modern theme)
+3. Optionally customize with `ui={{ theme: 'minimal' }}` if you prefer lighter styling
+4. Remove external dependencies:
+   ```bash
+   npm uninstall react-toastify react-modal react-confetti react-use
+   ```
+
+#### New Projects
+
+For new projects using built-in UI, install react-achievements and explicitly opt-in:
+
+```bash
+npm install react-achievements
+```
+
+```tsx
+<AchievementProvider
+  achievements={config}
+  useBuiltInUI={true}  // Explicitly enable built-in UI
+  ui={{ theme: 'modern' }}  // Optional theme customization
+>
+  {/* Beautiful built-in UI */}
+</AchievementProvider>
+```
+
+Without `useBuiltInUI={true}`, you'll need to install the external UI dependencies (default behavior for v3.6.0).
+
+### Deprecation Timeline
+
+- **v3.6.0 (current)**: Built-in UI available, external deps optional with deprecation warning
+- **v3.7.0-v3.9.0**: Continued support for both systems, refinements based on feedback
+- **v4.0.0**: External dependencies fully optional, built-in UI becomes default
 
 ## Simple API (Recommended)
 
@@ -322,6 +608,10 @@ See the [examples directory](./stories/examples) for detailed implementations an
 - Toast notifications
 - Confetti animations
 - TypeScript support
+- **NEW in v3.6.0**: Built-in UI components with zero external dependencies
+- **NEW in v3.6.0**: Extensible theme system with 3 built-in themes (modern, minimal, gamified)
+- **NEW in v3.6.0**: Component injection for full UI customization
+- **NEW in v3.6.0**: BadgesButton inline mode for drawers and sidebars
 - **NEW in v3.4.0**: Async storage support (IndexedDB, REST API, Offline Queue)
 - **NEW in v3.4.0**: 50MB+ storage capacity with IndexedDB
 - **NEW in v3.4.0**: Server-side sync with REST API storage

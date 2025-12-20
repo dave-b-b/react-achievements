@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.0] - 2025-12-18
+
+### Added
+- Built-in UI components (`BuiltInNotification`, `BuiltInModal`, `BuiltInConfetti`) as alternatives to external dependencies
+- Theme system with 3 built-in presets: `modern`, `minimal`, `gamified`
+- `UIConfig` interface for comprehensive UI customization
+- `useBuiltInUI` prop on `AchievementProvider` to opt-in to built-in UI (v3.6.0 defaults to legacy external deps)
+- `BadgesButton` inline placement mode for embedding in drawers/sidebars
+- Custom `useWindowSize` hook (replaces react-use dependency)
+
+### Changed
+- External UI dependencies (`react-confetti`, `react-modal`, `react-toastify`, `react-use`) marked as **optional peerDependencies** via `peerDependenciesMeta`
+- npm will no longer warn if external UI packages are not installed
+- Installation simplified: `npm install react-achievements` (React auto-installed by npm 7+)
+
+### Deprecated
+- External UI dependencies (`react-toastify`, `react-modal`, `react-confetti`, `react-use`) - will remain optional but built-in UI will become default in v4.0.0
+- Deprecation warning shown once per session when external deps are detected
+
+### Breaking Changes (Future)
+- **v4.0.0**: Built-in UI will become the default. External UI dependencies will remain supported but require explicit opt-in.
+
+### Backward Compatibility
+- ✅ 100% compatible with v3.5.0 - all existing code works without changes
+- ✅ External dependencies still used by default if installed
+- ✅ Opt-in migration via `useBuiltInUI={true}` prop
+
+---
+
 ## [3.5.0] - 2025-12-18
 
 ### Added
@@ -296,9 +325,64 @@ import { AchievementProvider, StorageType } from 'react-achievements';
 
 ---
 
-## Version History
+## [3.2.0] - 2024-08-25
 
-### [3.3.0] - 2024-12-10
-First changelog entry. This version adds enterprise-grade error handling, data portability, and quality controls.
+### Added
+
+#### Three-Tier AchievementBuilder API
+- **Smart Defaults (Tier 1)**: Zero-config achievement creation with built-in defaults
+  - `createScoreAchievement(threshold)` - Instant score achievements with smart titles and icons
+  - `createLevelAchievement(level)` - Level-based achievements with automatic formatting
+  - `createBooleanAchievement(metric)` - Boolean achievements with camelCase → Title Case conversion
+  - `createValueAchievement(metric, value)` - String-based achievements for enums/options
+  - Bulk creation methods: `createScoreAchievements([100, 500, 1000])`
+
+- **Chainable Customization (Tier 2)**: Progressive enhancement of default achievements
+  - `.withAward({ title, description, icon })` - Override any achievement property
+  - Fluent API for readable achievement definitions
+  - Mix default and custom awards in bulk operations
+
+- **Full Builder Control (Tier 3)**: Complex achievement logic for power users
+  - `AchievementBuilder.create()` - Start a new complex achievement
+  - `.withId(id)` - Set unique achievement identifier
+  - `.withMetric(metric)` - Specify tracked metric
+  - `.withCondition(fn)` - Custom condition functions with full state access
+  - `.withAward(award)` - Set achievement rewards
+  - `.build()` - Finalize achievement configuration
+  - Support for complex types: Date, null, undefined handling
+
+- **Utility Methods**:
+  - `AchievementBuilder.combine([...])` - Merge multiple achievement configs
+  - Mix and match all three tiers in a single configuration
+  - Compatible with Simple API configurations
+
+### Benefits
+- **95% less code** for common achievement patterns
+- **Type-safe** with full TypeScript support
+- **Progressive complexity** - start simple, scale as needed
+- **Backward compatible** - works alongside existing Simple and Complex APIs
+
+### Example
+```tsx
+// Tier 1: Smart defaults
+const simple = AchievementBuilder.createScoreAchievement(100); // "Score 100!" + 🏆
+
+// Tier 2: Chainable customization
+const custom = AchievementBuilder.createScoreAchievement(500)
+  .withAward({ title: 'High Scorer!', icon: '⭐' });
+
+// Tier 3: Complex logic
+const advanced = AchievementBuilder.create()
+  .withId('perfect_combo')
+  .withMetric('gameState')
+  .withCondition((value, state) => state.score >= 1000 && state.accuracy === 100)
+  .withAward({ title: 'Perfect!', icon: '💎' })
+  .build();
+
+// Combine all tiers
+const achievements = AchievementBuilder.combine([simple, custom, advanced]);
+```
+
+---
 
 Previous versions (0.0.1 - 3.2.1) were released before changelog tracking began.

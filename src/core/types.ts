@@ -130,4 +130,17 @@ export enum StorageType {
     Memory = 'memory',         // Synchronous in-memory storage
     IndexedDB = 'indexeddb',   // Asynchronous IndexedDB storage
     RestAPI = 'restapi'        // Asynchronous REST API storage
-} 
+}
+
+// Re-export UI types for convenience
+export type {
+    NotificationProps,
+    NotificationComponent,
+    ModalProps,
+    ModalComponent,
+    ConfettiProps,
+    ConfettiComponent,
+    NotificationPosition,
+    ThemeConfig,
+    UIConfig,
+} from './ui/interfaces'; 

@@ -84,3 +84,26 @@ export {
     type ImportOptions,
     type ImportResult
 } from './core/utils/dataImport';
+
+// Built-in UI Components (NEW in v3.6.0)
+export { BuiltInNotification } from './core/ui/BuiltInNotification';
+export { BuiltInModal } from './core/ui/BuiltInModal';
+export { BuiltInConfetti } from './core/ui/BuiltInConfetti';
+
+// UI Types and Interfaces (NEW in v3.6.0)
+export type {
+    NotificationComponent,
+    NotificationProps,
+    ModalComponent,
+    ModalProps,
+    ConfettiComponent,
+    ConfettiProps,
+    NotificationPosition,
+    ThemeConfig,
+    UIConfig,
+} from './core/types';
+
+// Theme System (NEW in v3.6.0)
+
+// Custom Hooks (NEW in v3.6.0)
+export { useWindowSize } from './core/hooks/useWindowSize';

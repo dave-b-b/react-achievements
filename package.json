@@ -1,6 +1,6 @@
 {
   "name": "react-achievements",
-  "version": "3.5.0",
+  "version": "3.6.0",
   "description": "Core achievement system for React applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -26,6 +26,20 @@
     "react-modal": "^3.16.1",
     "react-toastify": "^9.1.3",
     "react-use": "^17.4.0"
+  },
+  "peerDependenciesMeta": {
+    "react-confetti": {
+      "optional": true
+    },
+    "react-modal": {
+      "optional": true
+    },
+    "react-toastify": {
+      "optional": true
+    },
+    "react-use": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@babel/core": "^7.22.5",
