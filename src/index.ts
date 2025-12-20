@@ -104,12 +104,6 @@ export type {
 } from './core/types';
 
 // Theme System (NEW in v3.6.0)
-export {
-    builtInThemes,
-    registerTheme,
-    getTheme,
-    listThemes,
-} from './core/ui/themes';
 
 // Custom Hooks (NEW in v3.6.0)
 export { useWindowSize } from './core/hooks/useWindowSize';

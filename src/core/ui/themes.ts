@@ -108,111 +108,13 @@ export const builtInThemes: Record<string, ThemeConfig> = {
 };
 
 /**
- * Global theme registry for custom themes
- * Users can register themes via registerTheme()
- */
-const themeRegistry = new Map<string, ThemeConfig>();
-
-/**
- * Register a custom theme globally
- * Registered themes can be used by passing their name to the theme prop
+ * Retrieve a theme by name (internal use only)
+ * Only checks built-in themes
  *
- * @example
- * ```tsx
- * import { registerTheme } from 'react-achievements';
- *
- * registerTheme({
- *   name: 'cyberpunk',
- *   notification: {
- *     background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%)',
- *     textColor: '#00ffff',
- *     accentColor: '#ff00ff',
- *     borderRadius: '4px',
- *     boxShadow: '0 0 20px rgba(255, 0, 255, 0.5)',
- *   },
- *   modal: {
- *     overlayColor: 'rgba(15, 15, 35, 0.95)',
- *     background: 'linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%)',
- *     textColor: '#00ffff',
- *     accentColor: '#ff00ff',
- *     borderRadius: '4px',
- *   },
- *   confetti: {
- *     colors: ['#00ffff', '#ff00ff', '#ffff00'],
- *     particleCount: 80,
- *   },
- * });
- *
- * <AchievementProvider ui={{ theme: 'cyberpunk' }}>
- * ```
- */
-export function registerTheme(theme: ThemeConfig): void {
-  if (!theme.name) {
-    throw new Error('[react-achievements] Theme must have a name property');
-  }
-
-  if (builtInThemes[theme.name]) {
-    console.warn(
-      `[react-achievements] Theme "${theme.name}" conflicts with a built-in theme name. Built-in themes always take precedence. Consider using a different name.`
-    );
-  }
-
-  themeRegistry.set(theme.name, theme);
-}
-
-/**
- * Retrieve a theme by name
- * Checks built-in themes first, then registered custom themes
- *
- * @param name - Theme name (built-in or registered)
+ * @param name - Theme name (built-in only)
  * @returns Theme configuration or undefined if not found
- *
- * @example
- * ```tsx
- * import { getTheme } from 'react-achievements';
- *
- * const modernTheme = getTheme('modern');
- * const customTheme = getTheme('my-custom-theme');
- * ```
- */
-export function getTheme(name: string): ThemeConfig | undefined {
-  // Built-in themes take precedence
-  return builtInThemes[name] || themeRegistry.get(name);
-}
-
-/**
- * List all available theme names
- * Includes both built-in and registered custom themes
- *
- * @returns Array of theme names
- *
- * @example
- * ```tsx
- * import { listThemes } from 'react-achievements';
- *
- * const allThemes = listThemes();
- * // ['modern', 'minimal', 'gamified', 'my-custom-theme', ...]
- * ```
- */
-export function listThemes(): string[] {
-  const builtInNames = Object.keys(builtInThemes);
-  const registeredNames = Array.from(themeRegistry.keys());
-
-  // Remove duplicates (registered themes with same name as built-in)
-  const uniqueRegisteredNames = registeredNames.filter(
-    (name) => !builtInThemes[name]
-  );
-
-  return [...builtInNames, ...uniqueRegisteredNames];
-}
-
-/**
- * Clear all registered custom themes
- * Useful for testing or dynamic theme management
- * Does not affect built-in themes
- *
  * @internal
  */
-export function clearCustomThemes(): void {
-  themeRegistry.clear();
+export function getTheme(name: string): ThemeConfig | undefined {
+  return builtInThemes[name];
 }
