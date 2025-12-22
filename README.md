@@ -2,9 +2,7 @@
 
 A flexible and extensible achievement system for React applications. This package provides the foundation for implementing achievements in React applications with support for multiple state management solutions including Redux, Zustand, and Context API. Check the `stories/examples` directory for implementation examples with different state management solutions.
 
-<p align="center">
-  <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExbnMxdHVqanZvbGR6czJqOTdpejZqc3F3NXh6a2FiM3lmdnB0d3VoOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LYXAZelQMeeYpzbgtT/giphy.gif" alt="React Achievements Demo" width="600" />
-</p>
+https://github.com/user-attachments/assets/a33fdae5-439b-4fc9-a388-ccb2f432a3a8
 
 ## Installation
 
@@ -405,6 +403,125 @@ npm install react-achievements
 
 Without `useBuiltInUI={true}`, you'll need to install the external UI dependencies (default behavior for v3.6.0).
 
+### Built-in UI Component API Reference
+
+The built-in UI system includes three core components that can be used standalone or customized via component injection.
+
+#### BuiltInNotification
+
+Displays achievement unlock notifications.
+
+**Props:**
+- `achievement` (object, required): Achievement object with `id`, `title`, `description`, and `icon`
+- `onClose` (function, optional): Callback to dismiss the notification
+- `duration` (number, optional): Auto-dismiss duration in ms (default: 5000)
+- `position` (string, optional): Notification position - 'top-left', 'top-center', 'top-right', 'bottom-left', 'bottom-center', or 'bottom-right' (default: 'top-center')
+- `theme` (string | ThemeConfig, optional): Theme name or custom theme config
+
+**Usage:**
+```tsx
+import { BuiltInNotification } from 'react-achievements';
+
+<BuiltInNotification
+  achievement={{
+    id: 'score_100',
+    title: 'Century!',
+    description: 'Score 100 points',
+    icon: '🏆'
+  }}
+  onClose={() => console.log('Dismissed')}
+  duration={5000}
+  position="top-center"
+  theme="modern"
+/>
+```
+
+#### BuiltInModal
+
+Modal dialog for displaying achievement history.
+
+**Props:**
+- `isOpen` (boolean, required): Modal open state
+- `onClose` (function, required): Callback to close modal
+- `achievements` (array, required): Array of achievement objects with `isUnlocked` status
+- `icons` (object, optional): Custom icon mapping
+- `theme` (string | ThemeConfig, optional): Theme name or custom theme config
+
+**Usage:**
+```tsx
+import { BuiltInModal } from 'react-achievements';
+
+<BuiltInModal
+  isOpen={isOpen}
+  onClose={() => setIsOpen(false)}
+  achievements={achievementsWithStatus}
+  icons={customIcons}
+  theme="minimal"
+/>
+```
+
+**Note:** This is the internal UI component. For the public API component with `showAllAchievements` support, use `BadgesModal` instead.
+
+#### BuiltInConfetti
+
+Confetti animation component.
+
+**Props:**
+- `show` (boolean, required): Whether confetti is active
+- `duration` (number, optional): Animation duration in ms (default: 5000)
+- `particleCount` (number, optional): Number of confetti particles (default: 50)
+- `colors` (string[], optional): Array of color hex codes (default: ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'])
+
+**Usage:**
+```tsx
+import { BuiltInConfetti } from 'react-achievements';
+
+<BuiltInConfetti
+  show={showConfetti}
+  duration={5000}
+  particleCount={150}
+  colors={['#ff0000', '#00ff00', '#0000ff']}
+/>
+```
+
+**Customization via Component Injection:**
+
+You can replace any built-in component with your own implementation:
+
+```tsx
+import { AchievementProvider, NotificationProps } from 'react-achievements';
+
+const MyCustomNotification: React.FC<NotificationProps> = ({
+  achievement,
+  onClose,
+  duration
+}) => {
+  useEffect(() => {
+    const timer = setTimeout(onClose, duration);
+    return () => clearTimeout(timer);
+  }, [duration, onClose]);
+
+  return (
+    <div className="my-notification">
+      <h3>{achievement.title}</h3>
+      <p>{achievement.description}</p>
+      <span>{achievement.icon}</span>
+    </div>
+  );
+};
+
+<AchievementProvider
+  achievements={config}
+  ui={{
+    NotificationComponent: MyCustomNotification,
+    // ModalComponent: MyCustomModal,
+    // ConfettiComponent: MyCustomConfetti
+  }}
+>
+  <App />
+</AchievementProvider>
+```
+
 ### Deprecation Timeline
 
 - **v3.6.0 (current)**: Built-in UI available, external deps optional with deprecation warning
@@ -657,6 +774,15 @@ To allow users to view their achievement history, the package provides two essen
 
 **Show All Achievements** (NEW in v3.5.0): Display both locked and unlocked achievements to motivate users and show them what's available:
 
+**⚠️ IMPORTANT: Using getAllAchievements with BadgesModal**
+
+When displaying all achievements (locked + unlocked) in the modal, you MUST use the `getAllAchievements()` method from the `useAchievements` hook:
+
+- ✅ **Correct**: `allAchievements={getAllAchievements()}`
+- ❌ **Incorrect**: `allAchievements={achievements.all}`
+
+**Why?** `getAllAchievements()` returns an array of achievement objects with an `isUnlocked: boolean` property that the modal uses to display locked vs unlocked states. The `achievements.all` property is the raw configuration object and doesn't include unlock status information.
+
 ```tsx
 import { useAchievements, BadgesModal } from 'react-achievements';
 
@@ -756,6 +882,25 @@ The library provides a small set of essential fallback icons for system use (err
 ## Async Storage (NEW in v3.4.0)
 
 React Achievements now supports async storage backends for modern applications that need large data capacity, server sync, or offline-first capabilities.
+
+### Choosing the Right Storage
+
+Select the storage option that best fits your application's needs:
+
+| Storage Type | Capacity | Persistence | Network | Offline | Use Case |
+|--------------|----------|-------------|---------|---------|----------|
+| **MemoryStorage** | Unlimited | Session only | No | N/A | Testing, prototypes, temporary state |
+| **LocalStorage** | ~5-10MB | Permanent | No | N/A | Simple apps, browser-only, small datasets |
+| **IndexedDB** | ~50MB+ | Permanent | No | N/A | Large datasets, offline apps, PWAs |
+| **RestAPI** | Unlimited | Server-side | Yes | No | Multi-device sync, cloud backup, user accounts |
+| **OfflineQueue** | Unlimited | Hybrid | Yes | Yes | PWAs, unreliable connections, offline-first apps |
+
+**Decision Tree:**
+- **Need cloud sync or multi-device support?** → Use **RestAPI** or **OfflineQueue**
+- **Large data storage (>10MB)?** → Use **IndexedDB**
+- **Simple browser-only app?** → Use **LocalStorage** (default)
+- **Testing or prototypes only?** → Use **MemoryStorage**
+- **Offline-first with sync?** → Use **OfflineQueue** (wraps RestAPI)
 
 ### IndexedDB Storage
 
@@ -1607,6 +1752,439 @@ The achievement components use default styling that works well out of the box. F
 />
 ```
 
+### Default Styles Reference
+
+The `defaultStyles` export provides access to the default styling configuration for all components. Use this to extend or override specific style properties while keeping other defaults.
+
+```tsx
+import { defaultStyles } from 'react-achievements';
+
+// Access default styles
+console.log(defaultStyles.badgesButton);
+console.log(defaultStyles.badgesModal);
+
+// Extend default styles
+<BadgesButton
+  style={{
+    ...defaultStyles.badgesButton,
+    backgroundColor: '#custom-color',
+    borderRadius: '12px'
+  }}
+  unlockedAchievements={achievements}
+/>
+
+// Override specific properties
+<BadgesModal
+  style={{
+    ...defaultStyles.badgesModal,
+    maxWidth: '800px',
+    padding: '2rem'
+  }}
+  isOpen={isOpen}
+  onClose={onClose}
+  achievements={achievements}
+/>
+```
+
+**Available style objects:**
+- `defaultStyles.badgesButton` - Default button styles
+- `defaultStyles.badgesModal` - Default modal styles
+- `defaultStyles.notification` - Default notification styles (built-in UI)
+- `defaultStyles.confetti` - Default confetti configuration
+
+## Utility Functions & Hooks
+
+### useWindowSize Hook
+
+Returns current window dimensions for responsive UI components.
+
+```tsx
+import { useWindowSize } from 'react-achievements';
+
+const MyComponent = () => {
+  const { width, height } = useWindowSize();
+
+  return (
+    <div>
+      Window size: {width} x {height}
+    </div>
+  );
+};
+```
+
+**Returns:** `{ width: number; height: number }`
+
+**Use cases:**
+- Responsive achievement UI layouts
+- Adaptive modal positioning
+- Mobile vs desktop rendering
+
+### normalizeAchievements Function
+
+Converts Simple API configuration to Complex API format internally. This function is used automatically by the `AchievementProvider`, so you typically don't need to call it directly.
+
+```tsx
+import { normalizeAchievements } from 'react-achievements';
+
+const simpleConfig = {
+  score: {
+    100: { title: 'Century!', icon: '🏆' }
+  }
+};
+
+const normalized = normalizeAchievements(simpleConfig);
+// Returns complex format used internally
+```
+
+**Note:** Usually not needed - the provider handles this automatically.
+
+### isSimpleConfig Type Guard
+
+Check if a configuration object uses the Simple API format.
+
+```tsx
+import { isSimpleConfig } from 'react-achievements';
+
+if (isSimpleConfig(myConfig)) {
+  console.log('Using Simple API format');
+} else {
+  console.log('Using Complex API format');
+}
+```
+
+**Returns:** `boolean`
+
+## TypeScript Type Reference
+
+### Core Types
+
+#### AchievementWithStatus
+
+Achievement object with unlock status (returned by `getAllAchievements()`).
+
+```tsx
+interface AchievementWithStatus {
+  achievementId: string;
+  achievementTitle: string;
+  achievementDescription?: string;
+  achievementIconKey?: string;
+  isUnlocked: boolean;
+}
+```
+
+#### AchievementMetrics
+
+Metrics tracked for achievements.
+
+```tsx
+type AchievementMetrics = Record<string, AchievementMetricValue>;
+type AchievementMetricValue = number | string | boolean | Date | null | undefined;
+```
+
+**Example:**
+```tsx
+const metrics: AchievementMetrics = {
+  score: 100,
+  level: 5,
+  completedTutorial: true,
+  lastLoginDate: new Date()
+};
+```
+
+#### UIConfig
+
+UI configuration for built-in components.
+
+```tsx
+interface UIConfig {
+  theme?: 'modern' | 'minimal' | 'gamified' | string;
+  customTheme?: ThemeConfig;
+  NotificationComponent?: React.ComponentType<NotificationProps>;
+  ModalComponent?: React.ComponentType<ModalProps>;
+  ConfettiComponent?: React.ComponentType<ConfettiProps>;
+  notificationPosition?: NotificationPosition;
+  enableNotifications?: boolean;
+  enableConfetti?: boolean;
+}
+```
+
+#### StorageType Enum
+
+```tsx
+enum StorageType {
+  Local = 'local',
+  Memory = 'memory',
+  IndexedDB = 'indexeddb',
+  RestAPI = 'restapi'
+}
+```
+
+**Usage:**
+```tsx
+<AchievementProvider storage={StorageType.IndexedDB}>
+```
+
+### Storage Interfaces
+
+#### AchievementStorage (Synchronous)
+
+```tsx
+interface AchievementStorage {
+  getMetrics(): AchievementMetrics;
+  setMetrics(metrics: AchievementMetrics): void;
+  getUnlockedAchievements(): string[];
+  setUnlockedAchievements(achievements: string[]): void;
+  clear(): void;
+}
+```
+
+#### AsyncAchievementStorage
+
+```tsx
+interface AsyncAchievementStorage {
+  getMetrics(): Promise<AchievementMetrics>;
+  setMetrics(metrics: AchievementMetrics): Promise<void>;
+  getUnlockedAchievements(): Promise<string[]>;
+  setUnlockedAchievements(achievements: string[]): Promise<void>;
+  clear(): Promise<void>;
+}
+```
+
+#### RestApiStorageConfig
+
+```tsx
+interface RestApiStorageConfig {
+  baseUrl: string;
+  userId: string;
+  headers?: Record<string, string>;
+  timeout?: number; // milliseconds, default: 10000
+}
+```
+
+**Example:**
+```tsx
+const config: RestApiStorageConfig = {
+  baseUrl: 'https://api.example.com',
+  userId: 'user123',
+  headers: {
+    'Authorization': 'Bearer token'
+  },
+  timeout: 15000
+};
+```
+
+### Import/Export Types
+
+#### ImportOptions
+
+```tsx
+interface ImportOptions {
+  strategy?: 'replace' | 'merge' | 'preserve';
+  validate?: boolean;
+  expectedConfigHash?: string;
+}
+```
+
+**Strategies:**
+- `replace`: Completely replace all existing data
+- `merge`: Combine imported and existing data (takes maximum values)
+- `preserve`: Only import new achievements, keep existing data
+
+#### ImportResult
+
+```tsx
+interface ImportResult {
+  success: boolean;
+  errors?: string[];
+  warnings?: string[];
+  imported?: {
+    metrics: number;
+    achievements: number;
+  };
+  mergedMetrics?: AchievementMetrics;
+  mergedUnlocked?: string[];
+  configMismatch?: boolean;
+}
+```
+
+## Common Patterns & Recipes
+
+Quick reference for common use cases and patterns.
+
+### Pattern 1: Display Only Unlocked Achievements
+
+Show users only the achievements they've unlocked:
+
+```tsx
+import { useAchievements, BadgesModal } from 'react-achievements';
+
+function MyComponent() {
+  const { achievements } = useAchievements();
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <BadgesModal
+      isOpen={isOpen}
+      onClose={() => setIsOpen(false)}
+      achievements={achievements.unlocked}  // Only unlocked IDs
+    />
+  );
+}
+```
+
+### Pattern 2: Display All Achievements (Locked + Unlocked)
+
+Show both locked and unlocked achievements to motivate users:
+
+```tsx
+import { useAchievements, BadgesModal } from 'react-achievements';
+
+function MyComponent() {
+  const { getAllAchievements } = useAchievements();
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <BadgesModal
+      isOpen={isOpen}
+      onClose={() => setIsOpen(false)}
+      showAllAchievements={true}
+      allAchievements={getAllAchievements()}  // ⭐ Required!
+      showUnlockConditions={true}  // Show hints
+    />
+  );
+}
+```
+
+### Pattern 3: Export Achievement Data
+
+Allow users to download their achievement progress:
+
+```tsx
+import { useAchievements } from 'react-achievements';
+
+function MyComponent() {
+  const { exportData } = useAchievements();
+
+  const handleExport = () => {
+    const jsonString = exportData();
+
+    // Create downloadable file
+    const blob = new Blob([jsonString], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `achievements-${Date.now()}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return <button onClick={handleExport}>Export Progress</button>;
+}
+```
+
+### Pattern 4: Import Achievement Data
+
+Restore achievements from a backup:
+
+```tsx
+import { useAchievements } from 'react-achievements';
+
+function MyComponent() {
+  const { importData, update } = useAchievements();
+
+  const handleImport = async (file: File) => {
+    const text = await file.text();
+    const result = importData(text, {
+      strategy: 'merge',  // Combine with existing data
+      validate: true
+    });
+
+    if (result.success && result.mergedMetrics) {
+      update(result.mergedMetrics);
+      alert(`Imported ${result.imported?.achievements} achievements!`);
+    } else {
+      alert('Import failed: ' + result.errors?.join(', '));
+    }
+  };
+
+  return (
+    <input
+      type="file"
+      accept=".json"
+      onChange={(e) => e.target.files?.[0] && handleImport(e.target.files[0])}
+    />
+  );
+}
+```
+
+### Pattern 5: Get Current Metrics
+
+Check achievement progress programmatically:
+
+```tsx
+import { useAchievements } from 'react-achievements';
+
+function MyComponent() {
+  const { getState } = useAchievements();
+
+  const handleCheckProgress = () => {
+    const state = getState();
+    console.log('Current metrics:', state.metrics);
+    console.log('Unlocked achievements:', state.unlocked);
+    console.log('Total unlocked:', state.unlocked.length);
+  };
+
+  return <button onClick={handleCheckProgress}>Check Progress</button>;
+}
+```
+
+### Pattern 6: Track Complex Events
+
+Handle achievements based on multiple conditions:
+
+```tsx
+import { useSimpleAchievements } from 'react-achievements';
+
+function GameComponent() {
+  const { track, trackMultiple } = useSimpleAchievements();
+
+  const handleLevelComplete = (score: number, time: number, accuracy: number) => {
+    // Track multiple related metrics at once
+    trackMultiple({
+      score: score,
+      completionTime: time,
+      accuracy: accuracy,
+      levelsCompleted: true
+    });
+
+    // Achievements with custom conditions will evaluate all metrics
+    // Example: "Perfect Level" achievement for score > 1000 AND accuracy === 100
+  };
+
+  return <button onClick={() => handleLevelComplete(1200, 45, 100)}>Complete Level</button>;
+}
+```
+
+### Pattern 7: Reset Progress
+
+Clear all achievement data:
+
+```tsx
+import { useAchievements } from 'react-achievements';
+
+function SettingsComponent() {
+  const { reset } = useAchievements();
+
+  const handleReset = () => {
+    if (confirm('Are you sure? This will delete all achievement progress.')) {
+      reset();
+      alert('All achievements have been reset!');
+    }
+  };
+
+  return <button onClick={handleReset}>Reset All Achievements</button>;
+}
+```
 
 ## API Reference
 
@@ -1622,11 +2200,243 @@ The achievement components use default styling that works well out of the box. F
 
 ### useAchievements Hook
 
-Returns an object with:
+The `useAchievements` hook provides access to all achievement functionality. It must be used within an `AchievementProvider`.
 
-- `update`: Function to update achievement metrics
-- `achievements`: Object containing unlocked and locked achievements
-- `reset`: Function to reset achievement storage
+```tsx
+const {
+  update,
+  achievements,
+  reset,
+  getState,
+  exportData,
+  importData,
+  getAllAchievements
+} = useAchievements();
+```
+
+#### Methods
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `update` | `(metrics: Record<string, any>) => void` | Update one or more achievement metrics. Triggers achievement evaluation. |
+| `achievements` | `{ unlocked: string[]; all: Record<string, any> }` | Object containing arrays of unlocked achievement IDs and the full configuration. |
+| `reset` | `() => void` | Clear all achievement data including metrics and unlock history. |
+| `getState` | `() => { metrics: AchievementMetrics; unlocked: string[] }` | Get current state with metrics (in array format) and unlocked IDs. |
+| `exportData` | `() => string` | Export all achievement data as JSON string for backup/transfer. |
+| `importData` | `(jsonString: string, options?: ImportOptions) => ImportResult` | Import previously exported data with merge strategies. |
+| `getAllAchievements` | `() => AchievementWithStatus[]` | **Get all achievements with unlock status. Required for `BadgesModal` when showing locked achievements.** |
+
+#### Method Details
+
+**`update(metrics: Record<string, any>): void`**
+
+Update achievement metrics and trigger evaluation of achievement conditions.
+
+```tsx
+// Single metric
+update({ score: 100 });
+
+// Multiple metrics
+update({ score: 500, level: 10 });
+```
+
+**`achievements: { unlocked: string[]; all: Record<string, any> }`**
+
+Object containing current achievement state.
+
+```tsx
+// Get unlocked achievement IDs
+console.log(achievements.unlocked); // ['score_100', 'level_5']
+
+// Get count of unlocked achievements
+const count = achievements.unlocked.length;
+```
+
+**`reset(): void`**
+
+Clear all achievement data including metrics, unlocked achievements, and notification history.
+
+```tsx
+// Reset all achievements
+reset();
+```
+
+**`getState(): { metrics: AchievementMetrics; unlocked: string[] }`**
+
+Get the current achievement state including metrics and unlocked achievement IDs.
+
+```tsx
+const state = getState();
+console.log('Current metrics:', state.metrics);
+console.log('Unlocked achievements:', state.unlocked);
+```
+
+**Note:** Metrics are returned in array format (e.g., `{ score: [100] }`) even if you passed scalar values.
+
+**`exportData(): string`**
+
+Export all achievement data as a JSON string for backup or transfer.
+
+```tsx
+const jsonString = exportData();
+
+// Save to file
+const blob = new Blob([jsonString], { type: 'application/json' });
+const url = URL.createObjectURL(blob);
+const link = document.createElement('a');
+link.href = url;
+link.download = `achievements-${Date.now()}.json`;
+link.click();
+```
+
+**`importData(jsonString: string, options?: ImportOptions): ImportResult`**
+
+Import previously exported achievement data.
+
+```tsx
+const result = importData(jsonString, {
+  strategy: 'merge', // 'replace', 'merge', or 'preserve'
+  validate: true
+});
+
+if (result.success) {
+  console.log(`Imported ${result.imported.achievements} achievements`);
+}
+```
+
+**`getAllAchievements(): AchievementWithStatus[]`**
+
+Returns all achievements (locked and unlocked) with their status. **This is required when using `BadgesModal` with `showAllAchievements={true}`**.
+
+```tsx
+const allAchievements = getAllAchievements();
+// Returns: [
+//   { achievementId: 'score_100', achievementTitle: 'Century!', isUnlocked: true, ... },
+//   { achievementId: 'score_500', achievementTitle: 'High Scorer!', isUnlocked: false, ... }
+// ]
+
+// Use with BadgesModal to show all achievements
+<BadgesModal
+  showAllAchievements={true}
+  allAchievements={allAchievements}
+  // ... other props
+/>
+```
+
+**Note:** Use `achievements.unlocked` for simple cases where you only need IDs. Use `getAllAchievements()` when you need full achievement objects with unlock status.
+
+### useSimpleAchievements Hook
+
+Simplified wrapper around `useAchievements` with cleaner API for common use cases.
+
+```tsx
+const {
+  track,
+  increment,
+  trackMultiple,
+  unlocked,
+  all,
+  unlockedCount,
+  reset,
+  getState,
+  exportData,
+  importData,
+  getAllAchievements
+} = useSimpleAchievements();
+```
+
+#### Methods
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `track` | `(metric: string, value: any) => void` | Update a single metric value. |
+| `increment` | `(metric: string, amount?: number) => void` | Increment a metric by amount (default: 1). |
+| `trackMultiple` | `(metrics: Record<string, any>) => void` | Update multiple metrics at once. |
+| `unlocked` | `string[]` | Array of unlocked achievement IDs. |
+| `all` | `Record<string, any>` | All achievements configuration. |
+| `unlockedCount` | `number` | Number of unlocked achievements. |
+| `reset` | `() => void` | Clear all achievement data. |
+| `getState` | `() => { metrics; unlocked }` | Get current state. |
+| `exportData` | `() => string` | Export data as JSON. |
+| `importData` | `(json, options) => ImportResult` | Import data. |
+| `getAllAchievements` | `() => AchievementWithStatus[]` | Get all achievements with status. |
+
+**Example:**
+
+```tsx
+const { track, increment, unlocked, unlockedCount } = useSimpleAchievements();
+
+// Track single metrics
+track('score', 100);
+track('completedTutorial', true);
+
+// Increment values (great for clicks, actions, etc.)
+increment('buttonClicks');     // Adds 1
+increment('score', 50);        // Adds 50
+
+// Check progress
+console.log(`Unlocked ${unlockedCount} achievements`);
+console.log('Achievement IDs:', unlocked);
+```
+
+### Component Props Reference
+
+#### BadgesButton Props
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `onClick` | `() => void` | Yes | Handler for button click |
+| `unlockedAchievements` | `AchievementDetails[]` | Yes | Array of unlocked achievements |
+| `position` | `'top-left' \| 'top-right' \| 'bottom-left' \| 'bottom-right'` | No | Fixed position (default: 'bottom-right') |
+| `placement` | `'fixed' \| 'inline'` | No | Positioning mode (default: 'fixed') |
+| `theme` | `string \| ThemeConfig` | No | Theme name or custom theme |
+| `style` | `React.CSSProperties` | No | Custom styles |
+| `icons` | `Record<string, string>` | No | Custom icon mapping |
+
+**Example:**
+```tsx
+<BadgesButton
+  onClick={() => setModalOpen(true)}
+  unlockedAchievements={achievements.unlocked}
+  position="bottom-right"
+  placement="fixed"
+  theme="modern"
+/>
+```
+
+#### BadgesModal Props
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `isOpen` | `boolean` | Yes | Modal open state |
+| `onClose` | `() => void` | Yes | Close handler |
+| `achievements` | `AchievementDetails[]` | Yes* | Unlocked achievements (*not used if `showAllAchievements`) |
+| `showAllAchievements` | `boolean` | No | Show locked + unlocked (default: false) |
+| `showUnlockConditions` | `boolean` | No | Show unlock hints (default: false) |
+| `allAchievements` | `AchievementWithStatus[]` | No* | All achievements with status (*required if `showAllAchievements`) |
+| `icons` | `Record<string, string>` | No | Custom icon mapping |
+| `style` | `React.CSSProperties` | No | Custom styles |
+
+**Example (unlocked only):**
+```tsx
+<BadgesModal
+  isOpen={isOpen}
+  onClose={() => setIsOpen(false)}
+  achievements={achievements.unlocked}
+/>
+```
+
+**Example (all achievements):**
+```tsx
+const { getAllAchievements } = useAchievements();
+
+<BadgesModal
+  isOpen={isOpen}
+  onClose={() => setIsOpen(false)}
+  showAllAchievements={true}
+  allAchievements={getAllAchievements()}  // Required!
+/>
+```
 
 ## Advanced: Complex API
 
