@@ -2,7 +2,7 @@
 
 A flexible and extensible achievement system for React applications. This package provides the foundation for implementing achievements in React applications with support for multiple state management solutions including Redux, Zustand, and Context API. Check the `stories/examples` directory for implementation examples with different state management solutions.
 
-https://github.com/user-attachments/assets/a33fdae5-439b-4fc9-a388-ccb2f432a3a8
+[![Demo video](https://github.com/user-attachments/assets/0f4816b2-93bf-4f71-975e-3392839f26d1)](https://github.com/user-attachments/assets/a33fdae5-439b-4fc9-a388-ccb2f432a3a8)
 
 ## Installation
 
