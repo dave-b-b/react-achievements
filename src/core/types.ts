@@ -22,12 +22,7 @@ export interface AchievementWithStatus extends AchievementDetails {
 
 export interface AchievementCondition {
     isConditionMet: (value: AchievementMetricArrayValue, state: AchievementState) => boolean;
-    achievementDetails: {
-        achievementId: string;
-        achievementTitle: string;
-        achievementDescription: string;
-        achievementIconKey: string;
-    };
+    achievementDetails: AchievementDetails | AchievementWithStatus
 }
 
 export interface AchievementConfiguration {
