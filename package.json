@@ -1,6 +1,6 @@
 {
   "name": "react-achievements",
-  "version": "3.6.1",
+  "version": "3.6.2",
   "description": "Core achievement system for React applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
