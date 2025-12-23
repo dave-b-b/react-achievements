@@ -38,6 +38,7 @@ export { OfflineQueueStorage } from './core/storage/OfflineQueueStorage';
 // Core UI Components
 export { BadgesButton } from './core/components/BadgesButton';
 export { BadgesModal } from './core/components/BadgesModal';
+export { BadgesButtonWithModal } from './core/components/BadgesButtonWithModal';
 export { ConfettiWrapper } from './core/components/ConfettiWrapper';
 
 // Core Provider and Hooks

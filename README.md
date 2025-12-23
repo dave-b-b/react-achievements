@@ -37,12 +37,11 @@ Then explicitly enable built-in UI in your code:
 Here's a complete working example using the **new Simple API** that shows automatic notifications and achievement tracking:
 
 ```tsx
-import React, { useState } from 'react';
-import { 
-  AchievementProvider, 
-  useSimpleAchievements, 
-  BadgesButton, 
-  BadgesModal 
+import React from 'react';
+import {
+  AchievementProvider,
+  useSimpleAchievements,
+  BadgesButtonWithModal
 } from 'react-achievements';
 
 // Define achievements with the Builder API for easy configuration
@@ -80,29 +79,28 @@ const gameAchievements = AchievementBuilder.combine([
     .build()
 ]);
 
-// Demo component with all essential features  
+// Demo component with all essential features
 const DemoComponent = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const { track, increment, unlocked, unlockedCount, reset } = useSimpleAchievements();
 
   return (
     <div>
       <h1>Achievement Demo</h1>
-      
+
       {/* Simple tracking - much easier! */}
       <button onClick={() => track('score', 100)}>
         Score 100 points
       </button>
       <button onClick={() => track('score', 500)}>
-        Score 500 points  
+        Score 500 points
       </button>
       <button onClick={() => track('level', 5)}>
         Reach level 5
-      </button>      
+      </button>
       <button onClick={() => track('completedTutorial', true)}>
         Complete tutorial
       </button>
-      
+
       {/* Increment tracking - perfect for button clicks */}
       <button onClick={() => increment('buttonClicks')}>
         Click Me! (increments by 1)
@@ -110,27 +108,19 @@ const DemoComponent = () => {
       <button onClick={() => increment('score', 10)}>
         Bonus Points! (+10)
       </button>
-      
+
       {/* Reset button */}
       <button onClick={reset}>
         Reset Achievements
       </button>
-      
+
       {/* Shows unlocked achievements count */}
       <p>Unlocked: {unlockedCount}</p>
-      
-      {/* Floating badges button */}
-      <BadgesButton 
+
+      {/* Achievement button with modal - no state management needed! */}
+      <BadgesButtonWithModal
+        unlockedAchievements={unlocked}
         position="bottom-right"
-        onClick={() => setIsModalOpen(true)}
-        unlockedAchievements={[]} // Simplified for demo
-      />
-      
-      {/* Achievement history modal */}
-      <BadgesModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        achievements={[]} // Simplified for demo
       />
     </div>
   );
@@ -749,61 +739,116 @@ When an achievement is unlocked, the system automatically:
 These notifications appear immediately when achievements are unlocked and require no additional setup.
 
 ### Achievement History
-To allow users to view their achievement history, the package provides two essential components:
 
-1. `BadgesButton`: A floating button that shows the number of unlocked achievements
-```tsx
-<BadgesButton 
-  position="bottom-right" // or "top-right", "top-left", "bottom-left"
-  onClick={() => setIsModalOpen(true)}
-  unlockedAchievements={achievements.unlocked}
-/>
-```
+**Simple Approach (Recommended)**: Use `BadgesButtonWithModal` for the common use case.
 
-2. `BadgesModal`: A modal dialog that displays all unlocked achievements with their details
-
-**Basic Usage** (shows only unlocked achievements):
-```tsx
-<BadgesModal
-  isOpen={isModalOpen}
-  onClose={() => setIsModalOpen(false)}
-  achievements={achievements.unlocked}
-  icons={customIcons} // Optional custom icons
-/>
-```
-
-**Show All Achievements** (NEW in v3.5.0): Display both locked and unlocked achievements to motivate users and show them what's available:
-
-**⚠️ IMPORTANT: Using getAllAchievements with BadgesModal**
-
-When displaying all achievements (locked + unlocked) in the modal, you MUST use the `getAllAchievements()` method from the `useAchievements` hook:
-
-- ✅ **Correct**: `allAchievements={getAllAchievements()}`
-- ❌ **Incorrect**: `allAchievements={achievements.all}`
-
-**Why?** `getAllAchievements()` returns an array of achievement objects with an `isUnlocked: boolean` property that the modal uses to display locked vs unlocked states. The `achievements.all` property is the raw configuration object and doesn't include unlock status information.
+This component combines the button and modal with internal state management - no boilerplate required:
 
 ```tsx
-import { useAchievements, BadgesModal } from 'react-achievements';
+import { BadgesButtonWithModal } from 'react-achievements';
 
 function MyComponent() {
-  const { getAllAchievements } = useAchievements();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // Get all achievements with their unlock status
-  const allAchievements = getAllAchievements();
+  const { unlocked } = useSimpleAchievements();
 
   return (
-    <BadgesModal
-      isOpen={isModalOpen}
-      onClose={() => setIsModalOpen(false)}
-      showAllAchievements={true}           // Enable showing locked achievements
-      showUnlockConditions={true}          // Show hints on how to unlock
-      allAchievements={allAchievements}    // Pass all achievements with status
+    <BadgesButtonWithModal
+      unlockedAchievements={unlocked}
+      position="bottom-right"
     />
   );
 }
 ```
+
+**Advanced Approach**: For custom state management or multiple triggers, use the separate components:
+
+1. `BadgesButton`: A floating button that shows the number of unlocked achievements
+2. `BadgesModal`: A modal dialog that displays achievements
+
+**Basic Usage** with manual state management:
+```tsx
+import { useState } from 'react';
+import { BadgesButton, BadgesModal } from 'react-achievements';
+
+function MyComponent() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { unlocked } = useSimpleAchievements();
+
+  return (
+    <>
+      <BadgesButton
+        position="bottom-right"
+        onClick={() => setIsModalOpen(true)}
+        unlockedAchievements={unlocked}
+      />
+
+      <BadgesModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        achievements={unlocked}
+      />
+    </>
+  );
+}
+```
+
+**When to use each approach:**
+- **BadgesButtonWithModal**: 90% of use cases - simple, one button triggers one modal
+- **Separate components**: Multiple triggers (nav bar + keyboard shortcuts), custom state management (Redux/Zustand), complex modal interactions
+
+**Show All Achievements** (both locked and unlocked) to motivate users and show them what's available:
+
+**Simple Approach:**
+```tsx
+import { BadgesButtonWithModal } from 'react-achievements';
+
+function MyComponent() {
+  const { unlocked, getAllAchievements } = useSimpleAchievements();
+
+  return (
+    <BadgesButtonWithModal
+      unlockedAchievements={unlocked}
+      showAllAchievements={true}
+      allAchievements={getAllAchievements()}
+      showUnlockConditions={true}  // Show hints on how to unlock
+    />
+  );
+}
+```
+
+**Advanced Approach (manual state):**
+```tsx
+import { useState } from 'react';
+import { BadgesButton, BadgesModal, useAchievements } from 'react-achievements';
+
+function MyComponent() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { getAllAchievements } = useAchievements();
+
+  return (
+    <>
+      <BadgesButton
+        onClick={() => setIsModalOpen(true)}
+        unlockedAchievements={getAllAchievements().filter(a => a.isUnlocked)}
+      />
+
+      <BadgesModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        showAllAchievements={true}
+        allAchievements={getAllAchievements()}
+        showUnlockConditions={true}
+      />
+    </>
+  );
+}
+```
+
+**⚠️ IMPORTANT**: When displaying all achievements (locked + unlocked), you MUST use the `getAllAchievements()` method:
+
+- ✅ **Correct**: `allAchievements={getAllAchievements()}`
+- ❌ **Incorrect**: `allAchievements={achievements.all}`
+
+**Why?** `getAllAchievements()` returns an array with `isUnlocked: boolean` property that the modal uses to display locked vs unlocked states. The `achievements.all` property is the raw configuration object.
 
 **Props for Show All Achievements:**
 - `showAllAchievements` (boolean): When `true`, displays both locked and unlocked achievements. Default: `false`
