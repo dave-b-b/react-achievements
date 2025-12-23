@@ -11,3 +11,7 @@ storybook-static/**
 # Docusaurus build output
 docs/build
 docs/.docusaurus
+docs/api
+
+# Auto-generated API docs (legacy location)
+/api
