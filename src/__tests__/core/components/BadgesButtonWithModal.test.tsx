@@ -3,21 +3,19 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BadgesButtonWithModal } from '../../../core/components/BadgesButtonWithModal';
 import { AchievementDetails, AchievementWithStatus } from '../../../core/types';
 
-// Mock react-modal to avoid portal-related issues in tests
-jest.mock('react-modal', () => {
-    const React = require('react');
-    return {
-        __esModule: true,
-        default: ({ isOpen, children, onRequestClose }: any) => (
-            isOpen ? (
-                <div data-testid="modal">
-                    <button onClick={onRequestClose} data-testid="modal-close">Close</button>
-                    {children}
-                </div>
-            ) : null
-        ),
-    };
-});
+
+jest.mock('react-modal', () => ({
+    __esModule: true,
+    default: ({ isOpen, children, onRequestClose }: any) =>
+        isOpen ? (
+            <div data-testid="modal">
+                <button onClick={onRequestClose} data-testid="modal-close">
+                    Close
+                </button>
+                {children}
+            </div>
+        ) : null,
+}));
 
 describe('BadgesButtonWithModal', () => {
     const mockUnlockedAchievements: AchievementDetails[] = [
