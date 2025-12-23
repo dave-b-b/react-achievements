@@ -97,11 +97,37 @@ export default Game;
 
 ## Step 5: Display Achievements
 
-Add the `BadgesButton` and `BadgesModal` to show unlocked achievements:
+Add the `BadgesButtonWithModal` component to show unlocked achievements:
 
 ```tsx title="Game.tsx"
-import { useSimpleAchievements, BadgesButton, BadgesModal } from 'react-achievements';
+import { useSimpleAchievements, BadgesButtonWithModal } from 'react-achievements';
+
+function Game() {
+  const { track, unlocked, getAllAchievements } = useSimpleAchievements();
+
+  return (
+    <div>
+      {/* Your game UI */}
+      <button onClick={() => track('score', 100)}>Score 100</button>
+
+      {/* Achievement UI - no state management needed! */}
+      <BadgesButtonWithModal
+        unlockedAchievements={unlocked}
+        showAllAchievements={true}
+        allAchievements={getAllAchievements()}
+      />
+    </div>
+  );
+}
+```
+
+**Advanced: Manual State Management**
+
+For complex scenarios (multiple triggers, custom state), use the separate components:
+
+```tsx title="Game.tsx (Advanced)"
 import { useState } from 'react';
+import { useSimpleAchievements, BadgesButton, BadgesModal } from 'react-achievements';
 
 function Game() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -112,7 +138,7 @@ function Game() {
       {/* Your game UI */}
       <button onClick={() => track('score', 100)}>Score 100</button>
 
-      {/* Achievement UI */}
+      {/* Achievement UI with manual state */}
       <BadgesButton
         onClick={() => setModalOpen(true)}
         unlockedAchievements={unlocked}
