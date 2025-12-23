@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.4] - 2025-12-22
+
+### Changed
+- **Release Workflow**: Streamlined manual release process with automated validation
+
+---
+
+
+## [3.6.1 - 3.6.3] 2025-12-22
+
+### Added
+- **Comprehensive README Documentation Improvements**: Expanded documentation coverage
+
+### Changed
+- **README Demo**: Updated demo GIF/video at top of README
+  - Clear comparison: ✅ Correct vs ❌ Incorrect usage
+  - Better guidance for users implementing achievement history modals
+
+### Improved
+- **Developer Experience**: Better discoverability of all exported APIs
+- **TypeScript Support**: Complete type reference documentation for TypeScript users
+- **Storage Selection**: Clear decision matrix and use case guidance
+
+---
+
 ## [3.6.0] - 2025-12-18
 
 ### Added
