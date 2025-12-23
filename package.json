@@ -14,10 +14,10 @@
     "type-check:stories": "find stories -name '*.tsx' -o -name '*.ts' | xargs tsc --noEmit --jsx react --esModuleInterop --skipLibCheck",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "prepare": "npm run build",
     "install-hooks": "sh scripts/install-hooks.sh",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "ship": "gh workflow run release.yml"
   },
   "peerDependencies": {
     "react": ">=16.8.0",
