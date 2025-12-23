@@ -1,6 +1,6 @@
 # Class: OfflineQueueStorage
 
-Defined in: [src/core/storage/OfflineQueueStorage.ts:11](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/OfflineQueueStorage.ts#L11)
+Defined in: [src/core/storage/OfflineQueueStorage.ts:11](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/OfflineQueueStorage.ts#L11)
 
 ## Implements
 
@@ -12,7 +12,7 @@ Defined in: [src/core/storage/OfflineQueueStorage.ts:11](https://github.com/dave
 
 > **new OfflineQueueStorage**(`innerStorage`): `OfflineQueueStorage`
 
-Defined in: [src/core/storage/OfflineQueueStorage.ts:18](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/OfflineQueueStorage.ts#L18)
+Defined in: [src/core/storage/OfflineQueueStorage.ts:18](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/OfflineQueueStorage.ts#L18)
 
 #### Parameters
 
@@ -30,7 +30,7 @@ Defined in: [src/core/storage/OfflineQueueStorage.ts:18](https://github.com/dave
 
 > **clear**(): `Promise`\<`void`\>
 
-Defined in: [src/core/storage/OfflineQueueStorage.ts:181](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/OfflineQueueStorage.ts#L181)
+Defined in: [src/core/storage/OfflineQueueStorage.ts:181](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/OfflineQueueStorage.ts#L181)
 
 #### Returns
 
@@ -46,7 +46,7 @@ Defined in: [src/core/storage/OfflineQueueStorage.ts:181](https://github.com/dav
 
 > **destroy**(): `void`
 
-Defined in: [src/core/storage/OfflineQueueStorage.ts:218](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/OfflineQueueStorage.ts#L218)
+Defined in: [src/core/storage/OfflineQueueStorage.ts:218](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/OfflineQueueStorage.ts#L218)
 
 Cleanup listeners (call on unmount)
 
@@ -60,7 +60,7 @@ Cleanup listeners (call on unmount)
 
 > **getMetrics**(): `Promise`\<[`AchievementMetrics`](../interfaces/AchievementMetrics.md)\>
 
-Defined in: [src/core/storage/OfflineQueueStorage.ts:127](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/OfflineQueueStorage.ts#L127)
+Defined in: [src/core/storage/OfflineQueueStorage.ts:127](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/OfflineQueueStorage.ts#L127)
 
 #### Returns
 
@@ -76,7 +76,7 @@ Defined in: [src/core/storage/OfflineQueueStorage.ts:127](https://github.com/dav
 
 > **getQueueStatus**(): `object`
 
-Defined in: [src/core/storage/OfflineQueueStorage.ts:208](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/OfflineQueueStorage.ts#L208)
+Defined in: [src/core/storage/OfflineQueueStorage.ts:208](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/OfflineQueueStorage.ts#L208)
 
 Get current queue status (useful for debugging)
 
@@ -98,7 +98,7 @@ Get current queue status (useful for debugging)
 
 > **getUnlockedAchievements**(): `Promise`\<`string`[]\>
 
-Defined in: [src/core/storage/OfflineQueueStorage.ts:154](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/OfflineQueueStorage.ts#L154)
+Defined in: [src/core/storage/OfflineQueueStorage.ts:154](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/OfflineQueueStorage.ts#L154)
 
 #### Returns
 
@@ -114,7 +114,7 @@ Defined in: [src/core/storage/OfflineQueueStorage.ts:154](https://github.com/dav
 
 > **setMetrics**(`metrics`): `Promise`\<`void`\>
 
-Defined in: [src/core/storage/OfflineQueueStorage.ts:139](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/OfflineQueueStorage.ts#L139)
+Defined in: [src/core/storage/OfflineQueueStorage.ts:139](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/OfflineQueueStorage.ts#L139)
 
 #### Parameters
 
@@ -136,7 +136,7 @@ Defined in: [src/core/storage/OfflineQueueStorage.ts:139](https://github.com/dav
 
 > **setUnlockedAchievements**(`achievements`): `Promise`\<`void`\>
 
-Defined in: [src/core/storage/OfflineQueueStorage.ts:166](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/OfflineQueueStorage.ts#L166)
+Defined in: [src/core/storage/OfflineQueueStorage.ts:166](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/OfflineQueueStorage.ts#L166)
 
 #### Parameters
 
@@ -158,7 +158,7 @@ Defined in: [src/core/storage/OfflineQueueStorage.ts:166](https://github.com/dav
 
 > **sync**(): `Promise`\<`void`\>
 
-Defined in: [src/core/storage/OfflineQueueStorage.ts:201](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/OfflineQueueStorage.ts#L201)
+Defined in: [src/core/storage/OfflineQueueStorage.ts:201](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/OfflineQueueStorage.ts#L201)
 
 Manually trigger queue processing (useful for testing)
 

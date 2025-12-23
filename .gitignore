@@ -7,3 +7,7 @@ coverage
 
 *storybook.log
 storybook-static/**
+
+# Docusaurus build output
+docs/build
+docs/.docusaurus

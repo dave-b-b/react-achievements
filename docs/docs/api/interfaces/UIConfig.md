@@ -1,6 +1,6 @@
 # Interface: UIConfig
 
-Defined in: [src/core/ui/interfaces.ts:100](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L100)
+Defined in: [src/core/ui/interfaces.ts:100](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L100)
 
 UI Configuration for AchievementProvider
 Allows customization of all UI components
@@ -11,7 +11,7 @@ Allows customization of all UI components
 
 > `optional` **ConfettiComponent**: [`ConfettiComponent`](../type-aliases/ConfettiComponent.md)
 
-Defined in: [src/core/ui/interfaces.ts:117](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L117)
+Defined in: [src/core/ui/interfaces.ts:117](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L117)
 
 Custom confetti component
 If not provided, uses built-in or legacy component based on detection
@@ -22,7 +22,7 @@ If not provided, uses built-in or legacy component based on detection
 
 > `optional` **customTheme**: [`ThemeConfig`](ThemeConfig.md)
 
-Defined in: [src/core/ui/interfaces.ts:129](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L129)
+Defined in: [src/core/ui/interfaces.ts:129](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L129)
 
 Direct theme configuration override
 Takes precedence over theme name
@@ -33,7 +33,7 @@ Takes precedence over theme name
 
 > `optional` **enableConfetti**: `boolean`
 
-Defined in: [src/core/ui/interfaces.ts:147](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L147)
+Defined in: [src/core/ui/interfaces.ts:147](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L147)
 
 Enable/disable confetti animations
 
@@ -49,7 +49,7 @@ true
 
 > `optional` **enableModal**: `boolean`
 
-Defined in: [src/core/ui/interfaces.ts:153](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L153)
+Defined in: [src/core/ui/interfaces.ts:153](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L153)
 
 Enable/disable modal
 
@@ -65,7 +65,7 @@ true
 
 > `optional` **enableNotifications**: `boolean`
 
-Defined in: [src/core/ui/interfaces.ts:141](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L141)
+Defined in: [src/core/ui/interfaces.ts:141](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L141)
 
 Enable/disable notifications
 
@@ -81,7 +81,7 @@ true
 
 > `optional` **ModalComponent**: [`ModalComponent`](../type-aliases/ModalComponent.md)
 
-Defined in: [src/core/ui/interfaces.ts:111](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L111)
+Defined in: [src/core/ui/interfaces.ts:111](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L111)
 
 Custom modal component
 If not provided, uses built-in or legacy component based on detection
@@ -92,7 +92,7 @@ If not provided, uses built-in or legacy component based on detection
 
 > `optional` **NotificationComponent**: [`NotificationComponent`](../type-aliases/NotificationComponent.md)
 
-Defined in: [src/core/ui/interfaces.ts:105](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L105)
+Defined in: [src/core/ui/interfaces.ts:105](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L105)
 
 Custom notification component
 If not provided, uses built-in or legacy component based on detection
@@ -103,7 +103,7 @@ If not provided, uses built-in or legacy component based on detection
 
 > `optional` **notificationPosition**: [`NotificationPosition`](../type-aliases/NotificationPosition.md)
 
-Defined in: [src/core/ui/interfaces.ts:135](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L135)
+Defined in: [src/core/ui/interfaces.ts:135](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L135)
 
 Notification positioning
 
@@ -119,7 +119,7 @@ Notification positioning
 
 > `optional` **theme**: `string`
 
-Defined in: [src/core/ui/interfaces.ts:123](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L123)
+Defined in: [src/core/ui/interfaces.ts:123](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L123)
 
 Theme to use (built-in name or registered custom theme name)
 Built-in themes: 'modern' (default), 'minimal', 'gamified'

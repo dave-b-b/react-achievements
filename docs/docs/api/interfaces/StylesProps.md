@@ -1,6 +1,6 @@
 # Interface: StylesProps
 
-Defined in: [src/core/types.ts:94](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L94)
+Defined in: [src/core/types.ts:94](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L94)
 
 ## Properties
 
@@ -8,7 +8,7 @@ Defined in: [src/core/types.ts:94](https://github.com/dave-b-b/react-achievement
 
 > `optional` **badgesButton**: `CSSProperties`
 
-Defined in: [src/core/types.ts:95](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L95)
+Defined in: [src/core/types.ts:95](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L95)
 
 ***
 
@@ -16,7 +16,7 @@ Defined in: [src/core/types.ts:95](https://github.com/dave-b-b/react-achievement
 
 > `optional` **badgesModal**: `object`
 
-Defined in: [src/core/types.ts:96](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L96)
+Defined in: [src/core/types.ts:96](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L96)
 
 #### achievementDescription?
 

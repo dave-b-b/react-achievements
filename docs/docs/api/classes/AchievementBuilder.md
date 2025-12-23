@@ -1,6 +1,6 @@
 # Class: AchievementBuilder
 
-Defined in: [src/utils/achievementHelpers.ts:183](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/utils/achievementHelpers.ts#L183)
+Defined in: [src/utils/achievementHelpers.ts:183](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/utils/achievementHelpers.ts#L183)
 
 Main AchievementBuilder with three-tier API
 Tier 1: Simple static methods with smart defaults
@@ -23,7 +23,7 @@ Tier 3: Full builder for complex logic
 
 > `static` **combine**(`achievements`): [`SimpleAchievementConfig`](../interfaces/SimpleAchievementConfig.md)
 
-Defined in: [src/utils/achievementHelpers.ts:321](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/utils/achievementHelpers.ts#L321)
+Defined in: [src/utils/achievementHelpers.ts:321](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/utils/achievementHelpers.ts#L321)
 
 Combine multiple achievement configurations
 
@@ -47,7 +47,7 @@ Combined SimpleAchievementConfig
 
 > `static` **create**(): `ComplexAchievementBuilder`
 
-Defined in: [src/utils/achievementHelpers.ts:310](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/utils/achievementHelpers.ts#L310)
+Defined in: [src/utils/achievementHelpers.ts:310](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/utils/achievementHelpers.ts#L310)
 
 Create a complex achievement builder for power users
 
@@ -63,7 +63,7 @@ ComplexAchievementBuilder for full control
 
 > `static` **createBooleanAchievement**(`metric`): `BooleanAchievement`
 
-Defined in: [src/utils/achievementHelpers.ts:278](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/utils/achievementHelpers.ts#L278)
+Defined in: [src/utils/achievementHelpers.ts:278](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/utils/achievementHelpers.ts#L278)
 
 Create a boolean achievement with smart defaults
 
@@ -87,7 +87,7 @@ Chainable BooleanAchievement
 
 > `static` **createLevelAchievement**(`level`): `ThresholdAchievement`
 
-Defined in: [src/utils/achievementHelpers.ts:235](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/utils/achievementHelpers.ts#L235)
+Defined in: [src/utils/achievementHelpers.ts:235](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/utils/achievementHelpers.ts#L235)
 
 Create a single level achievement with smart defaults
 
@@ -111,7 +111,7 @@ Chainable ThresholdAchievement
 
 > `static` **createLevelAchievements**(`levels`): [`SimpleAchievementConfig`](../interfaces/SimpleAchievementConfig.md)
 
-Defined in: [src/utils/achievementHelpers.ts:248](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/utils/achievementHelpers.ts#L248)
+Defined in: [src/utils/achievementHelpers.ts:248](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/utils/achievementHelpers.ts#L248)
 
 Create multiple level achievements
 
@@ -135,7 +135,7 @@ Complete SimpleAchievementConfig
 
 > `static` **createScoreAchievement**(`threshold`): `ThresholdAchievement`
 
-Defined in: [src/utils/achievementHelpers.ts:192](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/utils/achievementHelpers.ts#L192)
+Defined in: [src/utils/achievementHelpers.ts:192](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/utils/achievementHelpers.ts#L192)
 
 Create a single score achievement with smart defaults
 
@@ -159,7 +159,7 @@ Chainable ThresholdAchievement
 
 > `static` **createScoreAchievements**(`thresholds`): [`SimpleAchievementConfig`](../interfaces/SimpleAchievementConfig.md)
 
-Defined in: [src/utils/achievementHelpers.ts:205](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/utils/achievementHelpers.ts#L205)
+Defined in: [src/utils/achievementHelpers.ts:205](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/utils/achievementHelpers.ts#L205)
 
 Create multiple score achievements
 
@@ -183,7 +183,7 @@ Complete SimpleAchievementConfig
 
 > `static` **createValueAchievement**(`metric`, `value`): `ValueAchievement`
 
-Defined in: [src/utils/achievementHelpers.ts:295](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/utils/achievementHelpers.ts#L295)
+Defined in: [src/utils/achievementHelpers.ts:295](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/utils/achievementHelpers.ts#L295)
 
 Create a value-based achievement with smart defaults
 

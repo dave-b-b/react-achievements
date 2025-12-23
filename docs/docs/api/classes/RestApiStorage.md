@@ -1,6 +1,6 @@
 # Class: RestApiStorage
 
-Defined in: [src/core/storage/RestApiStorage.ts:11](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/RestApiStorage.ts#L11)
+Defined in: [src/core/storage/RestApiStorage.ts:11](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/RestApiStorage.ts#L11)
 
 ## Implements
 
@@ -12,7 +12,7 @@ Defined in: [src/core/storage/RestApiStorage.ts:11](https://github.com/dave-b-b/
 
 > **new RestApiStorage**(`config`): `RestApiStorage`
 
-Defined in: [src/core/storage/RestApiStorage.ts:14](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/RestApiStorage.ts#L14)
+Defined in: [src/core/storage/RestApiStorage.ts:14](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/RestApiStorage.ts#L14)
 
 #### Parameters
 
@@ -30,7 +30,7 @@ Defined in: [src/core/storage/RestApiStorage.ts:14](https://github.com/dave-b-b/
 
 > **clear**(): `Promise`\<`void`\>
 
-Defined in: [src/core/storage/RestApiStorage.ts:126](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/RestApiStorage.ts#L126)
+Defined in: [src/core/storage/RestApiStorage.ts:126](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/RestApiStorage.ts#L126)
 
 #### Returns
 
@@ -46,7 +46,7 @@ Defined in: [src/core/storage/RestApiStorage.ts:126](https://github.com/dave-b-b
 
 > **getMetrics**(): `Promise`\<[`AchievementMetrics`](../interfaces/AchievementMetrics.md)\>
 
-Defined in: [src/core/storage/RestApiStorage.ts:61](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/RestApiStorage.ts#L61)
+Defined in: [src/core/storage/RestApiStorage.ts:61](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/RestApiStorage.ts#L61)
 
 #### Returns
 
@@ -62,7 +62,7 @@ Defined in: [src/core/storage/RestApiStorage.ts:61](https://github.com/dave-b-b/
 
 > **getUnlockedAchievements**(): `Promise`\<`string`[]\>
 
-Defined in: [src/core/storage/RestApiStorage.ts:97](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/RestApiStorage.ts#L97)
+Defined in: [src/core/storage/RestApiStorage.ts:97](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/RestApiStorage.ts#L97)
 
 #### Returns
 
@@ -78,7 +78,7 @@ Defined in: [src/core/storage/RestApiStorage.ts:97](https://github.com/dave-b-b/
 
 > **setMetrics**(`metrics`): `Promise`\<`void`\>
 
-Defined in: [src/core/storage/RestApiStorage.ts:82](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/RestApiStorage.ts#L82)
+Defined in: [src/core/storage/RestApiStorage.ts:82](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/RestApiStorage.ts#L82)
 
 #### Parameters
 
@@ -100,7 +100,7 @@ Defined in: [src/core/storage/RestApiStorage.ts:82](https://github.com/dave-b-b/
 
 > **setUnlockedAchievements**(`achievements`): `Promise`\<`void`\>
 
-Defined in: [src/core/storage/RestApiStorage.ts:111](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/RestApiStorage.ts#L111)
+Defined in: [src/core/storage/RestApiStorage.ts:111](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/RestApiStorage.ts#L111)
 
 #### Parameters
 

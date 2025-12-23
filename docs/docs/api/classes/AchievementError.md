@@ -1,6 +1,6 @@
 # Class: AchievementError
 
-Defined in: [src/core/errors/AchievementErrors.ts:4](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/errors/AchievementErrors.ts#L4)
+Defined in: [src/core/errors/AchievementErrors.ts:4](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/errors/AchievementErrors.ts#L4)
 
 Base error class for all achievement-related errors
 
@@ -22,7 +22,7 @@ Base error class for all achievement-related errors
 
 > **new AchievementError**(`message`, `code`, `recoverable`, `remedy?`): `AchievementError`
 
-Defined in: [src/core/errors/AchievementErrors.ts:5](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/errors/AchievementErrors.ts#L5)
+Defined in: [src/core/errors/AchievementErrors.ts:5](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/errors/AchievementErrors.ts#L5)
 
 #### Parameters
 
@@ -68,7 +68,7 @@ Defined in: docs/node\_modules/typescript/lib/lib.es2022.error.d.ts:24
 
 > **code**: `string`
 
-Defined in: [src/core/errors/AchievementErrors.ts:7](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/errors/AchievementErrors.ts#L7)
+Defined in: [src/core/errors/AchievementErrors.ts:7](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/errors/AchievementErrors.ts#L7)
 
 ***
 
@@ -100,7 +100,7 @@ Defined in: docs/node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 > **recoverable**: `boolean`
 
-Defined in: [src/core/errors/AchievementErrors.ts:8](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/errors/AchievementErrors.ts#L8)
+Defined in: [src/core/errors/AchievementErrors.ts:8](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/errors/AchievementErrors.ts#L8)
 
 ***
 
@@ -108,7 +108,7 @@ Defined in: [src/core/errors/AchievementErrors.ts:8](https://github.com/dave-b-b
 
 > `optional` **remedy**: `string`
 
-Defined in: [src/core/errors/AchievementErrors.ts:9](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/errors/AchievementErrors.ts#L9)
+Defined in: [src/core/errors/AchievementErrors.ts:9](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/errors/AchievementErrors.ts#L9)
 
 ***
 

@@ -1,6 +1,6 @@
 # Class: StorageError
 
-Defined in: [src/core/errors/AchievementErrors.ts:54](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/errors/AchievementErrors.ts#L54)
+Defined in: [src/core/errors/AchievementErrors.ts:54](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/errors/AchievementErrors.ts#L54)
 
 Error thrown when storage operations fail
 
@@ -14,7 +14,7 @@ Error thrown when storage operations fail
 
 > **new StorageError**(`message`, `originalError?`): `StorageError`
 
-Defined in: [src/core/errors/AchievementErrors.ts:55](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/errors/AchievementErrors.ts#L55)
+Defined in: [src/core/errors/AchievementErrors.ts:55](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/errors/AchievementErrors.ts#L55)
 
 #### Parameters
 
@@ -52,7 +52,7 @@ Defined in: docs/node\_modules/typescript/lib/lib.es2022.error.d.ts:24
 
 > **code**: `string`
 
-Defined in: [src/core/errors/AchievementErrors.ts:7](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/errors/AchievementErrors.ts#L7)
+Defined in: [src/core/errors/AchievementErrors.ts:7](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/errors/AchievementErrors.ts#L7)
 
 #### Inherited from
 
@@ -88,7 +88,7 @@ Defined in: docs/node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 > `optional` **originalError**: `Error`
 
-Defined in: [src/core/errors/AchievementErrors.ts:55](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/errors/AchievementErrors.ts#L55)
+Defined in: [src/core/errors/AchievementErrors.ts:55](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/errors/AchievementErrors.ts#L55)
 
 ***
 
@@ -96,7 +96,7 @@ Defined in: [src/core/errors/AchievementErrors.ts:55](https://github.com/dave-b-
 
 > **recoverable**: `boolean`
 
-Defined in: [src/core/errors/AchievementErrors.ts:8](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/errors/AchievementErrors.ts#L8)
+Defined in: [src/core/errors/AchievementErrors.ts:8](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/errors/AchievementErrors.ts#L8)
 
 #### Inherited from
 
@@ -108,7 +108,7 @@ Defined in: [src/core/errors/AchievementErrors.ts:8](https://github.com/dave-b-b
 
 > `optional` **remedy**: `string`
 
-Defined in: [src/core/errors/AchievementErrors.ts:9](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/errors/AchievementErrors.ts#L9)
+Defined in: [src/core/errors/AchievementErrors.ts:9](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/errors/AchievementErrors.ts#L9)
 
 #### Inherited from
 

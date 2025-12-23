@@ -1,6 +1,6 @@
 # Interface: ModalProps
 
-Defined in: [src/core/ui/interfaces.ts:27](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L27)
+Defined in: [src/core/ui/interfaces.ts:27](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L27)
 
 Modal component interface
 Displays list of achievements (locked/unlocked)
@@ -11,7 +11,7 @@ Displays list of achievements (locked/unlocked)
 
 > **achievements**: [`AchievementWithStatus`](AchievementWithStatus.md)[]
 
-Defined in: [src/core/ui/interfaces.ts:30](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L30)
+Defined in: [src/core/ui/interfaces.ts:30](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L30)
 
 ***
 
@@ -19,7 +19,7 @@ Defined in: [src/core/ui/interfaces.ts:30](https://github.com/dave-b-b/react-ach
 
 > `optional` **icons**: `Record`\<`string`, `string`\>
 
-Defined in: [src/core/ui/interfaces.ts:31](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L31)
+Defined in: [src/core/ui/interfaces.ts:31](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L31)
 
 ***
 
@@ -27,7 +27,7 @@ Defined in: [src/core/ui/interfaces.ts:31](https://github.com/dave-b-b/react-ach
 
 > **isOpen**: `boolean`
 
-Defined in: [src/core/ui/interfaces.ts:28](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L28)
+Defined in: [src/core/ui/interfaces.ts:28](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L28)
 
 ***
 
@@ -35,7 +35,7 @@ Defined in: [src/core/ui/interfaces.ts:28](https://github.com/dave-b-b/react-ach
 
 > **onClose**: () => `void`
 
-Defined in: [src/core/ui/interfaces.ts:29](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L29)
+Defined in: [src/core/ui/interfaces.ts:29](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L29)
 
 #### Returns
 
@@ -47,4 +47,4 @@ Defined in: [src/core/ui/interfaces.ts:29](https://github.com/dave-b-b/react-ach
 
 > `optional` **theme**: `string`
 
-Defined in: [src/core/ui/interfaces.ts:32](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L32)
+Defined in: [src/core/ui/interfaces.ts:32](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L32)

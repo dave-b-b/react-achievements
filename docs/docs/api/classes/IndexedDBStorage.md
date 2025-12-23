@@ -1,6 +1,6 @@
 # Class: IndexedDBStorage
 
-Defined in: [src/core/storage/IndexedDBStorage.ts:4](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/IndexedDBStorage.ts#L4)
+Defined in: [src/core/storage/IndexedDBStorage.ts:4](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/IndexedDBStorage.ts#L4)
 
 ## Implements
 
@@ -12,7 +12,7 @@ Defined in: [src/core/storage/IndexedDBStorage.ts:4](https://github.com/dave-b-b
 
 > **new IndexedDBStorage**(`dbName`): `IndexedDBStorage`
 
-Defined in: [src/core/storage/IndexedDBStorage.ts:10](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/IndexedDBStorage.ts#L10)
+Defined in: [src/core/storage/IndexedDBStorage.ts:10](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/IndexedDBStorage.ts#L10)
 
 #### Parameters
 
@@ -30,7 +30,7 @@ Defined in: [src/core/storage/IndexedDBStorage.ts:10](https://github.com/dave-b-
 
 > **clear**(): `Promise`\<`void`\>
 
-Defined in: [src/core/storage/IndexedDBStorage.ts:126](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/IndexedDBStorage.ts#L126)
+Defined in: [src/core/storage/IndexedDBStorage.ts:126](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/IndexedDBStorage.ts#L126)
 
 #### Returns
 
@@ -46,7 +46,7 @@ Defined in: [src/core/storage/IndexedDBStorage.ts:126](https://github.com/dave-b
 
 > **getMetrics**(): `Promise`\<[`AchievementMetrics`](../interfaces/AchievementMetrics.md)\>
 
-Defined in: [src/core/storage/IndexedDBStorage.ts:108](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/IndexedDBStorage.ts#L108)
+Defined in: [src/core/storage/IndexedDBStorage.ts:108](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/IndexedDBStorage.ts#L108)
 
 #### Returns
 
@@ -62,7 +62,7 @@ Defined in: [src/core/storage/IndexedDBStorage.ts:108](https://github.com/dave-b
 
 > **getUnlockedAchievements**(): `Promise`\<`string`[]\>
 
-Defined in: [src/core/storage/IndexedDBStorage.ts:117](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/IndexedDBStorage.ts#L117)
+Defined in: [src/core/storage/IndexedDBStorage.ts:117](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/IndexedDBStorage.ts#L117)
 
 #### Returns
 
@@ -78,7 +78,7 @@ Defined in: [src/core/storage/IndexedDBStorage.ts:117](https://github.com/dave-b
 
 > **setMetrics**(`metrics`): `Promise`\<`void`\>
 
-Defined in: [src/core/storage/IndexedDBStorage.ts:113](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/IndexedDBStorage.ts#L113)
+Defined in: [src/core/storage/IndexedDBStorage.ts:113](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/IndexedDBStorage.ts#L113)
 
 #### Parameters
 
@@ -100,7 +100,7 @@ Defined in: [src/core/storage/IndexedDBStorage.ts:113](https://github.com/dave-b
 
 > **setUnlockedAchievements**(`achievements`): `Promise`\<`void`\>
 
-Defined in: [src/core/storage/IndexedDBStorage.ts:122](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/IndexedDBStorage.ts#L122)
+Defined in: [src/core/storage/IndexedDBStorage.ts:122](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/IndexedDBStorage.ts#L122)
 
 #### Parameters
 

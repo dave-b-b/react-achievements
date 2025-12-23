@@ -1,6 +1,6 @@
 # Class: LocalStorage
 
-Defined in: [src/core/storage/LocalStorage.ts:4](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/LocalStorage.ts#L4)
+Defined in: [src/core/storage/LocalStorage.ts:4](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/LocalStorage.ts#L4)
 
 ## Implements
 
@@ -12,7 +12,7 @@ Defined in: [src/core/storage/LocalStorage.ts:4](https://github.com/dave-b-b/rea
 
 > **new LocalStorage**(`storageKey`): `LocalStorage`
 
-Defined in: [src/core/storage/LocalStorage.ts:7](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/LocalStorage.ts#L7)
+Defined in: [src/core/storage/LocalStorage.ts:7](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/LocalStorage.ts#L7)
 
 #### Parameters
 
@@ -30,7 +30,7 @@ Defined in: [src/core/storage/LocalStorage.ts:7](https://github.com/dave-b-b/rea
 
 > **clear**(): `void`
 
-Defined in: [src/core/storage/LocalStorage.ts:111](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/LocalStorage.ts#L111)
+Defined in: [src/core/storage/LocalStorage.ts:111](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/LocalStorage.ts#L111)
 
 #### Returns
 
@@ -46,7 +46,7 @@ Defined in: [src/core/storage/LocalStorage.ts:111](https://github.com/dave-b-b/r
 
 > **getMetrics**(): [`AchievementMetrics`](../interfaces/AchievementMetrics.md)
 
-Defined in: [src/core/storage/LocalStorage.ts:93](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/LocalStorage.ts#L93)
+Defined in: [src/core/storage/LocalStorage.ts:93](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/LocalStorage.ts#L93)
 
 #### Returns
 
@@ -62,7 +62,7 @@ Defined in: [src/core/storage/LocalStorage.ts:93](https://github.com/dave-b-b/re
 
 > **getUnlockedAchievements**(): `string`[]
 
-Defined in: [src/core/storage/LocalStorage.ts:102](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/LocalStorage.ts#L102)
+Defined in: [src/core/storage/LocalStorage.ts:102](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/LocalStorage.ts#L102)
 
 #### Returns
 
@@ -78,7 +78,7 @@ Defined in: [src/core/storage/LocalStorage.ts:102](https://github.com/dave-b-b/r
 
 > **setMetrics**(`metrics`): `void`
 
-Defined in: [src/core/storage/LocalStorage.ts:97](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/LocalStorage.ts#L97)
+Defined in: [src/core/storage/LocalStorage.ts:97](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/LocalStorage.ts#L97)
 
 #### Parameters
 
@@ -100,7 +100,7 @@ Defined in: [src/core/storage/LocalStorage.ts:97](https://github.com/dave-b-b/re
 
 > **setUnlockedAchievements**(`achievements`): `void`
 
-Defined in: [src/core/storage/LocalStorage.ts:106](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/LocalStorage.ts#L106)
+Defined in: [src/core/storage/LocalStorage.ts:106](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/LocalStorage.ts#L106)
 
 #### Parameters
 

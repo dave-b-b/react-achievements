@@ -2,4 +2,4 @@
 
 > `const` **AchievementProvider**: `React.FC`\<`AchievementProviderProps`\>
 
-Defined in: [src/providers/AchievementProvider.tsx:69](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/providers/AchievementProvider.tsx#L69)
+Defined in: [src/providers/AchievementProvider.tsx:69](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/providers/AchievementProvider.tsx#L69)

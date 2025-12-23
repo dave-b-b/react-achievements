@@ -2,6 +2,9 @@ import type {ReactNode} from 'react';
 import clsx from 'clsx';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
+import MountainSvg from '@site/static/img/undraw_docusaurus_mountain.svg';
+import TreeSvg from '@site/static/img/undraw_docusaurus_tree.svg';
+import ReactSvg from '@site/static/img/undraw_docusaurus_react.svg';
 
 type FeatureItem = {
   title: string;
@@ -12,7 +15,7 @@ type FeatureItem = {
 const FeatureList: FeatureItem[] = [
   {
     title: 'Simple API',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    Svg: MountainSvg,
     description: (
       <>
         Get started in minutes with the Simple API. Define achievements using intuitive
@@ -22,7 +25,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Framework Agnostic',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    Svg: TreeSvg,
     description: (
       <>
         Works with Redux, Zustand, Context API, or any state management solution.
@@ -32,7 +35,7 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: 'Fully Customizable',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    Svg: ReactSvg,
     description: (
       <>
         Customize every aspect from UI components to storage backends. Built with React

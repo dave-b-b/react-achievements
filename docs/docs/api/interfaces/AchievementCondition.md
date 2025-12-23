@@ -1,6 +1,6 @@
 # Interface: AchievementCondition
 
-Defined in: [src/core/types.ts:23](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L23)
+Defined in: [src/core/types.ts:23](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L23)
 
 ## Properties
 
@@ -8,7 +8,7 @@ Defined in: [src/core/types.ts:23](https://github.com/dave-b-b/react-achievement
 
 > **achievementDetails**: [`AchievementWithStatus`](AchievementWithStatus.md) \| [`AchievementDetails`](AchievementDetails.md)
 
-Defined in: [src/core/types.ts:25](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L25)
+Defined in: [src/core/types.ts:25](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L25)
 
 ***
 
@@ -16,7 +16,7 @@ Defined in: [src/core/types.ts:25](https://github.com/dave-b-b/react-achievement
 
 > **isConditionMet**: (`value`, `state`) => `boolean`
 
-Defined in: [src/core/types.ts:24](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L24)
+Defined in: [src/core/types.ts:24](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L24)
 
 #### Parameters
 

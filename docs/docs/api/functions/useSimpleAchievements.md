@@ -2,7 +2,7 @@
 
 > **useSimpleAchievements**(): `object`
 
-Defined in: [src/hooks/useSimpleAchievements.ts:7](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/hooks/useSimpleAchievements.ts#L7)
+Defined in: [src/hooks/useSimpleAchievements.ts:7](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/hooks/useSimpleAchievements.ts#L7)
 
 A simplified hook for achievement tracking.
 Provides an easier API for common use cases while maintaining access to advanced features.

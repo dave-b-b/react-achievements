@@ -1,6 +1,6 @@
 # Interface: AchievementProviderProps
 
-Defined in: [src/core/types.ts:111](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L111)
+Defined in: [src/core/types.ts:111](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L111)
 
 ## Properties
 
@@ -8,7 +8,7 @@ Defined in: [src/core/types.ts:111](https://github.com/dave-b-b/react-achievemen
 
 > `optional` **badgesButtonPosition**: `"top-left"` \| `"top-right"` \| `"bottom-left"` \| `"bottom-right"`
 
-Defined in: [src/core/types.ts:116](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L116)
+Defined in: [src/core/types.ts:116](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L116)
 
 ***
 
@@ -16,7 +16,7 @@ Defined in: [src/core/types.ts:116](https://github.com/dave-b-b/react-achievemen
 
 > **children**: `ReactNode`
 
-Defined in: [src/core/types.ts:112](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L112)
+Defined in: [src/core/types.ts:112](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L112)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [src/core/types.ts:112](https://github.com/dave-b-b/react-achievemen
 
 > **config**: [`AchievementConfiguration`](AchievementConfiguration.md)
 
-Defined in: [src/core/types.ts:113](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L113)
+Defined in: [src/core/types.ts:113](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L113)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [src/core/types.ts:113](https://github.com/dave-b-b/react-achievemen
 
 > `optional` **icons**: `Record`\<`string`, `string`\>
 
-Defined in: [src/core/types.ts:118](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L118)
+Defined in: [src/core/types.ts:118](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L118)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [src/core/types.ts:118](https://github.com/dave-b-b/react-achievemen
 
 > `optional` **initialState**: [`InitialAchievementMetrics`](InitialAchievementMetrics.md) & `object`
 
-Defined in: [src/core/types.ts:114](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L114)
+Defined in: [src/core/types.ts:114](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L114)
 
 #### Type Declaration
 
@@ -54,7 +54,7 @@ Defined in: [src/core/types.ts:114](https://github.com/dave-b-b/react-achievemen
 
 > `optional` **onAchievementUnlocked**: (`achievement`) => `void`
 
-Defined in: [src/core/types.ts:120](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L120)
+Defined in: [src/core/types.ts:120](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L120)
 
 #### Parameters
 
@@ -72,7 +72,7 @@ Defined in: [src/core/types.ts:120](https://github.com/dave-b-b/react-achievemen
 
 > `optional` **storage**: [`AchievementStorage`](AchievementStorage.md)
 
-Defined in: [src/core/types.ts:119](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L119)
+Defined in: [src/core/types.ts:119](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L119)
 
 ***
 
@@ -80,7 +80,7 @@ Defined in: [src/core/types.ts:119](https://github.com/dave-b-b/react-achievemen
 
 > `optional` **storageKey**: `string`
 
-Defined in: [src/core/types.ts:115](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L115)
+Defined in: [src/core/types.ts:115](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L115)
 
 ***
 
@@ -88,4 +88,4 @@ Defined in: [src/core/types.ts:115](https://github.com/dave-b-b/react-achievemen
 
 > `optional` **styles**: `Partial`\<[`StylesProps`](StylesProps.md)\>
 
-Defined in: [src/core/types.ts:117](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L117)
+Defined in: [src/core/types.ts:117](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L117)

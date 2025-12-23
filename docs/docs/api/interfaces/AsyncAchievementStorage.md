@@ -1,6 +1,6 @@
 # Interface: AsyncAchievementStorage
 
-Defined in: [src/core/types.ts:70](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L70)
+Defined in: [src/core/types.ts:70](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L70)
 
 ## Methods
 
@@ -8,7 +8,7 @@ Defined in: [src/core/types.ts:70](https://github.com/dave-b-b/react-achievement
 
 > **clear**(): `Promise`\<`void`\>
 
-Defined in: [src/core/types.ts:75](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L75)
+Defined in: [src/core/types.ts:75](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L75)
 
 #### Returns
 
@@ -20,7 +20,7 @@ Defined in: [src/core/types.ts:75](https://github.com/dave-b-b/react-achievement
 
 > **getMetrics**(): `Promise`\<[`AchievementMetrics`](AchievementMetrics.md)\>
 
-Defined in: [src/core/types.ts:71](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L71)
+Defined in: [src/core/types.ts:71](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L71)
 
 #### Returns
 
@@ -32,7 +32,7 @@ Defined in: [src/core/types.ts:71](https://github.com/dave-b-b/react-achievement
 
 > **getUnlockedAchievements**(): `Promise`\<`string`[]\>
 
-Defined in: [src/core/types.ts:73](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L73)
+Defined in: [src/core/types.ts:73](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L73)
 
 #### Returns
 
@@ -44,7 +44,7 @@ Defined in: [src/core/types.ts:73](https://github.com/dave-b-b/react-achievement
 
 > **setMetrics**(`metrics`): `Promise`\<`void`\>
 
-Defined in: [src/core/types.ts:72](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L72)
+Defined in: [src/core/types.ts:72](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L72)
 
 #### Parameters
 
@@ -62,7 +62,7 @@ Defined in: [src/core/types.ts:72](https://github.com/dave-b-b/react-achievement
 
 > **setUnlockedAchievements**(`achievements`): `Promise`\<`void`\>
 
-Defined in: [src/core/types.ts:74](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/types.ts#L74)
+Defined in: [src/core/types.ts:74](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/types.ts#L74)
 
 #### Parameters
 

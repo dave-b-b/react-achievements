@@ -1,6 +1,6 @@
 # Class: StorageQuotaError
 
-Defined in: [src/core/errors/AchievementErrors.ts:24](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/errors/AchievementErrors.ts#L24)
+Defined in: [src/core/errors/AchievementErrors.ts:24](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/errors/AchievementErrors.ts#L24)
 
 Error thrown when browser storage quota is exceeded
 
@@ -14,7 +14,7 @@ Error thrown when browser storage quota is exceeded
 
 > **new StorageQuotaError**(`bytesNeeded`): `StorageQuotaError`
 
-Defined in: [src/core/errors/AchievementErrors.ts:25](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/errors/AchievementErrors.ts#L25)
+Defined in: [src/core/errors/AchievementErrors.ts:25](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/errors/AchievementErrors.ts#L25)
 
 #### Parameters
 
@@ -36,7 +36,7 @@ Defined in: [src/core/errors/AchievementErrors.ts:25](https://github.com/dave-b-
 
 > **bytesNeeded**: `number`
 
-Defined in: [src/core/errors/AchievementErrors.ts:25](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/errors/AchievementErrors.ts#L25)
+Defined in: [src/core/errors/AchievementErrors.ts:25](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/errors/AchievementErrors.ts#L25)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: docs/node\_modules/typescript/lib/lib.es2022.error.d.ts:24
 
 > **code**: `string`
 
-Defined in: [src/core/errors/AchievementErrors.ts:7](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/errors/AchievementErrors.ts#L7)
+Defined in: [src/core/errors/AchievementErrors.ts:7](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/errors/AchievementErrors.ts#L7)
 
 #### Inherited from
 
@@ -92,7 +92,7 @@ Defined in: docs/node\_modules/typescript/lib/lib.es5.d.ts:1076
 
 > **recoverable**: `boolean`
 
-Defined in: [src/core/errors/AchievementErrors.ts:8](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/errors/AchievementErrors.ts#L8)
+Defined in: [src/core/errors/AchievementErrors.ts:8](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/errors/AchievementErrors.ts#L8)
 
 #### Inherited from
 
@@ -104,7 +104,7 @@ Defined in: [src/core/errors/AchievementErrors.ts:8](https://github.com/dave-b-b
 
 > `optional` **remedy**: `string`
 
-Defined in: [src/core/errors/AchievementErrors.ts:9](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/errors/AchievementErrors.ts#L9)
+Defined in: [src/core/errors/AchievementErrors.ts:9](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/errors/AchievementErrors.ts#L9)
 
 #### Inherited from
 

@@ -1,6 +1,6 @@
 # Class: AsyncStorageAdapter
 
-Defined in: [src/core/storage/AsyncStorageAdapter.ts:4](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/AsyncStorageAdapter.ts#L4)
+Defined in: [src/core/storage/AsyncStorageAdapter.ts:4](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/AsyncStorageAdapter.ts#L4)
 
 ## Implements
 
@@ -12,7 +12,7 @@ Defined in: [src/core/storage/AsyncStorageAdapter.ts:4](https://github.com/dave-
 
 > **new AsyncStorageAdapter**(`asyncStorage`, `options?`): `AsyncStorageAdapter`
 
-Defined in: [src/core/storage/AsyncStorageAdapter.ts:14](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/AsyncStorageAdapter.ts#L14)
+Defined in: [src/core/storage/AsyncStorageAdapter.ts:14](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/AsyncStorageAdapter.ts#L14)
 
 #### Parameters
 
@@ -36,7 +36,7 @@ Defined in: [src/core/storage/AsyncStorageAdapter.ts:14](https://github.com/dave
 
 > **clear**(): `void`
 
-Defined in: [src/core/storage/AsyncStorageAdapter.ts:131](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/AsyncStorageAdapter.ts#L131)
+Defined in: [src/core/storage/AsyncStorageAdapter.ts:131](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/AsyncStorageAdapter.ts#L131)
 
 SYNC CLEAR: Clears cache immediately, clears storage in background
 
@@ -54,7 +54,7 @@ SYNC CLEAR: Clears cache immediately, clears storage in background
 
 > **flush**(): `Promise`\<`void`\>
 
-Defined in: [src/core/storage/AsyncStorageAdapter.ts:155](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/AsyncStorageAdapter.ts#L155)
+Defined in: [src/core/storage/AsyncStorageAdapter.ts:155](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/AsyncStorageAdapter.ts#L155)
 
 Wait for all pending writes to complete (useful for testing/cleanup)
 NOT part of AchievementStorage interface - utility method
@@ -69,7 +69,7 @@ NOT part of AchievementStorage interface - utility method
 
 > **getMetrics**(): [`AchievementMetrics`](../interfaces/AchievementMetrics.md)
 
-Defined in: [src/core/storage/AsyncStorageAdapter.ts:72](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/AsyncStorageAdapter.ts#L72)
+Defined in: [src/core/storage/AsyncStorageAdapter.ts:72](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/AsyncStorageAdapter.ts#L72)
 
 SYNC READ: Returns cached metrics immediately
 Cache is loaded eagerly during construction
@@ -88,7 +88,7 @@ Cache is loaded eagerly during construction
 
 > **getUnlockedAchievements**(): `string`[]
 
-Defined in: [src/core/storage/AsyncStorageAdapter.ts:102](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/AsyncStorageAdapter.ts#L102)
+Defined in: [src/core/storage/AsyncStorageAdapter.ts:102](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/AsyncStorageAdapter.ts#L102)
 
 SYNC READ: Returns cached unlocked achievements immediately
 
@@ -106,7 +106,7 @@ SYNC READ: Returns cached unlocked achievements immediately
 
 > **setMetrics**(`metrics`): `void`
 
-Defined in: [src/core/storage/AsyncStorageAdapter.ts:80](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/AsyncStorageAdapter.ts#L80)
+Defined in: [src/core/storage/AsyncStorageAdapter.ts:80](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/AsyncStorageAdapter.ts#L80)
 
 SYNC WRITE: Updates cache immediately, writes to storage in background
 Uses optimistic updates - assumes write will succeed
@@ -131,7 +131,7 @@ Uses optimistic updates - assumes write will succeed
 
 > **setUnlockedAchievements**(`achievements`): `void`
 
-Defined in: [src/core/storage/AsyncStorageAdapter.ts:109](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/AsyncStorageAdapter.ts#L109)
+Defined in: [src/core/storage/AsyncStorageAdapter.ts:109](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/AsyncStorageAdapter.ts#L109)
 
 SYNC WRITE: Updates cache immediately, writes to storage in background
 

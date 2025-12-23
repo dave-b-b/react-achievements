@@ -1,6 +1,6 @@
 # Interface: ThemeConfig
 
-Defined in: [src/core/ui/interfaces.ts:65](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L65)
+Defined in: [src/core/ui/interfaces.ts:65](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L65)
 
 Theme configuration interface
 Defines styling for all UI components
@@ -11,7 +11,7 @@ Defines styling for all UI components
 
 > **confetti**: `object`
 
-Defined in: [src/core/ui/interfaces.ts:89](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L89)
+Defined in: [src/core/ui/interfaces.ts:89](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L89)
 
 #### colors
 
@@ -31,7 +31,7 @@ Defined in: [src/core/ui/interfaces.ts:89](https://github.com/dave-b-b/react-ach
 
 > **modal**: `object`
 
-Defined in: [src/core/ui/interfaces.ts:79](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L79)
+Defined in: [src/core/ui/interfaces.ts:79](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L79)
 
 #### accentColor
 
@@ -71,7 +71,7 @@ Defined in: [src/core/ui/interfaces.ts:79](https://github.com/dave-b-b/react-ach
 
 > **name**: `string`
 
-Defined in: [src/core/ui/interfaces.ts:66](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L66)
+Defined in: [src/core/ui/interfaces.ts:66](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L66)
 
 ***
 
@@ -79,7 +79,7 @@ Defined in: [src/core/ui/interfaces.ts:66](https://github.com/dave-b-b/react-ach
 
 > **notification**: `object`
 
-Defined in: [src/core/ui/interfaces.ts:67](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/ui/interfaces.ts#L67)
+Defined in: [src/core/ui/interfaces.ts:67](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/ui/interfaces.ts#L67)
 
 #### accentColor
 

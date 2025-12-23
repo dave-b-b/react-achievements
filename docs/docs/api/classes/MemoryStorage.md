@@ -1,6 +1,6 @@
 # Class: MemoryStorage
 
-Defined in: [src/core/storage/MemoryStorage.ts:3](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/MemoryStorage.ts#L3)
+Defined in: [src/core/storage/MemoryStorage.ts:3](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/MemoryStorage.ts#L3)
 
 ## Implements
 
@@ -12,7 +12,7 @@ Defined in: [src/core/storage/MemoryStorage.ts:3](https://github.com/dave-b-b/re
 
 > **new MemoryStorage**(): `MemoryStorage`
 
-Defined in: [src/core/storage/MemoryStorage.ts:7](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/MemoryStorage.ts#L7)
+Defined in: [src/core/storage/MemoryStorage.ts:7](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/MemoryStorage.ts#L7)
 
 #### Returns
 
@@ -24,7 +24,7 @@ Defined in: [src/core/storage/MemoryStorage.ts:7](https://github.com/dave-b-b/re
 
 > **clear**(): `void`
 
-Defined in: [src/core/storage/MemoryStorage.ts:25](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/MemoryStorage.ts#L25)
+Defined in: [src/core/storage/MemoryStorage.ts:25](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/MemoryStorage.ts#L25)
 
 #### Returns
 
@@ -40,7 +40,7 @@ Defined in: [src/core/storage/MemoryStorage.ts:25](https://github.com/dave-b-b/r
 
 > **getMetrics**(): [`AchievementMetrics`](../interfaces/AchievementMetrics.md)
 
-Defined in: [src/core/storage/MemoryStorage.ts:9](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/MemoryStorage.ts#L9)
+Defined in: [src/core/storage/MemoryStorage.ts:9](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/MemoryStorage.ts#L9)
 
 #### Returns
 
@@ -56,7 +56,7 @@ Defined in: [src/core/storage/MemoryStorage.ts:9](https://github.com/dave-b-b/re
 
 > **getUnlockedAchievements**(): `string`[]
 
-Defined in: [src/core/storage/MemoryStorage.ts:17](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/MemoryStorage.ts#L17)
+Defined in: [src/core/storage/MemoryStorage.ts:17](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/MemoryStorage.ts#L17)
 
 #### Returns
 
@@ -72,7 +72,7 @@ Defined in: [src/core/storage/MemoryStorage.ts:17](https://github.com/dave-b-b/r
 
 > **setMetrics**(`metrics`): `void`
 
-Defined in: [src/core/storage/MemoryStorage.ts:13](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/MemoryStorage.ts#L13)
+Defined in: [src/core/storage/MemoryStorage.ts:13](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/MemoryStorage.ts#L13)
 
 #### Parameters
 
@@ -94,7 +94,7 @@ Defined in: [src/core/storage/MemoryStorage.ts:13](https://github.com/dave-b-b/r
 
 > **setUnlockedAchievements**(`achievements`): `void`
 
-Defined in: [src/core/storage/MemoryStorage.ts:21](https://github.com/dave-b-b/react-achievements/blob/2283189c3274a15397f543b098b98d32e4fb9597/src/core/storage/MemoryStorage.ts#L21)
+Defined in: [src/core/storage/MemoryStorage.ts:21](https://github.com/dave-b-b/react-achievements/blob/3d10e1b67b77878cf7df50ca317f6dc2c677383e/src/core/storage/MemoryStorage.ts#L21)
 
 #### Parameters
 
