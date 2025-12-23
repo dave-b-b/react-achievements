@@ -41,7 +41,7 @@ const config: Config = {
       {
         entryPoints: ['../src/index.ts'],
         tsconfig: '../tsconfig.json',
-        out: 'docs/api',
+        out: 'api',
       },
     ],
   ],
@@ -51,7 +51,25 @@ const config: Config = {
       'classic',
       {
         docs: {
+          path: '.', // Look for docs in current directory instead of docs/
+          routeBasePath: 'docs',
           sidebarPath: './sidebars.ts',
+          exclude: [
+            '**/node_modules/**',
+            '**/.docusaurus/**',
+            '**/build/**',
+            '**/src/**',
+            '**/static/**',
+            '**/*.config.*',
+            '**/*.ts',
+            '**/*.tsx',
+            '**/*.js',
+            '**/*.jsx',
+            '**/package*.json',
+            '**/.gitignore',
+            '**/tsconfig.json',
+            '**/README.md', // Exclude root README
+          ],
           editUrl:
             'https://github.com/dave-b-b/react-achievements/tree/main/docs/',
         },
