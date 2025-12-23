@@ -4,30 +4,20 @@ on:
   workflow_dispatch:  # Manual trigger via GitHub UI or CLI
 
 permissions:
-  contents: write
-  id-token: write
+  id-token: write  # Required for OIDC
+  contents: read
 
 jobs:
-  release:
+  publish:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           registry-url: 'https://registry.npmjs.org'
-          always-auth: true
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build package
-        run: npm run build
-
-      - name: Publish to npm
-        run: npm publish --access public --provenance
-        env:
-          NPM_CONFIG_USERCONFIG: /dev/null
-
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm test
+      - run: npm publish
