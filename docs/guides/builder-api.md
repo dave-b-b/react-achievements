@@ -56,7 +56,7 @@ const achievements = AchievementBuilder.combine([
 ```
 
 **Smart Defaults:**
-- Auto-generated title: "Score {threshold} points"
+- Auto-generated title: "Score \{threshold\} points"
 - Auto-generated ID: `score_{threshold}`
 - Trophy icon: 🏆
 - Metric: `score`
@@ -72,7 +72,7 @@ const achievements = AchievementBuilder.combine([
 ```
 
 **Smart Defaults:**
-- Auto-generated title: "Reach level {threshold}"
+- Auto-generated title: "Reach level \{threshold\}"
 - Auto-generated ID: `level_{threshold}`
 - Star icon: ⭐
 - Metric: `level`
