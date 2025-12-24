@@ -40,19 +40,11 @@ const config: Config = {
       'docusaurus-plugin-typedoc',
       {
         entryPoints: ['../src/index.ts'],
-        tsconfig: '../tsconfig.json',
+        tsconfig: '../tsconfig.docs.json',
         out: 'api-reference',
         hidePageTitle: true,
         readme: 'none',
         plugin: ['typedoc-plugin-markdown', 'typedoc-plugin-frontmatter'],
-        exclude: [
-          '../src/**/__mocks__/**',
-          '../src/**/__tests__/**',
-          '../src/**/test-utils/**',
-          '../src/**/*.test.ts',
-          '../src/**/*.test.tsx',
-          '../src/**/setupTests.ts',
-        ],
         indexFrontmatter: {
           title: 'API Reference',
           sidebar_label: 'API Index',
