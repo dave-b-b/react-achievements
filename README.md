@@ -174,7 +174,7 @@ import type { AchievementMetrics, AchievementWithStatus } from 'react-achievemen
 const metrics: AchievementMetrics = { score: 100, level: 5 };
 ```
 
-➡️ **[Complete API Reference](https://dave-b-b.github.io/react-achievements/docs/api)**
+➡️ **[Complete API Reference](https://dave-b-b.github.io/react-achievements/docs/api-reference)**
 
 ---
 
@@ -285,9 +285,9 @@ npm install react-toastify react-modal react-confetti react-use
 - 📱 **[State Management](https://dave-b-b.github.io/react-achievements/docs/recipes/state-management)** - Redux, Zustand, Context examples
 
 ### API Reference
-- 📚 **[Complete API Docs](https://dave-b-b.github.io/react-achievements/docs/api)** - Full TypeScript API reference
-- 🪝 **[Hooks](https://dave-b-b.github.io/react-achievements/docs/api/functions/useSimpleAchievements)** - useSimpleAchievements, useAchievements
-- 🧱 **[Components](https://dave-b-b.github.io/react-achievements/docs/api/variables/BadgesButton)** - BadgesButton, BadgesModal, etc.
+- 📚 **[Complete API Docs](https://dave-b-b.github.io/react-achievements/docs/api-reference)** - Full TypeScript API reference
+- 🪝 **[Hooks](https://dave-b-b.github.io/react-achievements/docs/api-reference/functions/useSimpleAchievements)** - useSimpleAchievements, useAchievements
+- 🧱 **[Components](https://dave-b-b.github.io/react-achievements/docs/api-reference/variables/BadgesButton)** - BadgesButton, BadgesModal, etc.
 
 ### Advanced
 - 🔌 **[Custom Storage](https://dave-b-b.github.io/react-achievements/docs/advanced/custom-storage)** - Implement your own storage backend
