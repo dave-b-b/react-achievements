@@ -41,7 +41,7 @@ const config: Config = {
       {
         entryPoints: ['../src/index.ts'],
         tsconfig: '../tsconfig.json',
-        out: 'api',
+        out: 'api-reference',
         hidePageTitle: true,
         readme: 'none',
         plugin: ['typedoc-plugin-markdown', 'typedoc-plugin-frontmatter'],
