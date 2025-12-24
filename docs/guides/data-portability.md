@@ -689,6 +689,6 @@ function AchievementBackupSystem() {
 
 ## What's Next?
 
-- **[Storage Options](./storage-options)** - Learn about storage backends
 - **[Error Handling](./error-handling)** - Handle backup failures gracefully
-- **[API Reference](../api)** - Complete export/import API docs
+- **[API Reference](../api-reference)** - Complete export/import API docs
+- **[Simple API](./simple-api)** - Learn the recommended configuration approach

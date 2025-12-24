@@ -311,7 +311,6 @@ const achievements = {
 
 ## Next Steps
 
-- **[Tracking Methods](/docs/api/hooks/useSimpleAchievements)** - Complete API reference
-- **[Storage Options](/docs/guides/storage-options)** - Choose the right storage backend
 - **[Common Patterns](/docs/recipes/common-patterns)** - Ready-to-use achievement patterns
-- **[Migration from Complex API](/docs/guides/migration)** - Migrate existing code
+- **[Theming Guide](./theming)** - Customize the UI appearance
+- **[Builder API](./builder-api)** - Advanced achievement configuration

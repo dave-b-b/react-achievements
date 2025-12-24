@@ -172,7 +172,6 @@ That's it! You've built a complete achievement system.
 Now that you have the basics working, explore more features:
 
 - **[Simple API Guide](/docs/guides/simple-api)** - Learn all Simple API patterns
-- **[Storage Options](/docs/guides/storage-options)** - Choose the right storage backend
 - **[Theming](/docs/guides/theming)** - Customize the look and feel
 - **[Common Patterns](/docs/recipes/common-patterns)** - Ready-to-use code examples
 

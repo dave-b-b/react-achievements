@@ -34,8 +34,6 @@ If you're using existing code that relies on legacy external UI libraries, insta
 npm install react-toastify react-modal react-confetti react-use
 ```
 
-To migrate to built-in UI components, see the [Migration Guide](/docs/guides/migration).
-
 ## Verifying Installation
 
 Create a test file to verify the installation:
@@ -60,7 +58,6 @@ If this compiles without errors, you're ready to go!
 
 - **[Quick Start](/docs/getting-started/quick-start)** - Build your first achievement system
 - **[Simple API Guide](/docs/guides/simple-api)** - Learn the recommended configuration approach
-- **[TypeScript Setup](/docs/guides/typescript)** - Configure TypeScript (recommended)
 
 ## Troubleshooting
 
@@ -78,7 +75,7 @@ If you encounter TypeScript errors:
 
 1. Ensure your TypeScript version is 4.5.0 or higher
 2. Add `"moduleResolution": "node"` to your `tsconfig.json`
-3. See the [TypeScript Guide](/docs/guides/typescript) for detailed setup
+3. Ensure you have `@types/react` installed: `npm install --save-dev @types/react`
 
 ### React version conflicts
 

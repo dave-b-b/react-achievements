@@ -504,4 +504,3 @@ const achievements = AchievementBuilder.combine([
 
 - **[Simple API Guide](../guides/simple-api)** - Learn the recommended lightweight API
 - **[Builder API](../guides/builder-api)** - Three-tier builder system
-- **[Migration Guide](../guides/migration)** - Migrate from Complex to Simple API

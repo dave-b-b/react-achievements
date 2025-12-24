@@ -499,4 +499,4 @@ ui={{ disableConfetti: false }}
 
 - **[Builder API](./builder-api)** - Advanced achievement configuration
 - **[Styling Guide](./styling)** - Deep customization of components
-- **[API Reference](../api)** - Complete API documentation
+- **[API Reference](../api-reference)** - Complete API documentation

@@ -25,7 +25,7 @@ function HomepageHeader() {
           </Link>
           <Link
             className="button button--primary button--lg"
-            to="/docs/api"
+            to="/docs/api-reference"
             style={{marginLeft: '1rem'}}>
             API Reference
           </Link>

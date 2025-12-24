@@ -8,7 +8,7 @@ sidebar_position: 0
 
  ## Quick Links
 
- - [Full Documentation](../intro) - Getting started and guides
+ - [Full Documentation](../) - Getting started and guides
  - [GitHub Repository](https://github.com/dave-b-b/react-achievements) - Source code
  - [Examples](https://github.com/dave-b-b/react-achievements/tree/main/stories/examples) - Redux, Zustand, Context implementations
  - [Contributing](https://github.com/dave-b-b/react-achievements/blob/main/CONTRIBUTING.md)

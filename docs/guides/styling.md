@@ -642,5 +642,5 @@ Notifications appearing behind other elements:
 ## What's Next?
 
 - **[Theming Guide](./theming)** - Explore built-in themes
-- **[API Reference](../api)** - Component prop documentation
+- **[API Reference](../api-reference)** - Component prop documentation
 - **[Builder API](./builder-api)** - Customize achievement configuration

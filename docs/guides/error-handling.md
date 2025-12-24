@@ -456,6 +456,6 @@ function AppWithFallback() {
 
 ## What's Next?
 
-- **[Storage Options](./storage-options)** - Learn about different storage backends
 - **[Data Portability](./data-portability)** - Export/import for error recovery
-- **[API Reference](../api)** - Complete error class documentation
+- **[API Reference](../api-reference)** - Complete error class documentation
+- **[Theming](./theming)** - Customize the UI appearance

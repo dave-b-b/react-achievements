@@ -532,4 +532,4 @@ const achievements = AchievementBuilder.combine([
 
 - **[Simple API Guide](./simple-api)** - Learn the recommended lightweight API
 - **[Complex API](../advanced/complex-api)** - Low-level POJO configuration
-- **[API Reference](../api)** - Complete type definitions
+- **[API Reference](../api-reference)** - Complete type definitions
