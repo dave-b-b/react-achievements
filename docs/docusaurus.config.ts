@@ -90,7 +90,7 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
-    image: 'img/react-achievements.logo-sm.png',
+    image: 'img/react-achievements-logo.png',
     colorMode: {
       respectPrefersColorScheme: true,
     },
@@ -98,7 +98,7 @@ const config: Config = {
       title: 'React Achievements',
       logo: {
         alt: 'React Achievements Logo',
-        src: 'img/react-achievements.logo-sm.png',
+        src: 'img/react-achievements-logo.png',
       },
       items: [
         {
