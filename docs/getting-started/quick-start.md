@@ -248,6 +248,6 @@ Use `getAllAchievements()` instead of `achievements.all`:
 
 ### Need help?
 
-- Check the [API Reference](/docs/api)
+- Check the [API Reference](/docs/api-intro)
 - Browse [Common Patterns](/docs/recipes/common-patterns)
 - Open an [issue on GitHub](https://github.com/YOUR_GITHUB_USERNAME/react-achievements/issues)
