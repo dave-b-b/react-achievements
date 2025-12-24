@@ -72,7 +72,7 @@ Ready to add achievements to your app? Here's where to go:
 - **[Installation](/docs/getting-started/installation)** - Install and configure React Achievements
 - **[Quick Start](/docs/getting-started/quick-start)** - Build your first achievement system
 - **[Simple API Guide](/docs/guides/simple-api)** - Learn the recommended API
-- **[API Reference](/docs/api)** - Complete API documentation
+- **[API Reference](/docs/api-intro)** - Complete API documentation
 
 ## Version Information
 

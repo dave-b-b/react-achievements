@@ -351,5 +351,5 @@ describe('MyCustomStorage', () => {
 ## Related Documentation
 
 - **[Storage Options](/docs/guides/storage-options)** - Built-in storage types
-- **[API Reference](/docs/api)** - Complete type definitions
+- **[API Reference](/docs/api-intro)** - Complete type definitions
 - **[Error Handling](/docs/guides/error-handling)** - Handle storage errors
