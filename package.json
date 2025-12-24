@@ -1,6 +1,6 @@
 {
   "name": "react-achievements",
-  "version": "3.6.5",
+  "version": "3.7.0",
   "description": "Core achievement system for React applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -106,7 +106,11 @@
     "core"
   ],
   "author": "Dave B",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/dave-b-b"
+  },
   "bugs": {
     "url": "https://github.com/dave-b-b/react-achievements/issues"
   },

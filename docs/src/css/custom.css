@@ -28,3 +28,8 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+/* Fix sidebar category casing - ensure proper capitalization */
+.theme-doc-sidebar-item-category > .menu__link {
+  text-transform: none !important;
+}

@@ -5,7 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.6.5] - 20250-12-23
+## [3.7.0] - 2025-12-23
+
+### Added
+- **BadgesButtonWithModal Component**: New convenience component that combines `BadgesButton` and `BadgesModal` with internal state management
+  - Manages modal open/close state internally
+
+### Improved
+- **Documentation**: Updated README and Docusaurus quick-start guide to showcase the simplified approach
+---
+
+## [3.6.5] - 2025-12-23
 - **Docusaurus**: added docusaurus to help document API for users
 
 ## [3.6.4] - 2025-12-22
