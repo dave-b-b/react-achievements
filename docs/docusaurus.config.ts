@@ -42,6 +42,8 @@ const config: Config = {
         entryPoints: ['../src/index.ts'],
         tsconfig: '../tsconfig.json',
         out: 'api',
+        hidePageTitle: true,
+        readme: 'none',
       },
     ],
   ],
@@ -83,7 +85,7 @@ const config: Config = {
 
   themeConfig: {
     // Replace with your project's social card
-    image: 'img/docusaurus-social-card.jpg',
+    image: 'img/react-achievements.logo-sm.png',
     colorMode: {
       respectPrefersColorScheme: true,
     },
@@ -91,7 +93,7 @@ const config: Config = {
       title: 'React Achievements',
       logo: {
         alt: 'React Achievements Logo',
-        src: 'img/logo.svg',
+        src: 'img/react-achievements.logo-sm.png',
       },
       items: [
         {

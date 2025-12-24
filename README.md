@@ -133,7 +133,7 @@ Zero external dependencies, three beautiful themes:
 ```
 
 **Includes:**
-- 🔔 Toast notifications with smooth animations
+- 🔔 Notifications with smooth animations
 - 🎊 Confetti celebrations
 - 🏆 Achievement modal with locked/unlocked states
 - 🎨 Customizable themes or inject your own components
@@ -327,9 +327,9 @@ npm install react-toastify react-modal react-confetti react-use
 
 ---
 
-## Examples & Demos
+## Examples & Feature Explanation
 
-### Live Demos
+### Feature Explanation
 - 🎮 **[Interactive Storybook](https://dave-b-b.github.io/react-achievements/)** - Explore all components and features
 - 🌐 **[Documentation Site](https://dave-b-b.github.io/react-achievements/docs/)** - Comprehensive guides and API docs
 
@@ -396,13 +396,13 @@ React Achievements is **dual-licensed**:
 **[Get Your Commercial License via GitHub Sponsors →](https://github.com/sponsors/dave-b-b)**
 
 #### Pricing Tiers:
-- **Indie Developer** ($19/month) - Small businesses, freelancers, startups <$100K revenue
-- **Professional** ($49/month) - Growing companies <$1M revenue, priority support
-- **Enterprise** ($199/month) - Large companies, unlimited revenue, private support
+- **Indie Developer** ($20/month) - Small businesses, freelancers, startups under $100K revenue
+- **Professional** ($50/month) - Growing companies under $1M revenue, priority support
+- **Enterprise** ($100/month) - Large companies, unlimited revenue
 
 ➡️ **[License Details](./LICENSE)** | **[Commercial License Terms](./COMMERCIAL-LICENSE.md)**
 
-For custom licensing or questions: **dave.b.business@gmail.com**
+For custom licensing or questions: **reactachievements@gmail.com**
 
 ---
 
