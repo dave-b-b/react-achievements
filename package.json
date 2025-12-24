@@ -106,7 +106,11 @@
     "core"
   ],
   "author": "Dave B",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/dave-b-b"
+  },
   "bugs": {
     "url": "https://github.com/dave-b-b/react-achievements/issues"
   },
