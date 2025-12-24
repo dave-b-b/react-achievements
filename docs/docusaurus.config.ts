@@ -44,6 +44,11 @@ const config: Config = {
         out: 'api',
         hidePageTitle: true,
         readme: 'none',
+        plugin: ['typedoc-plugin-markdown', 'typedoc-plugin-frontmatter'],
+        indexFrontmatter: {
+          title: 'API Reference',
+          sidebar_label: 'API Index',
+        },
       },
     ],
   ],

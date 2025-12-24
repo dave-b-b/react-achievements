@@ -1,8 +1,8 @@
- ---
- sidebar_position: 0
- ---
+---
+sidebar_position: 0
+---
 
- # API Reference
+# API Reference
 
  Welcome to the React Achievements API Reference. This documentation is automatically generated from TypeScript source code using TypeDoc.
 
