@@ -2,8 +2,16 @@
   "name": "react-achievements",
   "version": "3.8.0",
   "description": "Core achievement system for React applications",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs"
+    }
+  },
   "scripts": {
     "build": "rollup -c",
     "test": "npm run type-check && jest",

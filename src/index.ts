@@ -16,10 +16,15 @@ export type {
     AchievementStorage,
     AsyncAchievementStorage,
     AnyAchievementStorage,
-    AchievementContextValue,
+    AchievementContextValue, // @deprecated - use AchievementContextType instead
     StylesProps,
     AchievementProviderProps,
 } from './core/types';
+
+// Context Types
+export type {
+    AchievementContextType,  // NEW - current context interface
+} from './providers/AchievementProvider';
 
 // Type Guards
 export { isAsyncStorage } from './core/types';

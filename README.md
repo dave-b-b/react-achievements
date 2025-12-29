@@ -120,10 +120,11 @@ const achievements = {
 
 ### ⚡ Event-Based Tracking (NEW in v3.8.0)
 
-Track achievements using events instead of manual metric updates:
+Track achievements using events instead of manual metric updates. The recommended pattern is to create the engine externally and access it via the `useAchievementEngine()` hook:
 
 ```tsx
-import { AchievementProvider, useAchievementEngine } from 'react-achievements';
+// main.tsx - Create engine at app entry point
+import { AchievementProvider, AchievementEngine } from 'react-achievements';
 
 // Configure event-to-metric mapping
 const eventMapping = {
@@ -135,6 +136,35 @@ const eventMapping = {
   })
 };
 
+const achievements = AchievementBuilder.create()
+        .withId('engaged_learner')
+        .withMetric('lessons')
+        .withCondition((value, state) => {
+           const lessonsValue = Array.isArray(value) ? value[value.length - 1] : value;
+           const notesMetric = state.metrics.notes;
+           const notesValue = Array.isArray(notesMetric) ? notesMetric[notesMetric.length - 1] : notesMetric;
+           return lessonsValue >= 1 && notesValue >= 1;
+        })
+        .withAward({ title: "Engaged Learner", description: "Lesson + Note combo", icon: "🧠" })
+        .build()
+
+// Create engine once, outside React
+const engine = new AchievementEngine({
+  achievements,
+  eventMapping,
+  storage: 'local'
+});
+
+// Inject into provider
+<AchievementProvider engine={engine} useBuiltInUI={true}>
+  <App />
+</AchievementProvider>
+```
+
+```tsx
+// Game.tsx - Access engine via hook (no props needed!)
+import { useAchievementEngine } from 'react-achievements';
+
 function Game() {
   const engine = useAchievementEngine();
 
@@ -145,13 +175,6 @@ function Game() {
 
   return <div>{/* Your game UI */}</div>;
 }
-
-<AchievementProvider
-  achievements={achievements}
-  eventMapping={eventMapping}
->
-  <Game />
-</AchievementProvider>
 ```
 
 **Benefits:**
@@ -159,24 +182,8 @@ function Game() {
 - 🔧 **Decoupled** - Achievement logic separated from business logic
 - 🌍 **Framework-Agnostic** - Built on `achievements-engine` (works in Vue, Angular, Node.js, etc.)
 - 🎛️ **Flexible** - Direct mapping, custom transformers, or no mapping at all
-
-**External Engine Mode:**
-```tsx
-import { AchievementEngine } from 'react-achievements';
-
-// Create engine outside React
-const engine = new AchievementEngine({
-  achievements,
-  eventMapping
-});
-
-// Share across your entire app
-<AchievementProvider engine={engine}>
-  <App />
-</AchievementProvider>
-```
-
-This allows you to use the same engine instance across different frameworks or trigger achievements from server-side code!
+- 🪝 **Hook-Based** - Access engine anywhere without props drilling
+- 🔄 **Persistent** - Engine survives route changes and component unmounts
 
 ➡️ **[Event-Based API Guide](https://dave-b-b.github.io/react-achievements/docs/guides/event-based-api)**
 
@@ -320,6 +327,7 @@ npm install react-achievements
 **Note about Legacy Dependencies:**
 
 As of v3.6.0, React Achievements includes a built-in UI system with **zero external dependencies** when using `useBuiltInUI={true}`. The legacy external UI dependencies (`react-toastify`, `react-modal`, `react-confetti`, `react-use`) are now optional and will be fully deprecated in v4.0.0.
+As of v3.8.0, React Achievements uses the `achievements-engine` package for event-based tracking and external engine mode.
 
 ```bash
 # Only if using legacy external UI (deprecated in v4.0.0)
@@ -368,7 +376,7 @@ npm install react-toastify react-modal react-confetti react-use
 
 **v3.8.0** - Event-Based Achievement System 🎉
 - Event-based tracking with `engine.emit()` for semantic achievement updates
-- Standalone `achievements-engine` package (framework-agnostic)
+- Standalone [achievements-engine](https://www.npmjs.com/package/achievements-engine) package (framework-agnostic)
 - External engine mode - share engine across React, Vue, Angular, Node.js
 - Event-to-metric mapping with direct mapping or custom transformers
 - New `useAchievementEngine` hook for direct engine access
@@ -398,6 +406,221 @@ npm install react-toastify react-modal react-confetti react-use
 - AWS S3 and Azure Blob Storage integration
 
 ➡️ **[Full Changelog](https://github.com/dave-b-b/react-achievements/releases)**
+
+---
+
+## Best Practices
+
+### ✅ Recommended: Hook-Based Access
+
+Create the engine once at your app's entry point and access it via hooks throughout your component tree:
+
+```tsx
+// ✅ Good: Create engine externally
+// main.tsx
+import { AchievementEngine } from 'achievements-engine';
+
+const engine = new AchievementEngine({
+  achievements,
+  eventMapping,
+  storage: 'local'
+});
+
+<AchievementProvider engine={engine}>
+  <App />
+</AchievementProvider>
+
+// Any component.tsx
+import { useAchievementEngine } from 'react-achievements';
+
+function MyComponent() {
+  const engine = useAchievementEngine();
+  engine.emit('userScored', 100);
+  // ...
+}
+```
+
+**Why?** This pattern:
+- ✅ Eliminates props drilling
+- ✅ More React-idiomatic with hooks
+- ✅ Engine persists across route changes
+- ✅ Easier to refactor and maintain
+- ✅ Can be shared across frameworks
+
+### ❌ Avoid: Props Drilling
+
+Don't pass the engine as props through multiple component layers:
+
+```tsx
+// ❌ Bad: Props drilling
+<App engine={engine}>
+  <Layout engine={engine}>
+    <Header engine={engine}>
+      <UserMenu engine={engine} />
+    </Header>
+  </Layout>
+</App>
+
+// ❌ Bad: Duplicating engine reference
+function App({ engine }) {
+  return (
+    <AchievementProvider engine={engine}>
+      <GameComponent engine={engine} />  {/* Redundant! */}
+    </AchievementProvider>
+  );
+}
+```
+
+**Why avoid?** Props drilling:
+- ❌ Makes refactoring difficult
+- ❌ Couples components unnecessarily
+- ❌ Increases maintenance burden
+- ❌ Goes against React hooks patterns
+
+### Pattern Selection Guide
+
+Choose the right pattern for your use case:
+
+| Pattern | Use Case | Complexity |
+|---------|----------|------------|
+| **Simple API** (`useSimpleAchievements`) | Quick implementation, basic needs | ⭐ Easiest |
+| **Event-Based** (`useAchievementEngine` + external engine) | Complex apps, semantic tracking | ⭐⭐ Recommended |
+| **Complex API** (direct metrics) | Legacy code, fine control | ⭐⭐⭐ Advanced |
+
+---
+
+## Troubleshooting
+
+### "AchievementEngine is not available" Error
+
+**Symptom**: Getting error "AchievementEngine is not available" or "engine is undefined" when using `useAchievementEngine()`
+
+**Causes & Solutions**:
+
+1. **Build mismatch** - Source code and built dist/ are out of sync
+   ```bash
+   # Solution: Rebuild the package
+   npm run build
+   ```
+
+2. **Wrong provider pattern** - Using `achievements` prop instead of `engine` prop
+   ```tsx
+   // ❌ Wrong: Can't use useAchievementEngine with achievements prop
+   <AchievementProvider achievements={config}>
+     <App />
+   </AchievementProvider>
+
+   // ✅ Correct: Create engine externally
+   const engine = new AchievementEngine({ achievements: config });
+   <AchievementProvider engine={engine}>
+     <App />
+   </AchievementProvider>
+   ```
+
+3. **Hook used outside provider** - Component not wrapped by AchievementProvider
+   ```tsx
+   // ❌ Wrong: Hook called outside provider
+   function App() {
+     const engine = useAchievementEngine(); // Error!
+     return <div>...</div>;
+   }
+
+   // ✅ Correct: Wrap with provider first
+   <AchievementProvider engine={engine}>
+     <App />
+   </AchievementProvider>
+   ```
+
+4. **Type mismatch** - Using outdated `AchievementContextValue` type
+   ```tsx
+   // ❌ Wrong: Outdated type (missing engine property)
+   import { AchievementContextValue } from 'react-achievements';
+
+   // ✅ Correct: Use current type
+   import { AchievementContextType } from 'react-achievements';
+   ```
+   The `AchievementContextValue` type is deprecated and will be removed in v4.0.0.
+
+### "Cannot use useAchievementEngine when AchievementProvider has achievements prop"
+
+**Symptom**: Error when trying to use `useAchievementEngine()` hook
+
+**Solution**: You're mixing the old pattern (achievements prop) with the new pattern (engine prop). Choose one:
+
+```tsx
+// Option 1: Use old pattern with useAchievements hook
+<AchievementProvider achievements={config}>
+  <App />
+</AchievementProvider>
+// Then use: const { update } = useAchievements();
+
+// Option 2: Use new pattern with useAchievementEngine hook
+const engine = new AchievementEngine({ achievements: config });
+<AchievementProvider engine={engine}>
+  <App />
+</AchievementProvider>
+// Then use: const engine = useAchievementEngine();
+```
+
+### Engine State Not Updating
+
+**Symptom**: Calling `engine.emit()` but achievements not unlocking
+
+**Solutions**:
+
+1. **Check event mapping** - Ensure events are mapped to the correct metrics
+   ```tsx
+   const eventMapping = {
+     'userScored': 'score',  // Maps event to metric
+   };
+   ```
+
+2. **Verify achievement conditions** - Check that conditions use the correct metric names
+   ```tsx
+   const achievements = {
+     score: {
+       100: { title: 'Century!', ... }  // Metric name must match eventMapping
+     }
+   };
+   ```
+
+3. **Check for typos** - Event names are case-sensitive
+   ```tsx
+   engine.emit('userScored', 100);  // ✅ Matches 'userScored' in eventMapping
+   engine.emit('userscored', 100);  // ❌ Won't work - different case!
+   ```
+
+### TypeScript Errors
+
+**Symptom**: TypeScript complaining about missing types or incompatible types
+
+**Solutions**:
+
+1. **Ensure TypeScript 4.5+** - The library requires TypeScript 4.5 or higher
+   ```bash
+   npm install --save-dev typescript@latest
+   ```
+
+2. **Import types explicitly** if needed
+   ```tsx
+   import type { AchievementEngine, SimpleAchievementConfig } from 'react-achievements';
+   ```
+
+3. **Check tsconfig.json** - Ensure proper module resolution
+   ```json
+   {
+     "compilerOptions": {
+       "moduleResolution": "node",
+       "esModuleInterop": true
+     }
+   }
+   ```
+
+### Still Having Issues?
+
+- 📖 [Check the full documentation](https://dave-b-b.github.io/react-achievements/docs/)
+- 💬 [Open a GitHub Discussion](https://github.com/dave-b-b/react-achievements/discussions)
+- 🐛 [Report a bug](https://github.com/dave-b-b/react-achievements/issues)
 
 ---
 

@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.8.1] - 2025-12-29
+
+### Fixed
+- Export `AchievementContextType` from main index to fix engine undefined issue
+- Ensure engine property is accessible in context for TypeScript consumers
+
+### Deprecated
+- `AchievementContextValue` - use `AchievementContextType` instead
+  - Old type kept for backward compatibility, will be removed in v4.0.0
+
+---
+
 ## [3.7.0] - 2025-12-23
 
 ### Added
