@@ -1,6 +1,6 @@
 {
   "name": "react-achievements",
-  "version": "3.7.0",
+  "version": "3.8.0",
   "description": "Core achievement system for React applications",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,13 +19,17 @@
     "build-storybook": "storybook build",
     "ship": "gh workflow run release.yml"
   },
+  "dependencies": {
+  },
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-confetti": "^6.1.0",
     "react-dom": ">=16.8.0",
     "react-modal": "^3.16.1",
     "react-toastify": "^9.1.3",
-    "react-use": "^17.4.0"
+    "react-use": "^17.4.0",
+    "achievements-engine": "file:../achievements-engine"
+
   },
   "peerDependenciesMeta": {
     "react-confetti": {

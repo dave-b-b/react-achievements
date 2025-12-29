@@ -1,28 +1,25 @@
 import React, { createContext, useEffect, useState, useRef } from 'react';
-import { AchievementConfigurationType, AchievementStorage, AsyncAchievementStorage, isAsyncStorage, AchievementMetrics, StorageType, AchievementWithStatus, UIConfig } from '../core/types';
-import { normalizeAchievements } from '../core/utils/configNormalizer';
-import { LocalStorage } from '../core/storage/LocalStorage';
-import { MemoryStorage } from '../core/storage/MemoryStorage';
-import { AsyncStorageAdapter } from '../core/storage/AsyncStorageAdapter';
-import { IndexedDBStorage } from '../core/storage/IndexedDBStorage';
-import { RestApiStorage, RestApiStorageConfig } from '../core/storage/RestApiStorage';
-import { exportAchievementData, createConfigHash } from '../core/utils/dataExport';
-import { importAchievementData, ImportOptions, ImportResult } from '../core/utils/dataImport';
-import { AchievementError, ConfigurationError } from '../core/errors/AchievementErrors';
+import { AchievementEngine } from 'achievements-engine';
+import type {
+  AchievementConfigurationType,
+  AchievementStorage,
+  AsyncAchievementStorage,
+  StorageType,
+  AchievementWithStatus,
+  AchievementUnlockedEvent,
+  EventMapping,
+  ImportOptions,
+  ImportResult
+} from 'achievements-engine';
+import { UIConfig } from '../core/types';
+import { RestApiStorageConfig } from '../core/storage/RestApiStorage';
+import { AchievementError } from '../core/errors/AchievementErrors';
 
-// New UI system (v3.6.0)
 import { BuiltInNotification } from '../core/ui/BuiltInNotification';
 import { BuiltInConfetti } from '../core/ui/BuiltInConfetti';
 import { detectLegacyLibraries, LegacyLibraries } from '../core/ui/legacyDetector';
 import { createLegacyToastNotification, createLegacyConfettiWrapper } from '../core/ui/LegacyWrappers';
 import type { NotificationComponent, ConfettiComponent } from '../core/types';
-
-interface AchievementDetails {
-  achievementId?: string;
-  achievementTitle?: string;
-  achievementDescription?: string;
-  achievementIconKey?: string;
-}
 
 export interface AchievementContextType {
   update: (metrics: Record<string, any>) => void;
@@ -32,23 +29,31 @@ export interface AchievementContextType {
   };
   reset: () => void;
   getState: () => {
-    metrics: AchievementMetrics;
+    metrics: Record<string, any>;
     unlocked: string[];
   };
   exportData: () => string;
   importData: (jsonString: string, options?: ImportOptions) => ImportResult;
   getAllAchievements: () => AchievementWithStatus[];
+  engine: AchievementEngine; // Always defined - initialized synchronously
 }
 
 export const AchievementContext = createContext<AchievementContextType | undefined>(undefined);
 
 interface AchievementProviderProps {
-  achievements: AchievementConfigurationType;
+  // Mode 1: Auto-create engine (backward compatible)
+  achievements?: AchievementConfigurationType;
   storage?: AchievementStorage | AsyncAchievementStorage | StorageType;
+  restApiConfig?: RestApiStorageConfig;
+  eventMapping?: EventMapping; // NEW: Event mapping support
+
+  // Mode 2: External engine (NEW in v3.8.0)
+  engine?: AchievementEngine;
+
+  // Common props
   children: React.ReactNode;
   icons?: Record<string, string>;
   onError?: (error: AchievementError) => void;
-  restApiConfig?: RestApiStorageConfig;
 
   /**
    * UI configuration for notifications, modal, and confetti
@@ -68,140 +73,142 @@ interface AchievementProviderProps {
 
 export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   achievements: achievementsConfig,
-  storage = StorageType.Local,
+  storage = 'local',
   children,
   icons = {},
   onError,
   restApiConfig,
   ui = {},
   useBuiltInUI = false,
+  engine: externalEngine,
+  eventMapping,
 }) => {
-  // Normalize the configuration to the complex format
-  const achievements = normalizeAchievements(achievementsConfig);
+  // Engine instance (either external or auto-created)
+  // Initialize synchronously BEFORE first render to avoid timing issues
+  const [engine] = useState<AchievementEngine>(() => {
+    if (externalEngine) {
+      // Mode 2: Use external engine
+      return externalEngine;
+    }
+
+    // Mode 1: Auto-create engine
+    if (!achievementsConfig) {
+      throw new Error('Either "achievements" or "engine" prop must be provided');
+    }
+
+    return new AchievementEngine({
+      achievements: achievementsConfig,
+      storage: storage as any, // Type cast needed for compatibility
+      restApiConfig,
+      onError: onError as ((error: Error) => void) | undefined,
+      eventMapping,
+    });
+  });
+
+  // React state synced from engine
+  // Initialize with current engine state (engine is available immediately)
   const [achievementState, setAchievementState] = useState<{
     unlocked: string[];
     all: Record<string, any>;
-  }>({
-    unlocked: [],
-    all: achievements,
+  }>(() => {
+    const unlocked = engine.getUnlocked();
+    return {
+      unlocked: [...unlocked],
+      all: {}, // Will be populated by getAllAchievements
+    };
   });
 
-  const [metrics, setMetrics] = useState<AchievementMetrics>({});
-  const seenAchievementsRef = useRef<Set<string>>(new Set());
-  const initialLoadRef = useRef<boolean>(false);
-  const storageRef = useRef<AchievementStorage | null>(null);
-  const metricsUpdatedRef = useRef<boolean>(false);
+  // Track which achievements have been seen to avoid duplicate notifications
+  const seenAchievementsRef = useRef<Set<string>>(new Set(engine.getUnlocked()));
   const [showConfetti, setShowConfetti] = useState(false);
-  const [_currentAchievement, setCurrentAchievement] = useState<AchievementDetails | null>(null);
 
   // NEW: UI component resolution state (v3.6.0)
   const [legacyLibraries, setLegacyLibraries] = useState<LegacyLibraries | null>(null);
-  const [uiReady, setUiReady] = useState(useBuiltInUI); // Ready immediately if forcing built-in
+  const [uiReady, setUiReady] = useState(useBuiltInUI);
   const [currentNotification, setCurrentNotification] = useState<{
     achievement: { id: string; title: string; description: string; icon: string };
   } | null>(null);
 
-  if (!storageRef.current) {
-    if (typeof storage === 'string') {
-      // StorageType enum
-      switch (storage) {
-        case StorageType.Local:
-          storageRef.current = new LocalStorage('achievements');
-          break;
-        case StorageType.Memory:
-          storageRef.current = new MemoryStorage();
-          break;
-        case StorageType.IndexedDB: {
-          // Wrap async storage with adapter
-          const indexedDB = new IndexedDBStorage('react-achievements');
-          storageRef.current = new AsyncStorageAdapter(indexedDB, { onError });
-          break;
-        }
-        case StorageType.RestAPI: {
-          if (!restApiConfig) {
-            throw new ConfigurationError('restApiConfig is required when using StorageType.RestAPI');
+  // Cleanup: Destroy engine on unmount (only if we auto-created it)
+  useEffect(() => {
+    return () => {
+      // Only destroy if we auto-created the engine
+      if (!externalEngine) {
+        engine.destroy();
+      }
+    };
+  }, [engine, externalEngine]);
+
+  // Subscribe to engine events
+  useEffect(() => {
+    // Engine is always available (initialized synchronously)
+    // Handle achievement unlocked
+    const unsubscribeUnlocked = engine.on('achievement:unlocked', (event: AchievementUnlockedEvent) => {
+      // Update unlocked list
+      setAchievementState(prev => ({
+        ...prev,
+        unlocked: [...engine.getUnlocked()],
+      }));
+
+      // Show notification if not seen before
+      if (!seenAchievementsRef.current.has(event.achievementId)) {
+        seenAchievementsRef.current.add(event.achievementId);
+
+        if (ui.enableNotifications !== false) {
+          // Get icon to display
+          let iconToDisplay = '🏆';
+          if (event.achievementIconKey && event.achievementIconKey in icons) {
+            iconToDisplay = icons[event.achievementIconKey];
           }
-          // Wrap async storage with adapter
-          const restApi = new RestApiStorage(restApiConfig);
-          storageRef.current = new AsyncStorageAdapter(restApi, { onError });
-          break;
-        }
-        default:
-          throw new ConfigurationError(`Unsupported storage type: ${storage}`);
-      }
-    } else {
-      // Custom storage instance
-      // Check if it's async storage and wrap with adapter
-      if (isAsyncStorage(storage)) {
-        storageRef.current = new AsyncStorageAdapter(storage, { onError });
-      } else {
-        storageRef.current = storage;
-      }
-    }
-  }
 
-  const storageImpl = storageRef.current;
+          setCurrentNotification({
+            achievement: {
+              id: event.achievementId,
+              title: event.achievementTitle,
+              description: event.achievementDescription,
+              icon: iconToDisplay,
+            },
+          });
 
-  const getNotifiedAchievementsKey = () => {
-    return 'notifiedAchievements';
-  };
+          // Show confetti
+          setShowConfetti(true);
 
-  const loadNotifiedAchievements = () => {
-    try {
-      if (storageImpl instanceof LocalStorage) {
-        const data = localStorage.getItem(`achievements_${getNotifiedAchievementsKey()}`);
-        if (data) {
-          const notifiedAchievements = JSON.parse(data) as string[];
-          return new Set(notifiedAchievements);
-        }
-      } else {
-        const data = (storageImpl as any).getItem?.(getNotifiedAchievementsKey());
-        if (data) {
-          return new Set(JSON.parse(data) as string[]);
+          // Hide confetti after 5 seconds
+          setTimeout(() => {
+            setShowConfetti(false);
+          }, 5000);
         }
       }
-    } catch (e) {
-      console.error('Error loading notified achievements', e);
-    }
-    return new Set<string>();
-  };
+    });
 
-  const saveNotifiedAchievements = (achievements: Set<string>) => {
-    try {
-      const achievementsArray = Array.from(achievements);
-      
-      if (storageImpl instanceof LocalStorage) {
-        localStorage.setItem(
-          `achievements_${getNotifiedAchievementsKey()}`, 
-          JSON.stringify(achievementsArray)
-        );
-      } else {
-        (storageImpl as any).setItem?.(
-          getNotifiedAchievementsKey(), 
-          JSON.stringify(achievementsArray)
-        );
-      }
-    } catch (e) {
-      console.error('Error saving notified achievements', e);
-    }
-  };
+    // Handle state changes (for syncing unlocked list)
+    const unsubscribeStateChanged = engine.on('state:changed', () => {
+      setAchievementState(prev => ({
+        ...prev,
+        unlocked: [...engine.getUnlocked()],
+      }));
+    });
 
-  // NEW: Detect legacy UI libraries on mount (v3.6.0)
+    return () => {
+      unsubscribeUnlocked();
+      unsubscribeStateChanged();
+    };
+  }, [engine, icons, ui.enableNotifications]);
+
+  // Detect legacy UI libraries on mount
   useEffect(() => {
     if (useBuiltInUI) {
-      // User explicitly wants built-in UI, skip detection
       setUiReady(true);
       return;
     }
 
-    // Attempt to detect legacy libraries
     detectLegacyLibraries().then((libs) => {
       setLegacyLibraries(libs);
       setUiReady(true);
     });
   }, [useBuiltInUI]);
 
-  // NEW: Resolve UI components based on detection and config (v3.6.0)
+  // Resolve UI components based on detection and config
   const NotificationComponent: NotificationComponent =
     ui.NotificationComponent ||
     (useBuiltInUI ? BuiltInNotification :
@@ -216,253 +223,53 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
        ? createLegacyConfettiWrapper(legacyLibraries)
        : BuiltInConfetti);
 
-  useEffect(() => {
-    if (!initialLoadRef.current) {
-      const savedUnlocked = storageImpl.getUnlockedAchievements() || [];
-      const savedMetrics = storageImpl.getMetrics() || {};
-      
-      seenAchievementsRef.current = loadNotifiedAchievements();
-
-      if (savedUnlocked.length > 0 || Object.keys(savedMetrics).length > 0) {
-        setAchievementState(prev => ({
-          ...prev,
-          unlocked: savedUnlocked,
-        }));
-        setMetrics(savedMetrics);
-        
-        savedUnlocked.forEach(id => {
-          seenAchievementsRef.current.add(id);
-        });
-        
-        saveNotifiedAchievements(seenAchievementsRef.current);
-      }
-      
-      initialLoadRef.current = true;
-    }
-  }, []);
-
-  useEffect(() => {
-    if (Object.keys(metrics).length === 0 || !metricsUpdatedRef.current) return;
-    
-    metricsUpdatedRef.current = false;
-    
-    const newlyUnlockedAchievements: string[] = [];
-    let achievementToShow: AchievementDetails | null = null;
-
-    Object.entries(achievements).forEach(([metricName, metricAchievements]) => {
-      metricAchievements.forEach((achievement) => {
-        const state = { metrics, unlockedAchievements: achievementState.unlocked };
-        const achievementId = achievement.achievementDetails.achievementId;
-        
-        // For custom conditions, we always check against all metrics
-        // For threshold-based conditions, we check against the specific metric
-        const currentValue = metrics[metricName];
-        const shouldCheckAchievement = currentValue !== undefined || 
-          achievement.achievementDetails.achievementId.includes('_custom_');
-        
-        if (shouldCheckAchievement) {
-          const valueToCheck = currentValue;
-          
-          if (achievement.isConditionMet(valueToCheck, state)) {
-            if (!achievementState.unlocked.includes(achievementId) && 
-                !newlyUnlockedAchievements.includes(achievementId)) {
-              newlyUnlockedAchievements.push(achievementId);
-              
-              if (!seenAchievementsRef.current.has(achievementId)) {
-                achievementToShow = achievement.achievementDetails;
-              }
-            }
-          }
-        }
-      });
-    });
-    
-    if (newlyUnlockedAchievements.length > 0) {
-      const allUnlocked = [...achievementState.unlocked, ...newlyUnlockedAchievements];
-      setAchievementState(prev => ({
-        ...prev,
-        unlocked: allUnlocked,
-      }));
-      storageImpl.setUnlockedAchievements(allUnlocked);
-
-      if (achievementToShow && (ui.enableNotifications !== false)) {
-        const achievement: AchievementDetails = achievementToShow;
-
-        // Get icon to display
-        let iconToDisplay = '🏆';
-        if (achievement.achievementIconKey && achievement.achievementIconKey in icons) {
-          iconToDisplay = icons[achievement.achievementIconKey];
-        }
-
-        // NEW: Use resolved notification component (v3.6.0)
-        setCurrentNotification({
-          achievement: {
-            id: achievement.achievementId || `achievement-${Date.now()}`,
-            title: achievement.achievementTitle || 'Achievement Unlocked!',
-            description: achievement.achievementDescription || '',
-            icon: iconToDisplay,
-          },
-        });
-
-        // Update seen achievements
-        if (achievement.achievementId) {
-          seenAchievementsRef.current.add(achievement.achievementId);
-          saveNotifiedAchievements(seenAchievementsRef.current);
-        }
-
-        // Show confetti
-        setCurrentAchievement(achievement);
-        setShowConfetti(true);
-
-        // Hide confetti after 5 seconds
-        const timer = setTimeout(() => {
-          setShowConfetti(false);
-          setCurrentAchievement(null);
-        }, 5000);
-
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [metrics, achievementState.unlocked, achievements, icons]);
-
-  const getAllAchievements = (): AchievementWithStatus[] => {
-    const result: AchievementWithStatus[] = [];
-
-    // Iterate through all normalized achievements
-    Object.entries(achievements).forEach(([_metricName, metricAchievements]) => {
-      metricAchievements.forEach((achievement) => {
-        const { achievementDetails } = achievement;
-        const isUnlocked = achievementState.unlocked.includes(achievementDetails.achievementId);
-
-        result.push({
-          achievementId: achievementDetails.achievementId,
-          achievementTitle: achievementDetails.achievementTitle,
-          achievementDescription: achievementDetails.achievementDescription,
-          achievementIconKey: achievementDetails.achievementIconKey,
-          isUnlocked,
-        });
-      });
-    });
-
-    return result;
-  };
-
+  // Context methods - delegate to engine
   const update = (newMetrics: Record<string, any>) => {
-    metricsUpdatedRef.current = true;
-
-    const updatedMetrics = { ...metrics };
-
-    Object.entries(newMetrics).forEach(([key, value]) => {
-      updatedMetrics[key] = value;
-    });
-
-    setMetrics(updatedMetrics);
-
-    const storageMetrics = Object.entries(updatedMetrics).reduce((acc, [key, value]) => ({
-      ...acc,
-      [key]: Array.isArray(value) ? value : [value]
-    }), {});
-
-    try {
-      storageImpl.setMetrics(storageMetrics);
-    } catch (error) {
-      if (error instanceof AchievementError) {
-        if (onError) {
-          onError(error);
-        } else {
-          console.error('Achievement storage error:', error.message, error.remedy);
-        }
-      } else {
-        console.error('Unexpected error saving metrics:', error);
-      }
-    }
+    engine.update(newMetrics);
   };
 
   const reset = () => {
-    storageImpl.clear();
-    
-    if (storageImpl instanceof LocalStorage) {
-      localStorage.removeItem(`achievements_${getNotifiedAchievementsKey()}`);
-    } else {
-      (storageImpl as any).removeItem?.(getNotifiedAchievementsKey());
-    }
-    
-    setAchievementState({
-      unlocked: [],
-      all: achievements,
-    });
-    setMetrics({});
-    
+    engine.reset();
     seenAchievementsRef.current.clear();
-    
     setShowConfetti(false);
-    setCurrentAchievement(null);
+    setCurrentNotification(null);
   };
 
   const getState = () => {
-    const metricsInArrayFormat = Object.entries(metrics).reduce((acc, [key, value]) => ({
-      ...acc,
-      [key]: Array.isArray(value) ? value : [value]
-    }), {});
+    const metrics = engine.getMetrics();
+    const unlocked = engine.getUnlocked();
+
+    // Convert metrics to array format for backward compatibility
+    const metricsInArrayFormat: Record<string, any> = {};
+    Object.entries(metrics).forEach(([key, value]) => {
+      metricsInArrayFormat[key] = Array.isArray(value) ? value : [value];
+    });
 
     return {
       metrics: metricsInArrayFormat,
-      unlocked: achievementState.unlocked,
+      unlocked: [...unlocked],
     };
   };
 
   const exportData = (): string => {
-    const state = getState();
-    const configHash = createConfigHash(achievementsConfig);
-    return exportAchievementData(state.metrics, state.unlocked, configHash);
+    return engine.export();
   };
 
   const importData = (jsonString: string, options?: ImportOptions): ImportResult => {
-    const state = getState();
-    const configHash = createConfigHash(achievementsConfig);
+    const result = engine.import(jsonString, options);
 
-    const result = importAchievementData(
-      jsonString,
-      state.metrics,
-      state.unlocked,
-      { ...options, expectedConfigHash: configHash }
-    );
-
-    if (result.success && 'mergedMetrics' in result && 'mergedUnlocked' in result) {
-      // Apply the imported data
-      const mergedResult = result as ImportResult & {
-        mergedMetrics: AchievementMetrics;
-        mergedUnlocked: string[]
-      };
-
-      // Update metrics state
-      const metricsFromArrayFormat = Object.entries(mergedResult.mergedMetrics).reduce(
-        (acc, [key, value]) => ({
-          ...acc,
-          [key]: Array.isArray(value) ? value[0] : value
-        }),
-        {}
-      );
-      setMetrics(metricsFromArrayFormat);
-
-      // Update unlocked achievements state
-      setAchievementState(prev => ({
-        ...prev,
-        unlocked: mergedResult.mergedUnlocked,
-      }));
-
-      // Persist to storage
-      storageImpl.setMetrics(mergedResult.mergedMetrics);
-      storageImpl.setUnlockedAchievements(mergedResult.mergedUnlocked);
-
-      // Update seen achievements to prevent duplicate notifications
-      mergedResult.mergedUnlocked.forEach(id => {
+    // Update seen achievements to prevent duplicate notifications
+    if (result?.success && 'mergedUnlocked' in result) {
+      result.mergedUnlocked?.forEach((id: string) => {
         seenAchievementsRef.current.add(id);
       });
-      saveNotifiedAchievements(seenAchievementsRef.current);
     }
 
     return result;
+  };
+
+  const getAllAchievements = (): AchievementWithStatus[] => {
+    return engine.getAllAchievements();
   };
 
   return (
@@ -475,11 +282,12 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         exportData,
         importData,
         getAllAchievements,
+        engine, // Always defined - no undefined fallback needed
       }}
     >
       {children}
 
-      {/* NEW: Notification component (v3.6.0) */}
+      {/* Notification component (v3.6.0) */}
       {uiReady && currentNotification && ui.enableNotifications !== false && (
         <NotificationComponent
           achievement={currentNotification.achievement}
@@ -490,7 +298,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         />
       )}
 
-      {/* NEW: Confetti component (v3.6.0) */}
+      {/* Confetti component (v3.6.0) */}
       {uiReady && ui.enableConfetti !== false && (
         <ConfettiComponentResolved
           show={showConfetti}
@@ -499,4 +307,4 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
       )}
     </AchievementContext.Provider>
   );
-}; 
+};

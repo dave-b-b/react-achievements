@@ -11,8 +11,9 @@
 ## Why React Achievements?
 
 - **🎯 Simple API** - 90% less configuration than traditional achievement systems
+- **⚡ Event-Based Tracking** - NEW in v3.8.0! Track achievements with semantic events
+- **🌍 Framework-Agnostic** - Core engine works in React, Vue, Angular, Node.js, and more
 - **🎨 Built-in UI** - Beautiful notifications & modals with zero external dependencies
-- **⚡ 5-Minute Setup** - From installation to first achievement unlock
 - **💾 5 Storage Options** - LocalStorage, Memory, IndexedDB, REST API, Offline Queue
 - **🎭 3 Themes** - Modern, Minimal, Gamified - or create your own
 - **📦 Type-Safe** - Full TypeScript support with comprehensive types
@@ -104,8 +105,10 @@ const achievements = {
     }
   }]
 };
+```
 
 // ✅ After (Simple API) - 1 line per achievement!
+```tsx
 const achievements = {
   score: {
     100: { title: 'Century!', description: 'Score 100 points', icon: '🏆' }
@@ -114,6 +117,68 @@ const achievements = {
 ```
 
 ➡️ **[Simple API Guide](https://dave-b-b.github.io/react-achievements/docs/guides/simple-api)**
+
+### ⚡ Event-Based Tracking (NEW in v3.8.0)
+
+Track achievements using events instead of manual metric updates:
+
+```tsx
+import { AchievementProvider, useAchievementEngine } from 'react-achievements';
+
+// Configure event-to-metric mapping
+const eventMapping = {
+  'levelUp': 'level',           // Direct mapping
+  'scoreChanged': 'score',
+  'questCompleted': (data, currentMetrics) => ({  // Custom transformer
+    questsCompleted: currentMetrics.questsCompleted + 1,
+    totalScore: currentMetrics.totalScore + data.points
+  })
+};
+
+function Game() {
+  const engine = useAchievementEngine();
+
+  // Track with events - cleaner and more semantic!
+  const handleLevelUp = () => engine.emit('levelUp', 5);
+  const handleScore = () => engine.emit('scoreChanged', 100);
+  const handleQuest = () => engine.emit('questCompleted', { points: 50 });
+
+  return <div>{/* Your game UI */}</div>;
+}
+
+<AchievementProvider
+  achievements={achievements}
+  eventMapping={eventMapping}
+>
+  <Game />
+</AchievementProvider>
+```
+
+**Benefits:**
+- 🎯 **Semantic** - Events describe what happened, not what to update
+- 🔧 **Decoupled** - Achievement logic separated from business logic
+- 🌍 **Framework-Agnostic** - Built on `achievements-engine` (works in Vue, Angular, Node.js, etc.)
+- 🎛️ **Flexible** - Direct mapping, custom transformers, or no mapping at all
+
+**External Engine Mode:**
+```tsx
+import { AchievementEngine } from 'react-achievements';
+
+// Create engine outside React
+const engine = new AchievementEngine({
+  achievements,
+  eventMapping
+});
+
+// Share across your entire app
+<AchievementProvider engine={engine}>
+  <App />
+</AchievementProvider>
+```
+
+This allows you to use the same engine instance across different frameworks or trigger achievements from server-side code!
+
+➡️ **[Event-Based API Guide](https://dave-b-b.github.io/react-achievements/docs/guides/event-based-api)**
 
 ### 🎨 Built-in UI Components
 
@@ -297,9 +362,18 @@ npm install react-toastify react-modal react-confetti react-use
 
 ## Version & Updates
 
-**Current Version:** 3.7.0
+**Current Version:** 3.8.0
 
 ### Recent Highlights
+
+**v3.8.0** - Event-Based Achievement System 🎉
+- Event-based tracking with `engine.emit()` for semantic achievement updates
+- Standalone `achievements-engine` package (framework-agnostic)
+- External engine mode - share engine across React, Vue, Angular, Node.js
+- Event-to-metric mapping with direct mapping or custom transformers
+- New `useAchievementEngine` hook for direct engine access
+- 100% backward compatible - all existing APIs still work
+- Zero breaking changes - upgrade seamlessly from v3.x
 
 **v3.6.0** - Built-in UI System
 - Zero external dependencies with built-in notifications, modals, confetti

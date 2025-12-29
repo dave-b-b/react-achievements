@@ -45,6 +45,7 @@ export { ConfettiWrapper } from './core/components/ConfettiWrapper';
 export { AchievementProvider, AchievementContext } from './providers/AchievementProvider';
 export { useAchievements } from './hooks/useAchievements';
 export { useSimpleAchievements } from './hooks/useSimpleAchievements';
+export { useAchievementEngine } from './hooks/useAchievementEngine'; // NEW in v3.8.0
 
 // Core Styles
 export { defaultStyles } from './core/styles/defaultStyles';
@@ -108,3 +109,20 @@ export type {
 
 // Custom Hooks (NEW in v3.6.0)
 export { useWindowSize } from './core/hooks/useWindowSize';
+
+// Achievement Engine (NEW in v3.8.0) - Framework-agnostic core
+export {AchievementEngine} from 'achievements-engine';
+export type { AchievementEngineInterface } from 'achievements-engine';
+
+// Re-export engine types for convenience
+export type {
+    EngineConfig,
+    EngineEvent,
+    AchievementUnlockedEvent,
+    MetricUpdatedEvent,
+    StateChangedEvent,
+    ErrorEvent,
+    EventMapping,
+    MetricUpdater,
+    UnsubscribeFn,
+} from 'achievements-engine';
