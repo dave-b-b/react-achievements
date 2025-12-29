@@ -112,7 +112,7 @@ export { useWindowSize } from './core/hooks/useWindowSize';
 
 // Achievement Engine (NEW in v3.8.0) - Framework-agnostic core
 export {AchievementEngine} from 'achievements-engine';
-export type { AchievementEngineInterface } from 'achievements-engine';
+export type { AchievementEngineApi } from 'achievements-engine';
 
 // Re-export engine types for convenience
 export type {

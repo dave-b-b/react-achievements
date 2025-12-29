@@ -36,6 +36,7 @@ export interface AchievementContextType {
   importData: (jsonString: string, options?: ImportOptions) => ImportResult;
   getAllAchievements: () => AchievementWithStatus[];
   engine: AchievementEngine; // Always defined - initialized synchronously
+  _isLegacyPattern: boolean; // NEW: Track which pattern is being used (achievements prop vs engine prop)
 }
 
 export const AchievementContext = createContext<AchievementContextType | undefined>(undefined);
@@ -83,17 +84,34 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   engine: externalEngine,
   eventMapping,
 }) => {
+  // VALIDATION: Prevent mixing patterns
+  if (achievementsConfig && externalEngine) {
+    throw new Error(
+      'Cannot provide both "achievements" and "engine" props to AchievementProvider.\n\n' +
+      'Choose one pattern:\n' +
+      '1. OLD metric-based: <AchievementProvider achievements={config}>\n' +
+      '2. NEW event-based: <AchievementProvider engine={myEngine}>'
+    );
+  }
+
+  // Track which pattern is being used
+  const isLegacyPattern = Boolean(achievementsConfig);
+
   // Engine instance (either external or auto-created)
   // Initialize synchronously BEFORE first render to avoid timing issues
   const [engine] = useState<AchievementEngine>(() => {
     if (externalEngine) {
-      // Mode 2: Use external engine
+      // NEW PATTERN: Use external injected engine
       return externalEngine;
     }
 
-    // Mode 1: Auto-create engine
+    // OLD PATTERN: Auto-create engine from achievements
     if (!achievementsConfig) {
-      throw new Error('Either "achievements" or "engine" prop must be provided');
+      throw new Error(
+        'AchievementProvider requires either "achievements" or "engine" prop.\n\n' +
+        '1. OLD pattern: <AchievementProvider achievements={config}>\n' +
+        '2. NEW pattern: <AchievementProvider engine={myEngine}>'
+      );
     }
 
     return new AchievementEngine({
@@ -283,6 +301,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         importData,
         getAllAchievements,
         engine, // Always defined - no undefined fallback needed
+        _isLegacyPattern: isLegacyPattern, // NEW: Expose pattern flag to hooks
       }}
     >
       {children}
