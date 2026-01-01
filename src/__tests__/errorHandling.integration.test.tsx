@@ -2,7 +2,7 @@ import React from 'react';
 import { render, act } from '@testing-library/react';
 import { AchievementProvider } from '../providers/AchievementProvider';
 import { useAchievements } from '../hooks/useAchievements';
-import { AchievementError, StorageQuotaError, isAchievementError } from '../core/errors/AchievementErrors';
+import { AchievementError, StorageQuotaError, isAchievementError } from '../index';
 import { AchievementStorage, AchievementMetrics, StorageType } from '../core/types';
 
 describe('Error Handling Integration', () => {

@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState, useRef } from 'react';
-import { AchievementEngine } from 'achievements-engine';
+import { AchievementEngine, AchievementError } from 'achievements-engine';
 import type {
   AchievementConfigurationType,
   AchievementStorage,
@@ -9,11 +9,10 @@ import type {
   AchievementUnlockedEvent,
   EventMapping,
   ImportOptions,
-  ImportResult
+  ImportResult,
+  RestApiStorageConfig
 } from 'achievements-engine';
 import { UIConfig } from '../core/types';
-import { RestApiStorageConfig } from '../core/storage/RestApiStorage';
-import { AchievementError } from '../core/errors/AchievementErrors';
 
 import { BuiltInNotification } from '../core/ui/BuiltInNotification';
 import { BuiltInConfetti } from '../core/ui/BuiltInConfetti';

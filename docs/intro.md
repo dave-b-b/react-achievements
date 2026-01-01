@@ -13,7 +13,7 @@ React Achievements is a comprehensive library that makes it easy to add gamifica
 
 ### Key Features
 
-- **🎯 Simple API** - Get started in minutes with minimal configuration
+- **🎯 Two Tracking Patterns** - Choose direct updates or event-based tracking
 - **🎨 Built-in UI** - Beautiful, customizable notification and modal components
 - **💾 Flexible Storage** - Choose from 5 storage options (LocalStorage, Memory, IndexedDB, REST API, Offline Queue)
 - **🔧 TypeScript** - Full TypeScript support with comprehensive type definitions
@@ -65,13 +65,20 @@ function App() {
 }
 ```
 
+> **Note**: This library supports two tracking patterns:
+> - **Direct Updates**: Update metrics directly (shown above)
+> - **Event-Based**: Emit semantic events (see [Event-Based Tracking](/docs/guides/event-based-tracking))
+>
+> Both patterns are fully supported. Choose based on your needs!
+
 ## What's Next?
 
 Ready to add achievements to your app? Here's where to go:
 
 - **[Installation](/docs/getting-started/installation)** - Install and configure React Achievements
 - **[Quick Start](/docs/getting-started/quick-start)** - Build your first achievement system
-- **[Simple API Guide](/docs/guides/simple-api)** - Learn the recommended API
+- **[Direct Updates Guide](/docs/guides/direct-updates)** - Learn the metric-based tracking pattern
+- **[Event-Based Tracking](/docs/guides/event-based-tracking)** - Learn the event-driven pattern
 - **[API Reference](/docs/api-intro)** - Complete API documentation
 
 ## Version Information

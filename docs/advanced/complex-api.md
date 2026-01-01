@@ -1,24 +1,29 @@
 ---
 sidebar_position: 2
+title: POJO Configuration (Legacy Format)
 ---
 
-# Complex API (POJO Configuration)
+# POJO Configuration (Legacy Format)
 
-The Complex API provides low-level, verbose configuration for maximum control over achievement behavior.
+The POJO (Plain Old JavaScript Object) configuration provides low-level, verbose configuration for maximum control over achievement behavior.
+
+> **Note**: This guide documents the low-level configuration format. For most use cases, use the [Builder API](../guides/builder-api) or threshold-based configuration instead.
+>
+> This configuration format works with both [Direct Updates](../guides/direct-updates) and [Event-Based Tracking](../guides/event-based-tracking) patterns.
 
 ## Overview
 
-The Complex API (also called POJO API) is the original configuration format. It provides complete control but requires more code than the Simple API or Builder API.
+The POJO configuration is the original format from earlier versions. It provides complete control but requires more code than threshold-based or Builder API configurations.
 
 **When to use:**
 - You need maximum control over achievement logic
 - You're migrating from an older version (< v3.0)
-- You have very specific requirements not covered by Simple/Builder APIs
+- You have very specific requirements not covered by other configuration patterns
 
 **When NOT to use:**
-- You're starting a new project (use Simple API instead)
+- You're starting a new project (use threshold-based configuration instead)
 - You want quick setup (use Builder API instead)
-- You value concise code (90% more verbose than Simple API)
+- You value concise code (90% more verbose than threshold-based configuration)
 
 ---
 
@@ -67,7 +72,7 @@ const achievements = {
 };
 ```
 
-### Simple API Equivalent (Concise)
+### Threshold-Based Configuration (Concise)
 
 ```tsx
 const achievements = {
@@ -77,7 +82,7 @@ const achievements = {
 };
 ```
 
-**Result:** 90% less code with Simple API!
+**Result:** 90% less code with threshold-based configuration!
 
 ---
 
@@ -270,7 +275,7 @@ achievementDetails: {
 
 ---
 
-## Migration from Complex to Simple API
+## Migration to Threshold-Based Configuration
 
 ### Before (Complex API - 15 lines per achievement)
 
@@ -299,7 +304,7 @@ const achievements = {
 };
 ```
 
-### After (Simple API - 1 line per achievement)
+### After (Threshold-Based - 1 line per achievement)
 
 ```tsx
 const achievements = {
@@ -313,7 +318,7 @@ const achievements = {
 ### Migration Steps
 
 1. **Identify patterns**: Look for threshold-based achievements
-2. **Convert to Simple API**: Replace with threshold syntax
+2. **Convert to Threshold-Based**: Replace with threshold syntax
 3. **Keep complex logic**: Use Builder API for multi-metric conditions
 4. **Test thoroughly**: Ensure all achievements still unlock correctly
 
@@ -422,7 +427,7 @@ function Game() {
 
 ### Disadvantages
 
-❌ **Verbose** - 10-15 lines per achievement vs 1 line with Simple API
+❌ **Verbose** - 10-15 lines per achievement vs 1 line with threshold-based configuration
 ❌ **Repetitive** - Lots of boilerplate code
 ❌ **Error-prone** - Easy to make typos in long configurations
 ❌ **Hard to read** - Difficult to scan large configurations
@@ -441,9 +446,9 @@ function Game() {
 
 ### ❌ Don't Use Complex API When:
 
-- Starting a new project (use Simple API)
-- You have simple threshold-based achievements (use Simple API)
-- You want concise code (use Simple API)
+- Starting a new project (use threshold-based configuration)
+- You have simple threshold-based achievements (use threshold-based configuration)
+- You want concise code (use threshold-based configuration)
 - You need multi-metric conditions (use Builder API)
 
 ---
@@ -452,7 +457,7 @@ function Game() {
 
 **For new projects, we recommend:**
 
-1. **Simple API** for 80% of achievements (threshold-based)
+1. **Threshold-based configuration** for 80% of achievements
 2. **Builder API** for 15% of achievements (custom conditions)
 3. **Complex API** for 5% of achievements (very specific needs)
 
@@ -462,7 +467,7 @@ function Game() {
 import { AchievementBuilder } from 'react-achievements';
 
 const achievements = AchievementBuilder.combine([
-  // 80%: Simple API for threshold achievements
+  // 80%: Threshold-based configuration for simple achievements
   {
     score: {
       100: { title: 'Century!', icon: '🏆' },
@@ -502,5 +507,6 @@ const achievements = AchievementBuilder.combine([
 
 ## What's Next?
 
-- **[Simple API Guide](../guides/simple-api)** - Learn the recommended lightweight API
+- **[Direct Updates](../guides/direct-updates)** - Learn how to track achievements
+- **[Event-Based Tracking](../guides/event-based-tracking)** - Alternative tracking pattern
 - **[Builder API](../guides/builder-api)** - Three-tier builder system

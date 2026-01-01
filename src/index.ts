@@ -29,16 +29,18 @@ export type {
 // Type Guards
 export { isAsyncStorage } from './core/types';
 
-// Core Storage Interface (Synchronous)
-export { LocalStorage } from './core/storage/LocalStorage';
-export { MemoryStorage } from './core/storage/MemoryStorage';
-export { StorageType } from './core/types';
+// Storage implementations from achievements-engine
+export {
+    LocalStorage,
+    MemoryStorage,
+    IndexedDBStorage,
+    RestApiStorage,
+    AsyncStorageAdapter,
+    OfflineQueueStorage,
+    StorageType
+} from 'achievements-engine';
 
-// Async Storage Implementations (NEW in v3.3.0)
-export { AsyncStorageAdapter } from './core/storage/AsyncStorageAdapter';
-export { IndexedDBStorage } from './core/storage/IndexedDBStorage';
-export { RestApiStorage, type RestApiStorageConfig } from './core/storage/RestApiStorage';
-export { OfflineQueueStorage } from './core/storage/OfflineQueueStorage';
+export type { RestApiStorageConfig } from 'achievements-engine';
 
 // Core UI Components
 export { BadgesButton } from './core/components/BadgesButton';
@@ -58,16 +60,35 @@ export { defaultStyles } from './core/styles/defaultStyles';
 // Core Icons
 export { defaultAchievementIcons } from './core/icons/defaultIcons';
 
-// Configuration Utils
-export { normalizeAchievements, isSimpleConfig } from './core/utils/configNormalizer';
+// Configuration and data utilities from achievements-engine
+export {
+    normalizeAchievements,
+    isSimpleConfig,
+    exportAchievementData,
+    createConfigHash,
+    importAchievementData
+} from 'achievements-engine';
 
-// Helper utilities for easier achievement creation
+export type {
+    ImportOptions,
+    ImportResult,
+    ExportedData
+} from 'achievements-engine';
+
+/**
+ * Achievement Builder Utilities
+ *
+ * These utilities are re-exported from achievements-engine for backwards compatibility.
+ * They provide a convenient builder API for creating achievement configurations.
+ *
+ * @see https://github.com/dave-b-b/achievements-engine for full documentation
+ */
 export {
     AchievementBuilder,
     type AwardDetails,
-} from './utils/achievementHelpers';
+} from 'achievements-engine';
 
-// Error Handling System (NEW in v3.3.0)
+// Error classes from achievements-engine
 export {
     AchievementError,
     StorageQuotaError,
@@ -77,20 +98,7 @@ export {
     SyncError,
     isAchievementError,
     isRecoverableError
-} from './core/errors/AchievementErrors';
-
-// Data Export/Import (NEW in v3.3.0)
-export {
-    exportAchievementData,
-    createConfigHash,
-    type ExportedData
-} from './core/utils/dataExport';
-
-export {
-    importAchievementData,
-    type ImportOptions,
-    type ImportResult
-} from './core/utils/dataImport';
+} from 'achievements-engine';
 
 // Built-in UI Components (NEW in v3.6.0)
 export { BuiltInNotification } from './core/ui/BuiltInNotification';

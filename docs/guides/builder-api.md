@@ -8,11 +8,15 @@ The Builder API provides a three-tier system for configuring achievements, from 
 
 ## Overview
 
-React Achievements offers three levels of configuration:
+React Achievements offers three levels of **achievement configuration**:
 
 1. **Tier 1: Smart Defaults** - Zero configuration for common patterns
 2. **Tier 2: Chainable Customization** - Fluent API for custom achievements
 3. **Tier 3: Full Control** - Complete customization for complex logic
+
+> **Note**: The Builder API defines HOW achievements are **configured**, not how
+> they're tracked. For tracking patterns, see [Direct Updates](./direct-updates)
+> or [Event-Based Tracking](./event-based-tracking).
 
 You can mix and match all three tiers in a single configuration!
 
@@ -255,7 +259,7 @@ const gameAchievements = AchievementBuilder.combine([
     })
     .build(),
 
-  // Simple API can also be mixed in!
+  // Threshold-based configuration can also be mixed in!
   {
     buttonClicks: {
       10: { title: 'Clicker', description: 'Click 10 times', icon: '👆' },
@@ -480,11 +484,11 @@ const achievements = AchievementBuilder.combine([
 
 ---
 
-## Migration from Simple API
+## Working with Threshold-Based Configuration
 
-The Builder API can coexist with the Simple API:
+The Builder API can coexist with threshold-based object configuration:
 
-### Simple API (Still Supported)
+### Threshold-Based Configuration
 
 ```tsx
 const achievements = {
@@ -510,7 +514,7 @@ const achievements = AchievementBuilder.combine([
 
 ```tsx
 const achievements = AchievementBuilder.combine([
-  // Simple API for threshold-based achievements
+  // Threshold-based configuration for simple patterns
   {
     score: {
       100: { title: 'Century!', icon: '🏆' },
@@ -530,6 +534,7 @@ const achievements = AchievementBuilder.combine([
 
 ## What's Next?
 
-- **[Simple API Guide](./simple-api)** - Learn the recommended lightweight API
-- **[Complex API](../advanced/complex-api)** - Low-level POJO configuration
+- **[Direct Updates](./direct-updates)** - Learn how to track achievements
+- **[Event-Based Tracking](./event-based-tracking)** - Alternative tracking pattern
+- **[Advanced Configuration](../advanced/complex-api)** - Low-level POJO configuration
 - **[API Reference](../api-reference)** - Complete type definitions

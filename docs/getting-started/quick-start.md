@@ -12,7 +12,37 @@ Build your first achievement system in 5 minutes.
 npm install react-achievements
 ```
 
-## Step 2: Define Achievements
+## Step 2: Choose Your Tracking Pattern
+
+React Achievements supports two ways to track progress:
+
+### Direct Updates (Recommended for Beginners)
+
+Update metrics directly in your React components. Simple and straightforward.
+
+```tsx
+const { track } = useSimpleAchievements();
+track('score', 100);
+```
+
+**Best for**: Simple apps, React-only projects, quick prototypes
+
+### Event-Based Tracking (Recommended for Larger Apps)
+
+Emit semantic events that get mapped to metric updates.
+
+```tsx
+const engine = useAchievementEngine();
+engine.emit('userScored', { points: 100 });
+```
+
+**Best for**: Multi-framework projects, complex logic, better testing
+
+---
+
+**This guide uses Direct Updates.** For Event-Based, see the [Event-Based Tracking Guide](/docs/guides/event-based-tracking).
+
+## Step 3: Define Achievements
 
 Create an achievements configuration using the Simple API:
 
@@ -42,7 +72,7 @@ export const gameAchievements = {
 };
 ```
 
-## Step 3: Wrap Your App
+## Step 4: Wrap Your App
 
 Wrap your application with the `AchievementProvider`:
 
@@ -65,7 +95,7 @@ function App() {
 export default App;
 ```
 
-## Step 4: Track Progress
+## Step 5: Track Progress
 
 Use the `useSimpleAchievements` hook to track user progress:
 
@@ -95,7 +125,7 @@ function Game() {
 export default Game;
 ```
 
-## Step 5: Display Achievements
+## Step 6: Display Achievements
 
 Add the `BadgesButtonWithModal` component to show unlocked achievements:
 
@@ -167,11 +197,76 @@ When a user scores 100 points:
 
 That's it! You've built a complete achievement system.
 
+## Alternative: Event-Based Pattern
+
+Want to try the event-based approach? Here's the same example:
+
+```tsx title="achievementEngine.ts"
+import { AchievementEngine } from 'react-achievements';
+import { gameAchievements } from './achievements';
+
+// Create engine outside React
+export const engine = new AchievementEngine({
+  achievements: gameAchievements,
+  eventMapping: {
+    'userScored': (data) => ({ score: data.points }),
+    'tutorialCompleted': () => ({ completedTutorial: true }),
+    'gameCompleted': (data) => ({
+      score: data.score,
+      accuracy: data.accuracy
+    })
+  },
+  storage: 'local'
+});
+```
+
+```tsx title="App.tsx"
+import { AchievementProvider } from 'react-achievements';
+import { engine } from './achievementEngine';
+import Game from './Game';
+
+function App() {
+  return (
+    <AchievementProvider engine={engine} useBuiltInUI={true}>
+      <Game />
+    </AchievementProvider>
+  );
+}
+```
+
+```tsx title="Game.tsx"
+import { useAchievementEngine } from 'react-achievements';
+
+function Game() {
+  const engine = useAchievementEngine();
+
+  const handleScorePoints = (points: number) => {
+    // Emit semantic events
+    engine.emit('userScored', { points });
+  };
+
+  const handleCompleteTutorial = () => {
+    engine.emit('tutorialCompleted');
+  };
+
+  return (
+    <div>
+      <button onClick={() => handleScorePoints(100)}>Score 100</button>
+      <button onClick={() => handleScorePoints(500)}>Score 500</button>
+      <button onClick={handleCompleteTutorial}>Complete Tutorial</button>
+    </div>
+  );
+}
+```
+
+**Learn more**: [Event-Based Tracking Guide](/docs/guides/event-based-tracking)
+
 ## Next Steps
 
 Now that you have the basics working, explore more features:
 
-- **[Simple API Guide](/docs/guides/simple-api)** - Learn all Simple API patterns
+- **[Direct Updates Guide](/docs/guides/direct-updates)** - Learn all direct update patterns
+- **[Event-Based Tracking](/docs/guides/event-based-tracking)** - Try the event-driven pattern
 - **[Theming](/docs/guides/theming)** - Customize the look and feel
 - **[Common Patterns](/docs/recipes/common-patterns)** - Ready-to-use code examples
 

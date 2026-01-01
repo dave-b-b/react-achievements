@@ -6,9 +6,9 @@ import {
   AchievementConfiguration,
   AchievementState,
   AchievementMetricArrayValue,
-  StorageType
+  StorageType,
+  MemoryStorage
 } from '../index';
-import { MemoryStorage } from '../core/storage/MemoryStorage';
 import '@testing-library/jest-dom';
 
 // Using built-in UI components - no external dependencies to mock
