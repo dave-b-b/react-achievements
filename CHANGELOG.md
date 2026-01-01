@@ -8,77 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [3.10.0] - 2025-12-30
 
 ### Changed
-- **Code Deduplication**: Removed duplicate implementations now provided by achievements-engine
-  - Storage implementations (LocalStorage, MemoryStorage, IndexedDBStorage, RestApiStorage, AsyncStorageAdapter, OfflineQueueStorage)
-  - Utility functions (normalizeAchievements, isSimpleConfig, exportAchievementData, importAchievementData, createConfigHash)
-  - Error classes (AchievementError, StorageError, ConfigurationError, StorageQuotaError, ImportValidationError, SyncError)
+  - Game engine extracted to [achievements-engine](https://www.npmjs.com/package/achievements-engine)
   - All functionality re-exported from achievements-engine - **full backward compatibility maintained**
-  - Reduced package size by ~2,000 lines / ~38KB of duplicate code
 
-### Removed
-- Duplicate storage implementations in `src/core/storage/` (6 files)
-- Duplicate utilities in `src/core/utils/` (3 files)
-- Duplicate error classes in `src/core/errors/` (1 file)
-- Duplicate unit tests (9 test files) - functionality covered by achievements-engine test suite
-
-### Internal
-- Maintained 15 integration test suites for React-specific functionality
-- Removed 9 unit test files now covered by achievements-engine test suite
-- Updated `achievements-engine` dependency to version `^1.1.1`
-
-### Migration Guide
-**No changes required for existing code** - all functionality is re-exported from the main package index.
-
-Both import patterns continue to work:
-```typescript
-// Still works - recommended
-import { LocalStorage, AchievementError } from 'react-achievements';
-
-// Also works - direct from engine
-import { LocalStorage, AchievementError } from 'achievements-engine';
-```
-
----
-
-## [3.9.0] - 2025-12-29
-
-### Changed
-- **AchievementBuilder Migration**: `AchievementBuilder` and `AwardDetails` are now re-exported from `achievements-engine@^1.1.0`
-  - All builder functionality remains identical - full backwards compatibility maintained
-  - Enables framework-agnostic achievement building (Vue, Angular, Svelte, etc.)
-  - Reduces package size by removing duplicate implementation
-
-### Added
-- Integration test suite verifying re-export functionality from achievements-engine
-
-### Internal
-- Removed local `src/utils/achievementHelpers.ts` implementation (now in achievements-engine)
-- Removed local `src/__tests__/achievementHelpers.test.ts` (now tested in achievements-engine)
-- Updated peer dependency to `achievements-engine ^1.1.0`
-
-### Migration Guide
-**No changes required** - backwards compatibility is fully maintained through re-exports.
-
-Both import patterns work identically:
-```typescript
-// Still works exactly the same
-import { AchievementBuilder } from 'react-achievements';
-
-// Also available directly from engine
-import { AchievementBuilder } from 'achievements-engine';
-```
-
----
-
-## [3.8.1] - 2025-12-29
-
-### Fixed
-- Export `AchievementContextType` from main index to fix engine undefined issue
-- Ensure engine property is accessible in context for TypeScript consumers
-
-### Deprecated
-- `AchievementContextValue` - use `AchievementContextType` instead
-  - Old type kept for backward compatibility, will be removed in v4.0.0
 
 ---
 

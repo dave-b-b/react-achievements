@@ -1,6 +1,6 @@
 {
   "name": "react-achievements",
-  "version": "3.10.0",
+  "version": "3.8.0",
   "description": "Core achievement system for React applications",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
