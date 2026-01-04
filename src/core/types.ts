@@ -85,6 +85,21 @@ export function isAsyncStorage(storage: AnyAchievementStorage): storage is Async
     return testResult && typeof testResult.then === 'function';
 }
 
+/**
+ * @deprecated This type is outdated and will be removed in v4.0.0.
+ * Use AchievementContextType from 'react-achievements' instead.
+ *
+ * This legacy interface does not include the 'engine' property.
+ *
+ * @example
+ * ```typescript
+ * // Old (deprecated)
+ * import { AchievementContextValue } from 'react-achievements';
+ *
+ * // New (recommended)
+ * import { AchievementContextType } from 'react-achievements';
+ * ```
+ */
 export interface AchievementContextValue {
     updateMetrics: (metrics: AchievementMetrics | ((prev: AchievementMetrics) => AchievementMetrics)) => void;
     unlockedAchievements: string[];

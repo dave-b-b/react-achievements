@@ -269,9 +269,12 @@ export const BuiltInModal: React.FC<ModalProps> = ({
               </div>
             ) : (
               achievements.map((achievement) => {
+                // If achievementIconKey exists but not in mergedIcons, use it directly (might be an emoji)
+                // Otherwise, look up in mergedIcons or fall back to default
                 const icon =
                   (achievement.achievementIconKey &&
                     mergedIcons[achievement.achievementIconKey]) ||
+                  achievement.achievementIconKey ||
                   mergedIcons.default ||
                   '⭐';
 

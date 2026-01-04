@@ -232,6 +232,70 @@ function ResetButton() {
 }
 ```
 
+## Pattern 8: Event-Based Tracking
+
+Use semantic events instead of direct metric updates:
+
+```tsx
+import { useAchievementEngine } from 'react-achievements';
+
+function GameComponent() {
+  const engine = useAchievementEngine();
+
+  const handlePlayerAction = (action: string, data: any) => {
+    // Emit semantic events
+    engine.emit(action, data);
+  };
+
+  return (
+    <div>
+      <button onClick={() => handlePlayerAction('userScored', { points: 100 })}>
+        Score Points
+      </button>
+      <button onClick={() => handlePlayerAction('userLeveledUp', { level: 5 })}>
+        Level Up
+      </button>
+      <button onClick={() => handlePlayerAction('bossDefeated', { bossName: 'Dragon' })}>
+        Defeat Boss
+      </button>
+    </div>
+  );
+}
+```
+
+**When to use:** Multi-framework projects, larger applications, semantic event names
+
+## Pattern 9: Listening to Achievement Events
+
+React to achievement unlocks with custom logic:
+
+```tsx
+import { useAchievementEngine } from 'react-achievements';
+import { useEffect } from 'react';
+
+function NotificationHandler() {
+  const engine = useAchievementEngine();
+
+  useEffect(() => {
+    // Subscribe to achievement unlocks
+    const unsubscribe = engine.on('achievement:unlocked', (event) => {
+      console.log(`Unlocked: ${event.achievementTitle}`);
+      console.log(event.achievementDescription);
+
+      // Custom notification logic
+      // Send to analytics, trigger custom animations, etc.
+    });
+
+    // Cleanup on unmount
+    return () => unsubscribe();
+  }, [engine]);
+
+  return null;
+}
+```
+
+**When to use:** Custom notifications, analytics tracking, special celebrations
+
 ## More Examples
 
 For more advanced patterns and use cases, see:

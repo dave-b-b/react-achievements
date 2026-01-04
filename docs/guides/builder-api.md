@@ -8,11 +8,15 @@ The Builder API provides a three-tier system for configuring achievements, from 
 
 ## Overview
 
-React Achievements offers three levels of configuration:
+React Achievements offers three levels of **achievement configuration**:
 
 1. **Tier 1: Smart Defaults** - Zero configuration for common patterns
 2. **Tier 2: Chainable Customization** - Fluent API for custom achievements
 3. **Tier 3: Full Control** - Complete customization for complex logic
+
+> **Note**: The Builder API defines HOW achievements are **configured**, not how
+> they're tracked. For tracking patterns, see [Direct Updates](./direct-updates)
+> or [Event-Based Tracking](./event-based-tracking).
 
 You can mix and match all three tiers in a single configuration!
 
@@ -30,9 +34,8 @@ AchievementBuilder.createScoreAchievement(100)
 
 // Tier 3: Full Control
 AchievementBuilder.create()
-  .withId('custom_achievement')
   .withMetric('score')
-  .withCondition((score) => score >= 100 && score % 10 === 0)
+  .withCondition((metrics) => metrics.score >= 100 && metrics.score % 10 === 0)
   .withAward({ title: 'Perfect Score!', icon: '💯' })
   .build()
 ```
@@ -110,41 +113,30 @@ AchievementBuilder.createScoreAchievement(100)
   })
 ```
 
-### Customize ID
-
-```tsx
-AchievementBuilder.createLevelAchievement(10)
-  .withId('level_master')
-  .withAward({
-    title: 'Level Master',
-    description: 'Reached level 10',
-    icon: '👑'
-  })
-```
-
-### Customize Metric Name
-
-```tsx
-// Track a different metric name
-AchievementBuilder.createScoreAchievement(100)
-  .withMetric('totalPoints')
-  .withAward({
-    title: 'Point Collector',
-    icon: '💰'
-  })
-```
-
 ### Chain Multiple Customizations
 
 ```tsx
 AchievementBuilder.createScoreAchievement(1000)
-  .withId('score_grandmaster')
-  .withMetric('playerScore')
   .withAward({
     title: 'Grandmaster',
     description: 'An incredible achievement!',
     icon: '👑'
   })
+```
+
+### Using Different Metric Names
+
+If you need to track a different metric name than the default (`score`, `level`, etc.), use threshold-based configuration instead:
+
+```tsx
+// For custom metric names, use threshold-based config
+const achievements = AchievementBuilder.combine([
+  {
+    totalPoints: {
+      100: { title: 'Point Collector', description: 'Score 100 points', icon: '💰' }
+    }
+  }
+]);
 ```
 
 ---
@@ -157,9 +149,8 @@ Complete customization for complex achievement logic.
 
 ```tsx
 AchievementBuilder.create()
-  .withId('speed_demon')
   .withMetric('buttonClicks')
-  .withCondition((clicks) => typeof clicks === 'number' && clicks >= 50)
+  .withCondition((metrics) => typeof metrics.buttonClicks === 'number' && metrics.buttonClicks >= 50)
   .withAward({
     title: 'Speed Demon',
     description: 'Click 50 times quickly',
@@ -171,8 +162,10 @@ AchievementBuilder.create()
 ### Multiple Condition Achievement
 
 ```tsx
+// For multi-metric conditions, you still need to specify a metric name
+// (it's used as the config key), but the condition receives the full metrics object
 AchievementBuilder.create()
-  .withId('perfect_game')
+  .withMetric('perfect_game') // Metric name used as config key
   .withCondition((metrics) =>
     metrics.score >= 1000 &&
     metrics.accuracy === 100 &&
@@ -186,13 +179,13 @@ AchievementBuilder.create()
   .build()
 ```
 
-**Note**: When using multi-metric conditions, don't specify `.withMetric()`. The condition function receives the entire metrics object.
+**Note**: Even for multi-metric conditions, `.withMetric()` is required (it's used as the config key). The condition function receives the entire metrics object, so you can check any metric.
 
 ### Complex Condition Logic
 
 ```tsx
 AchievementBuilder.create()
-  .withId('streak_master')
+  .withMetric('streak_master') // Metric name used as config key
   .withCondition((metrics) => {
     const { currentStreak, highestStreak, totalGames } = metrics;
     return (
@@ -234,7 +227,6 @@ const gameAchievements = AchievementBuilder.combine([
     }),
 
   AchievementBuilder.createLevelAchievement(10)
-    .withId('level_10_special')
     .withAward({
       title: 'Double Digits',
       description: 'Level 10 unlocked',
@@ -243,7 +235,7 @@ const gameAchievements = AchievementBuilder.combine([
 
   // Tier 3: Full custom logic
   AchievementBuilder.create()
-    .withId('perfect_score')
+    .withMetric('perfect_score') // Metric name required
     .withCondition((metrics) =>
       metrics.score >= 500 &&
       metrics.accuracy === 100
@@ -255,7 +247,7 @@ const gameAchievements = AchievementBuilder.combine([
     })
     .build(),
 
-  // Simple API can also be mixed in!
+  // Threshold-based configuration can also be mixed in!
   {
     buttonClicks: {
       10: { title: 'Clicker', description: 'Click 10 times', icon: '👆' },
@@ -279,9 +271,10 @@ export default gameAchievements;
 
 ### Use Tier 2 When:
 - You need custom titles, descriptions, or icons
-- You want custom achievement IDs
-- You're tracking non-standard metric names
 - You want quick setup with personalization
+- Default metric names (`score`, `level`, etc.) work for you
+
+**Note**: For custom metric names, use threshold-based configuration instead of Tier 2.
 
 ### Use Tier 3 When:
 - Achievement conditions involve multiple metrics
@@ -340,21 +333,19 @@ Creates a fully custom achievement.
 
 ### Builder Methods
 
-#### .withId(id: string)
-
-Sets a custom achievement ID.
-
-```tsx
-.withId('my_custom_id')
-```
-
 #### .withMetric(metricName: string)
 
-Sets the metric to track (single-metric achievements only).
+Sets the metric to track. **Only available on Tier 3** (`AchievementBuilder.create()`).
 
 ```tsx
-.withMetric('playerScore')
+// Tier 3 only
+AchievementBuilder.create()
+  .withMetric('playerScore')
+  .withCondition(...)
+  .build()
 ```
+
+**Note**: For Tier 2 achievements, the metric is fixed (`score` for `createScoreAchievement()`, `level` for `createLevelAchievement()`, etc.). To use custom metric names, use threshold-based configuration.
 
 #### .withCondition(fn: Function)
 
@@ -402,9 +393,8 @@ AchievementBuilder.createScoreAchievement(100)
 
 // ❌ Overkill: Tier 3 for simple achievements
 AchievementBuilder.create()
-  .withId('score_100')
   .withMetric('score')
-  .withCondition((score) => score >= 100)
+  .withCondition((metrics) => metrics.score >= 100)
   .withAward({ title: 'Score 100 points' })
   .build()
 ```
@@ -421,7 +411,7 @@ AchievementBuilder.createScoreAchievement(100)
 // ❌ Overkill: Tier 3 for simple customization
 AchievementBuilder.create()
   .withMetric('score')
-  .withCondition((score) => score >= 100)
+  .withCondition((metrics) => metrics.score >= 100)
   .withAward({ title: 'Century!', icon: '🎯' })
   .build()
 ```
@@ -442,18 +432,23 @@ AchievementBuilder.create()
   .build()
 ```
 
-### 4. Keep IDs Unique
+### 4. Use Threshold-Based Config for Custom Metrics
 
-Ensure all achievement IDs are unique across your configuration:
+If you need to track metrics with different names than the defaults, use threshold-based configuration:
 
 ```tsx
-// ❌ Bad: Duplicate IDs
-AchievementBuilder.createScoreAchievement(100).withId('score_100'),
-AchievementBuilder.createLevelAchievement(100).withId('score_100')  // Conflict!
+// ✅ Good: Custom metric name using threshold-based config
+const achievements = AchievementBuilder.combine([
+  {
+    lessons: {
+      1: { title: 'First Steps', description: 'Complete a lesson', icon: '📖' },
+      5: { title: 'On a Roll', description: 'Complete 5 lessons', icon: '📚' }
+    }
+  }
+]);
 
-// ✅ Good: Unique IDs
-AchievementBuilder.createScoreAchievement(100).withId('score_100'),
-AchievementBuilder.createLevelAchievement(100).withId('level_100')
+// ❌ Not possible: Tier 2 doesn't support custom metric names
+// AchievementBuilder.createScoreAchievement(100).withMetric('lessons') // Error!
 ```
 
 ### 5. Organize by Complexity
@@ -472,6 +467,7 @@ const achievements = AchievementBuilder.combine([
 
   // --- Tier 3: Complex Logic ---
   AchievementBuilder.create()
+    .withMetric('perfect_game') // Metric name required
     .withCondition((m) => m.score >= 500 && m.accuracy === 100)
     .withAward({ title: 'Perfect Game', icon: '💎' })
     .build()
@@ -480,11 +476,11 @@ const achievements = AchievementBuilder.combine([
 
 ---
 
-## Migration from Simple API
+## Working with Threshold-Based Configuration
 
-The Builder API can coexist with the Simple API:
+The Builder API can coexist with threshold-based object configuration:
 
-### Simple API (Still Supported)
+### Threshold-Based Configuration
 
 ```tsx
 const achievements = {
@@ -510,7 +506,7 @@ const achievements = AchievementBuilder.combine([
 
 ```tsx
 const achievements = AchievementBuilder.combine([
-  // Simple API for threshold-based achievements
+  // Threshold-based configuration for simple patterns
   {
     score: {
       100: { title: 'Century!', icon: '🏆' },
@@ -520,6 +516,7 @@ const achievements = AchievementBuilder.combine([
 
   // Builder API for complex achievements
   AchievementBuilder.create()
+    .withMetric('perfect_game') // Metric name required
     .withCondition((m) => m.score >= 1000 && m.accuracy === 100)
     .withAward({ title: 'Perfect Game', icon: '💎' })
     .build()
@@ -530,6 +527,7 @@ const achievements = AchievementBuilder.combine([
 
 ## What's Next?
 
-- **[Simple API Guide](./simple-api)** - Learn the recommended lightweight API
-- **[Complex API](../advanced/complex-api)** - Low-level POJO configuration
+- **[Direct Updates](./direct-updates)** - Learn how to track achievements
+- **[Event-Based Tracking](./event-based-tracking)** - Alternative tracking pattern
+- **[Advanced Configuration](../advanced/complex-api)** - Low-level POJO configuration
 - **[API Reference](../api-reference)** - Complete type definitions

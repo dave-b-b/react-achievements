@@ -13,6 +13,7 @@ import { LegacyLibraries } from './legacyDetector';
 import { BuiltInNotification } from './BuiltInNotification';
 import { BuiltInModal } from './BuiltInModal';
 import { BuiltInConfetti } from './BuiltInConfetti';
+import { defaultAchievementIcons } from '../icons/defaultIcons';
 
 /**
  * Wrapper for react-toastify toast notifications
@@ -21,8 +22,17 @@ import { BuiltInConfetti } from './BuiltInConfetti';
 export const createLegacyToastNotification = (
   libraries: LegacyLibraries
 ): NotificationComponent => {
-  return ({ achievement, onClose }) => {
+  return ({ achievement, onClose, icons = {} }) => {
     const { toast } = libraries;
+
+    //  Merge custom icons with defaults from react-achievements
+    const mergedIcons = { ...defaultAchievementIcons, ...icons };
+    const icon =
+      (achievement.achievementIconKey &&
+        mergedIcons[achievement.achievementIconKey as keyof typeof mergedIcons]) ||
+      achievement.achievementIconKey ||
+      mergedIcons.default ||
+      '⭐';
 
     useEffect(() => {
       if (!toast) return;
@@ -31,18 +41,18 @@ export const createLegacyToastNotification = (
       toast.success(
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <span style={{ fontSize: '2em', marginRight: '10px' }}>
-            {achievement.icon}
+            {icon}
           </span>
           <div>
             <div style={{ fontSize: '12px', opacity: 0.8, marginBottom: '4px' }}>
               Achievement Unlocked!
             </div>
             <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
-              {achievement.title}
+              {achievement.achievementTitle}
             </div>
-            {achievement.description && (
+            {achievement.achievementDescription && (
               <div style={{ fontSize: '13px', opacity: 0.9 }}>
-                {achievement.description}
+                {achievement.achievementDescription}
               </div>
             )}
           </div>
@@ -54,11 +64,11 @@ export const createLegacyToastNotification = (
           closeOnClick: true,
           pauseOnHover: true,
           draggable: true,
-          toastId: achievement.id,
+          toastId: achievement.achievementId,
           onClose,
         }
       );
-    }, [achievement, toast, onClose]);
+    }, [achievement, toast, onClose, icon]);
 
     return null; // Toast handles its own rendering
   };

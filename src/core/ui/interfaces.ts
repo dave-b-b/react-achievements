@@ -6,16 +6,12 @@ import { AchievementWithStatus } from '../types';
  * Displays achievement unlock notifications
  */
 export interface NotificationProps {
-  achievement: {
-    id: string;
-    title: string;
-    description: string;
-    icon: string;
-  };
+  achievement: AchievementWithStatus;
   onClose?: () => void;
   duration?: number;
   position?: NotificationPosition;
   theme?: string;
+  icons?: Record<string, string>;
 }
 
 export type NotificationComponent = React.FC<NotificationProps>;

@@ -85,10 +85,11 @@ const NotificationThemesComponent = () => {
       {showNotification && (
         <BuiltInNotification
           achievement={{
-            id: '1',
-            title: 'Achievement Unlocked!',
-            description: `This is the ${activeTheme} theme`,
-            icon: '🏆',
+            achievementId: '1',
+            achievementTitle: 'Achievement Unlocked!',
+            achievementDescription: `This is the ${activeTheme} theme`,
+            achievementIconKey: '🏆',
+            isUnlocked: true,
           }}
           theme={activeTheme}
           position="top-center"
@@ -149,10 +150,11 @@ const NotificationPositionsComponent = () => {
       {showNotification && (
         <BuiltInNotification
           achievement={{
-            id: '1',
-            title: 'Position Test',
-            description: `Showing at ${position}`,
-            icon: '📍',
+            achievementId: '1',
+            achievementTitle: 'Position Test',
+            achievementDescription: `Showing at ${position}`,
+            achievementIconKey: '📍',
+            isUnlocked: true,
           }}
           position={position}
           duration={5000}
@@ -431,10 +433,11 @@ const BuiltInThemesDemoComponent = () => {
       {showNotification && (
         <BuiltInNotification
           achievement={{
-            id: '1',
-            title: `${currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1)} Theme`,
-            description: `Switched to ${currentTheme} theme!`,
-            icon: '🎨',
+            achievementId: '1',
+            achievementTitle: `${currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1)} Theme`,
+            achievementDescription: `Switched to ${currentTheme} theme!`,
+            achievementIconKey: '🎨',
+            isUnlocked: true,
           }}
           theme={currentTheme}
           position="top-center"
@@ -550,12 +553,7 @@ const CompleteDemoComponent = () => {
       {/* Notification */}
       {showNotification && (
         <BuiltInNotification
-          achievement={{
-            id: sampleAchievements[unlockedCount - 1].achievementId,
-            title: sampleAchievements[unlockedCount - 1].achievementTitle,
-            description: sampleAchievements[unlockedCount - 1].achievementDescription,
-            icon: '🏆',
-          }}
+          achievement={sampleAchievements[unlockedCount - 1]}
           theme={theme}
           position="top-center"
           duration={5000}
