@@ -142,9 +142,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   // NEW: UI component resolution state (v3.6.0)
   const [legacyLibraries, setLegacyLibraries] = useState<LegacyLibraries | null>(null);
   const [uiReady, setUiReady] = useState(useBuiltInUI);
-  const [currentNotification, setCurrentNotification] = useState<{
-    achievement: { id: string; title: string; description: string; icon: string };
-  } | null>(null);
+  const [currentNotification, setCurrentNotification] = useState<AchievementWithStatus | null>(null);
 
   // Cleanup: Destroy engine on unmount (only if we auto-created it)
   useEffect(() => {
@@ -172,20 +170,16 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
         seenAchievementsRef.current.add(event.achievementId);
 
         if (ui.enableNotifications !== false) {
-          // Get icon to display
-          let iconToDisplay = '🏆';
-          if (event.achievementIconKey && event.achievementIconKey in icons) {
-            iconToDisplay = icons[event.achievementIconKey];
-          }
+          // Create a full AchievementWithStatus object for the notification
+          const unlockedAchievement: AchievementWithStatus = {
+            achievementId: event.achievementId,
+            achievementTitle: event.achievementTitle,
+            achievementDescription: event.achievementDescription,
+            achievementIconKey: event.achievementIconKey,
+            isUnlocked: true,
+          };
 
-          setCurrentNotification({
-            achievement: {
-              id: event.achievementId,
-              title: event.achievementTitle,
-              description: event.achievementDescription,
-              icon: iconToDisplay,
-            },
-          });
+          setCurrentNotification(unlockedAchievement);
 
           // Show confetti
           setShowConfetti(true);
@@ -308,11 +302,12 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
       {/* Notification component (v3.6.0) */}
       {uiReady && currentNotification && ui.enableNotifications !== false && (
         <NotificationComponent
-          achievement={currentNotification.achievement}
+          achievement={currentNotification}
           onClose={() => setCurrentNotification(null)}
           duration={5000}
           position={ui.notificationPosition || 'top-center'}
           theme={ui.theme || 'modern'}
+          icons={icons}
         />
       )}
 

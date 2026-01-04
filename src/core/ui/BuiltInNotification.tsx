@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NotificationProps } from './interfaces';
 import { getTheme, builtInThemes } from './themes';
+import { defaultAchievementIcons } from '../icons/defaultIcons';
 
 /**
  * Built-in notification component
@@ -12,11 +13,15 @@ export const BuiltInNotification: React.FC<NotificationProps> = ({
   duration = 5000,
   position = 'top-center',
   theme = 'modern',
+  icons = {},
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
 
-  //  Get theme configuration
+  // Merge custom icons with defaults
+  const mergedIcons: Record<string, string> = { ...defaultAchievementIcons, ...icons };
+
+  // Get theme configuration
   const themeConfig = getTheme(theme) || builtInThemes.modern;
   const { notification: themeStyles } = themeConfig;
 
@@ -153,14 +158,23 @@ export const BuiltInNotification: React.FC<NotificationProps> = ({
     lineHeight: 1,
   };
 
+  // If achievementIconKey exists but not in mergedIcons, use it directly (might be an emoji)
+  // Otherwise, look up in mergedIcons or fall back to default
+  const icon =
+    (achievement.achievementIconKey &&
+      mergedIcons[achievement.achievementIconKey]) ||
+    achievement.achievementIconKey ||
+    mergedIcons.default ||
+    '⭐';
+
   return (
     <div style={containerStyles} data-testid="built-in-notification">
-      <div style={iconStyles}>{achievement.icon}</div>
+      <div style={iconStyles}>{icon}</div>
       <div style={contentStyles}>
         <div style={headerStyles}>Achievement Unlocked!</div>
-        <div style={titleStyles}>{achievement.title}</div>
-        {achievement.description && (
-          <div style={descriptionStyles}>{achievement.description}</div>
+        <div style={titleStyles}>{achievement.achievementTitle}</div>
+        {achievement.achievementDescription && (
+          <div style={descriptionStyles}>{achievement.achievementDescription}</div>
         )}
       </div>
       <button
