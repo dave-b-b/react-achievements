@@ -43,7 +43,9 @@ describe('AchievementProvider UI Integration', () => {
             </AchievementProvider>
         );
         
-        fireEvent.click(screen.getByText('Update'));
+        await act(async () => {
+            fireEvent.click(screen.getByText('Update'));
+        });
 
         await act(async () => {
             jest.runAllTimers();
@@ -59,7 +61,9 @@ describe('AchievementProvider UI Integration', () => {
             </AchievementProvider>
         );
 
-        fireEvent.click(screen.getByText('Update'));
+        await act(async () => {
+            fireEvent.click(screen.getByText('Update'));
+        });
 
         await act(async () => {
             jest.runAllTimers();
@@ -76,7 +80,9 @@ describe('AchievementProvider UI Integration', () => {
             </AchievementProvider>
         );
 
-        fireEvent.click(screen.getByText('Update'));
+        await act(async () => {
+            fireEvent.click(screen.getByText('Update'));
+        });
 
         await waitFor(() => {
             const notification = screen.getByTestId('built-in-notification');
@@ -97,7 +103,9 @@ describe('AchievementProvider UI Integration', () => {
             </AchievementProvider>
         );
 
-        fireEvent.click(screen.getByText('Update'));
+        await act(async () => {
+            fireEvent.click(screen.getByText('Update'));
+        });
 
         await waitFor(() => {
             expect(screen.getByTestId('custom-notification')).toBeInTheDocument();
@@ -114,7 +122,9 @@ describe('AchievementProvider UI Integration', () => {
             </AchievementProvider>
         );
 
-        fireEvent.click(screen.getByText('Update'));
+        await act(async () => {
+            fireEvent.click(screen.getByText('Update'));
+        });
 
         await waitFor(() => {
             const notification = screen.getByTestId('built-in-notification');
@@ -135,7 +145,9 @@ describe('AchievementProvider UI Integration', () => {
             </AchievementProvider>
         );
 
-        fireEvent.click(screen.getByText('Update'));
+        await act(async () => {
+            fireEvent.click(screen.getByText('Update'));
+        });
 
         await waitFor(() => {
             expect(screen.getByTestId('custom-confetti')).toBeInTheDocument();
@@ -154,7 +166,9 @@ describe('AchievementProvider UI Integration', () => {
                 </AchievementProvider>
             );
 
-            fireEvent.click(screen.getByText('Update'));
+            await act(async () => {
+                fireEvent.click(screen.getByText('Update'));
+            });
 
             await waitFor(() => {
                 const notification = screen.getByTestId('built-in-notification');
@@ -173,7 +187,9 @@ describe('AchievementProvider UI Integration', () => {
             </AchievementProvider>
         );
 
-        fireEvent.click(screen.getByText('Update'));
+        await act(async () => {
+            fireEvent.click(screen.getByText('Update'));
+        });
 
         await waitFor(() => {
             const notification = screen.getByTestId('built-in-notification');
@@ -191,7 +207,9 @@ describe('AchievementProvider UI Integration', () => {
             </AchievementProvider>
         );
 
-        fireEvent.click(screen.getByText('Update'));
+        await act(async () => {
+            fireEvent.click(screen.getByText('Update'));
+        });
 
         await waitFor(() => {
             const notification = screen.getByTestId('built-in-notification');
@@ -209,7 +227,9 @@ describe('AchievementProvider UI Integration', () => {
             </AchievementProvider>
         );
 
-        fireEvent.click(screen.getByText('Update'));
+        await act(async () => {
+            fireEvent.click(screen.getByText('Update'));
+        });
 
         await waitFor(() => {
             expect(screen.getByTestId('built-in-notification')).toBeInTheDocument();
