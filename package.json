@@ -27,8 +27,6 @@
     "build-storybook": "storybook build",
     "ship": "gh workflow run release.yml"
   },
-  "dependencies": {
-  },
   "peerDependencies": {
     "react": ">=16.8.0",
     "react-confetti": "^6.1.0",
@@ -37,7 +35,6 @@
     "react-toastify": "^9.1.3",
     "react-use": "^17.4.0",
     "achievements-engine": "^1.1.2"
-
   },
   "peerDependenciesMeta": {
     "react-confetti": {
