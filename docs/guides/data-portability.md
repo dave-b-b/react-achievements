@@ -691,4 +691,4 @@ function AchievementBackupSystem() {
 
 - **[Error Handling](./error-handling)** - Handle backup failures gracefully
 - **[API Reference](../api-reference)** - Complete export/import API docs
-- **[Simple API](./simple-api)** - Learn the recommended configuration approach
+- **[Event-Based Tracking](/docs/guides/event-based-tracking)** - Learn the event-driven pattern

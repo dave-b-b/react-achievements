@@ -57,7 +57,7 @@ If this compiles without errors, you're ready to go!
 ## Next Steps
 
 - **[Quick Start](/docs/getting-started/quick-start)** - Build your first achievement system
-- **[Simple API Guide](/docs/guides/simple-api)** - Learn the recommended configuration approach
+- **[Event-Based Tracking](/docs/guides/event-based-tracking)** - Learn the event-driven pattern
 
 ## Troubleshooting
 
