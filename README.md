@@ -18,6 +18,39 @@ npm install react-achievements
 
 ---
 
+## Start Here (60 Seconds)
+
+```tsx
+import { AchievementProvider, useSimpleAchievements, BadgesButtonWithModal } from 'react-achievements';
+
+const achievements = {
+  score: {
+    100: { title: 'Century!', description: 'Score 100 points', icon: '🏆' },
+  }
+};
+
+function AchievementsUI() {
+  const { track, unlocked } = useSimpleAchievements();
+
+  return (
+    <div>
+      <button onClick={() => track('score', 100)}>Score 100</button>
+      <BadgesButtonWithModal unlockedAchievements={unlocked} />
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <AchievementProvider achievements={achievements} useBuiltInUI={true}>
+      <AchievementsUI />
+    </AchievementProvider>
+  );
+}
+```
+
+---
+
 ## Usage
 
 React Achievements supports two tracking patterns:
@@ -144,3 +177,7 @@ React Achievements is **dual-licensed**:
 ---
 
 **Built with ❤️ by [Dave B](https://github.com/dave-b-b)** | [📚 Documentation](https://dave-b-b.github.io/react-achievements/) | [⭐ Star on GitHub](https://github.com/dave-b-b/react-achievements)
+
+## AI Agents
+
+If you're using AI coding agents, see `AGENTS.md` for a concise integration prompt, pitfalls, and the recommended API.
