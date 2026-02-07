@@ -47,6 +47,7 @@ export { BadgesButton } from './core/components/BadgesButton';
 export { BadgesModal } from './core/components/BadgesModal';
 export { BadgesButtonWithModal } from './core/components/BadgesButtonWithModal';
 export { ConfettiWrapper } from './core/components/ConfettiWrapper';
+export { LevelProgress } from './core/components/LevelProgress';
 
 // Core Provider and Hooks
 export { AchievementProvider, AchievementContext } from './providers/AchievementProvider';

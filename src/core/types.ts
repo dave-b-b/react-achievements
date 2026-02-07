@@ -121,6 +121,15 @@ export interface StylesProps {
         lockIcon?: React.CSSProperties;
         lockedAchievementItem?: React.CSSProperties;
     };
+    levelProgress?: {
+        container?: React.CSSProperties;
+        header?: React.CSSProperties;
+        levelLabel?: React.CSSProperties;
+        valueText?: React.CSSProperties;
+        progressTrack?: React.CSSProperties;
+        progressBar?: React.CSSProperties;
+        progressText?: React.CSSProperties;
+    };
 }
 
 export interface AchievementProviderProps {
