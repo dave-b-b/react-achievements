@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.9.1] - 2026-02-07
+
+### Added
+- **AI Agent Guide**: New `AGENTS.md` with a golden-path snippet, common pitfalls, and a ready-to-use prompt template
+- **README Quick Start**: 60-second minimal example and pointer to AI agent guidance
+
+### Fixed
+- **Docs Example**: Intro quick example now uses hooks inside the provider tree
+- **Documentation Links**: Replaced placeholder GitHub links with the correct repository URLs
+
+---
+
 ## [3.9.0] - 2026-02-07
 
 ### Added
