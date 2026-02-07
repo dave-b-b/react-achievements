@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 React Achievements is a flexible achievement system library for React applications. It provides core functionality for implementing gamification features with support for multiple state management solutions (Redux, Zustand, Context API). The library includes automatic notifications, confetti animations, and customizable UI components.
 
-**Version 3.1.0** introduces the Simple API that reduces configuration complexity by 90% while maintaining full backward compatibility with the existing complex API.
+**Version 3.1.0** introduced the Simple API that reduces configuration complexity by 90% while maintaining full backward compatibility with the existing complex API. Current release is **v3.9.0**.
 
 ## Development Commands
 
@@ -114,7 +114,7 @@ const config = {
 - Builds ES modules with TypeScript compilation
 - Generates type definitions in `dist/index.d.ts`
 - Excludes tests and stories from build
-- External dependencies: react, react-dom, react-modal, react-toastify, react-confetti, react-use
+- Built-in UI is available by default; legacy UI dependencies (`react-modal`, `react-toastify`, `react-confetti`, `react-use`) are optional and only needed when using the legacy UI components.
 
 ## State Management Examples
 

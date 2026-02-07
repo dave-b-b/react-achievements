@@ -40,12 +40,12 @@ const achievements = {
   }
 };
 
-function App() {
+function AchievementsUI() {
   const [modalOpen, setModalOpen] = useState(false);
   const { track, unlocked, getAllAchievements } = useSimpleAchievements();
 
   return (
-    <AchievementProvider achievements={achievements} useBuiltInUI={true}>
+    <>
       <button onClick={() => track('score', 100)}>Score 100</button>
       <button onClick={() => track('completedTutorial', true)}>Complete Tutorial</button>
 
@@ -60,6 +60,14 @@ function App() {
         showAllAchievements={true}
         allAchievements={getAllAchievements()}
       />
+    </>
+  );
+}
+
+function App() {
+  return (
+    <AchievementProvider achievements={achievements} useBuiltInUI={true}>
+      <AchievementsUI />
     </AchievementProvider>
   );
 }
@@ -92,4 +100,4 @@ This documentation is for **React Achievements v3.6+**. The library is actively 
 - **v3.4.0** - Async storage system (IndexedDB, REST API, Offline Queue)
 - **v3.3.0** - Error handling system with data export/import
 
-See the [Changelog](https://github.com/YOUR_GITHUB_USERNAME/react-achievements/blob/main/CHANGELOG.md) for complete version history.
+See the [Changelog](https://github.com/dave-b-b/react-achievements/blob/main/CHANGELOG.md) for complete version history.

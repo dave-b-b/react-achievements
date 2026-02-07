@@ -335,4 +335,4 @@ For more advanced patterns and use cases, see:
 
 - **[API Reference](/docs/api-intro)** - Complete API documentation
 - **[Advanced Guide](/docs/advanced/custom-storage)** - Custom implementations
-- **[GitHub Examples](https://github.com/YOUR_GITHUB_USERNAME/react-achievements/tree/main/stories/examples)** - Full working demos
+- **[GitHub Examples](https://github.com/dave-b-b/react-achievements/tree/main/stories/examples)** - Full working demos
