@@ -91,4 +91,43 @@ export const defaultStyles: Required<StylesProps> = {
             opacity: 0.5,
         },
     },
-}; 
+    levelProgress: {
+        container: {
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            padding: '12px 16px',
+        },
+        header: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '12px',
+            fontWeight: 600,
+        },
+        levelLabel: {
+            fontSize: '14px',
+        },
+        valueText: {
+            fontSize: '12px',
+            opacity: 0.8,
+        },
+        progressTrack: {
+            position: 'relative',
+            height: '10px',
+            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+            borderRadius: '999px',
+            overflow: 'hidden',
+        },
+        progressBar: {
+            height: '100%',
+            borderRadius: '999px',
+            transition: 'width 0.2s ease-in-out',
+        },
+        progressText: {
+            fontSize: '12px',
+            opacity: 0.8,
+            textAlign: 'right',
+        },
+    },
+};

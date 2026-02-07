@@ -227,6 +227,22 @@ Pass styles directly to components:
 />
 ```
 
+### LevelProgress Styles
+
+```tsx
+<LevelProgress
+  level={3}
+  currentXP={120}
+  nextLevelXP={200}
+  styles={{
+    container: { background: '#111827', color: '#f9fafb' },
+    progressTrack: { backgroundColor: 'rgba(255,255,255,0.15)' },
+    progressBar: { backgroundColor: '#22d3ee' },
+    progressText: { fontWeight: 600 },
+  }}
+/>
+```
+
 ---
 
 ## Custom Animations

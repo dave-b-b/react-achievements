@@ -207,7 +207,40 @@ function AchievementProgress({ threshold = 1000 }) {
 }
 ```
 
-## Pattern 7: Reset All Achievements (Development/Testing)
+## Pattern 7: Level Progress (Out-of-the-Box)
+
+Use the built-in LevelProgress component for a ready-made, theme-aware progress bar:
+
+```tsx
+import { LevelProgress } from 'react-achievements';
+
+function LevelStatus({ level, currentXP, nextLevelXP }) {
+  return (
+    <LevelProgress
+      level={level}
+      currentXP={currentXP}
+      nextLevelXP={nextLevelXP}
+      theme="gamified"
+    />
+  );
+}
+```
+
+Customize styling to match your app:
+
+```tsx
+<LevelProgress
+  level={3}
+  currentXP={120}
+  nextLevelXP={200}
+  styles={{
+    container: { background: '#111827', color: '#f9fafb' },
+    progressBar: { backgroundColor: '#22d3ee' },
+  }}
+/>
+```
+
+## Pattern 8: Reset All Achievements (Development/Testing)
 
 Clear all achievement data:
 
