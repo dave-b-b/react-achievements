@@ -6,12 +6,26 @@ import { SimpleAchievementConfig, StorageType } from '../core/types';
 
 // Test component that uses the simple achievements hook
 const TestComponent: React.FC = () => {
-  const { track, trackMultiple, unlocked, unlockedCount, reset } = useSimpleAchievements();
+  const {
+    track,
+    trackMultiple,
+    unlocked,
+    unlockedIds,
+    unlockedAchievements,
+    allAchievements,
+    unlockedCount,
+    totalCount,
+    reset
+  } = useSimpleAchievements();
 
   return (
     <div>
       <div data-testid="unlocked-count">{unlockedCount}</div>
       <div data-testid="unlocked-list">{unlocked.join(',')}</div>
+      <div data-testid="unlocked-ids">{unlockedIds.join(',')}</div>
+      <div data-testid="unlocked-achievement-count">{unlockedAchievements.length}</div>
+      <div data-testid="all-achievement-count">{allAchievements.length}</div>
+      <div data-testid="total-count">{totalCount}</div>
       <button onClick={() => track('score', 100)} data-testid="track-score">
         Track Score
       </button>
@@ -59,6 +73,10 @@ describe('useSimpleAchievements', () => {
     
     expect(screen.getByTestId('unlocked-count')).toHaveTextContent('0');
     expect(screen.getByTestId('unlocked-list')).toHaveTextContent('');
+    expect(screen.getByTestId('unlocked-ids')).toHaveTextContent('');
+    expect(screen.getByTestId('unlocked-achievement-count')).toHaveTextContent('0');
+    expect(screen.getByTestId('all-achievement-count')).toHaveTextContent('5');
+    expect(screen.getByTestId('total-count')).toHaveTextContent('5');
   });
 
   it('should unlock achievement when tracking a metric that meets threshold', async () => {
@@ -75,6 +93,8 @@ describe('useSimpleAchievements', () => {
 
     expect(screen.getByTestId('unlocked-count')).toHaveTextContent('1');
     expect(screen.getByTestId('unlocked-list')).toHaveTextContent('score_100');
+    expect(screen.getByTestId('unlocked-ids')).toHaveTextContent('score_100');
+    expect(screen.getByTestId('unlocked-achievement-count')).toHaveTextContent('1');
   });
 
   it('should unlock multiple achievements when tracking higher values', async () => {

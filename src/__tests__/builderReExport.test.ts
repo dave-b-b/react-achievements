@@ -29,6 +29,37 @@ describe('Builder re-export from achievements-engine', () => {
     expect(config.score![500].icon).toBe('⭐');
   });
 
+  it('should support bulk score and level achievements with optional awards', () => {
+    const scoreAwards: (number | [number, AwardDetails])[] = [
+      100,
+      [500, { title: 'High Scorer!', icon: '⭐' }],
+    ];
+    const levelAwards: (number | [number, AwardDetails])[] = [
+      5,
+      [10, { title: 'Double Digits', icon: '🔟' }],
+    ];
+
+    const config = AchievementBuilder.combine([
+      AchievementBuilder.createScoreAchievements(scoreAwards),
+      AchievementBuilder.createLevelAchievements(levelAwards),
+    ]);
+
+    expect(config.score![100].title).toBe('Score 100!');
+    expect(config.score![500].title).toBe('High Scorer!');
+    expect(config.level![5].title).toBe('Level 5!');
+    expect(config.level![10].icon).toBe('🔟');
+  });
+
+  it('should support value achievements for string metrics', () => {
+    const config = AchievementBuilder.createValueAchievement('characterClass', 'wizard')
+      .withAward({ title: 'Arcane Scholar', description: 'Choose wizard', icon: '🧙' })
+      .toConfig();
+
+    expect(config.characterClass!.wizard.title).toBe('Arcane Scholar');
+    expect(config.characterClass!.wizard.description).toBe('Choose wizard');
+    expect(config.characterClass!.wizard.icon).toBe('🧙');
+  });
+
   it('should support combining multiple achievements', () => {
     const scoreAchievement = AchievementBuilder.createScoreAchievement(100);
     const levelAchievement = AchievementBuilder.createLevelAchievement(5);

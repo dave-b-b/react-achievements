@@ -1,29 +1,21 @@
-import React from 'react';
-import Confetti from 'react-confetti';
-import { useWindowSize } from '../hooks/useWindowSize';
+import React, { useEffect } from 'react';
+import { BuiltInConfetti } from '../ui/BuiltInConfetti';
+import { warnDeprecation } from '../utils/deprecation';
 
-interface ConfettiWrapperProps {
-    show: boolean;
+export interface ConfettiWrapperProps {
+  show: boolean;
 }
 
+/**
+ * @deprecated Use the provider `ui.ConfettiComponent` option or the built-in
+ * confetti default. This v3 compatibility wrapper will be removed in 4.2.
+ */
 export const ConfettiWrapper: React.FC<ConfettiWrapperProps> = ({ show }) => {
-    const { width, height } = useWindowSize();
-
-    if (!show) return null;
-
-    return (
-        <Confetti
-            width={width}
-            height={height}
-            numberOfPieces={200}
-            recycle={false}
-            style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                zIndex: 1001,
-                pointerEvents: 'none',
-            }}
-        />
+  useEffect(() => {
+    warnDeprecation(
+      '`ConfettiWrapper` is deprecated. Use the provider `ui.ConfettiComponent` option or built-in confetti defaults instead. `ConfettiWrapper` will be removed in 4.2.'
     );
-}; 
+  }, []);
+
+  return <BuiltInConfetti show={show} particleCount={200} />;
+};

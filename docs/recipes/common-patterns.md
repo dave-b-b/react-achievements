@@ -4,75 +4,110 @@ sidebar_position: 1
 
 # Common Patterns
 
-Ready-to-use code examples for common achievement scenarios.
+Ready-to-use v4 examples for common achievement workflows.
 
-## Pattern 1: Display Only Unlocked Achievements
+## Floating Widget
 
-Show only achievements the user has earned:
+Use the default widget when you want the fastest badge button plus modal setup:
 
 ```tsx
-import { useAchievements, BadgesModal } from 'react-achievements';
-import { useState } from 'react';
+import { AchievementsWidget } from 'react-achievements';
 
-function AchievementHistory() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const { achievements } = useAchievements();
+<AchievementsWidget position="bottom-right" />
+```
+
+## Drawer Or Navigation Item
+
+Inline placement lets the trigger flow with your layout:
+
+```tsx
+<AchievementsWidget placement="inline" label="Badges" />
+```
+
+Use `renderTrigger` when the trigger should be one of your existing controls:
+
+```tsx
+<AchievementsWidget
+  placement="inline"
+  renderTrigger={({ buttonProps, unlockedCount, totalCount }) => (
+    <button {...buttonProps} className="drawer-row">
+      Achievements
+      <span>{unlockedCount}/{totalCount}</span>
+    </button>
+  )}
+/>
+```
+
+## Existing Button Opens The Modal
+
+Use `AchievementsModal` when your app already has a button, drawer row, command menu item, or profile-menu action.
+
+```tsx
+import { useState } from 'react';
+import { AchievementsModal } from 'react-achievements';
+
+function AchievementAction() {
+  const [open, setOpen] = useState(false);
 
   return (
     <>
-      <button onClick={() => setModalOpen(true)}>
-        View My Achievements ({achievements.unlocked.length})
-      </button>
-
-      <BadgesModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        achievements={achievements.unlocked.map(id => {
-          const achievement = achievements.all[id];
-          return {
-            achievementId: id,
-            achievementTitle: achievement.title,
-            achievementDescription: achievement.description,
-            achievementIconKey: achievement.icon,
-          };
-        })}
-      />
+      <button onClick={() => setOpen(true)}>View achievements</button>
+      <AchievementsModal isOpen={open} onClose={() => setOpen(false)} />
     </>
   );
 }
 ```
 
-## Pattern 2: Display All Achievements (Locked + Unlocked)
+`AchievementsModal` reads achievement state from the nearest `AchievementProvider`, so you do not need to map unlocked IDs into achievement objects.
 
-Show progress toward locked achievements:
+## Inline Achievement List
+
+Use `AchievementsList` for profile pages, settings pages, drawers, or dashboard panels.
 
 ```tsx
-import { useAchievements, BadgesModal } from 'react-achievements';
-import { useState } from 'react';
+import { AchievementsList } from 'react-achievements';
 
-function AchievementGallery() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const { getAllAchievements } = useAchievements();
-
-  return (
-    <>
-      <button onClick={() => setModalOpen(true)}>
-        View All Achievements
-      </button>
-
-      <BadgesModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        showAllAchievements={true}
-        allAchievements={getAllAchievements()}
-        showUnlockConditions={true}
-      />
-    </>
-  );
-}
+<AchievementsList />
 ```
 
-## Pattern 3: Export Achievement Data
+Only show earned achievements:
+
+```tsx
+<AchievementsList showLocked={false} emptyState="No achievements unlocked yet." />
+```
+
+Render each row yourself while keeping provider state, filtering, and icon resolution:
+
+```tsx
+<AchievementsList
+  renderAchievement={({ achievement, icon, isLocked }) => (
+    <div className={isLocked ? 'locked-row' : 'unlocked-row'}>
+      <span>{icon}</span>
+      <strong>{achievement.achievementTitle}</strong>
+    </div>
+  )}
+/>
+```
+
+## Provider-Level Icons
+
+Define icon keys once on the provider. Notifications, widgets, modals, and lists can all use them.
+
+```tsx
+<AchievementProvider
+  achievements={{
+    login: {
+      true: { title: 'First Login', icon: 'login' },
+    },
+  }}
+  icons={{ login: '🔑' }}
+>
+  <App />
+  <AchievementsWidget />
+</AchievementProvider>
+```
+
+## Export Achievement Data
 
 Allow users to download their achievement progress:
 
@@ -87,21 +122,18 @@ function ExportButton() {
     const blob = new Blob([jsonString], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
+
     link.href = url;
     link.download = `achievements-${Date.now()}.json`;
     link.click();
     URL.revokeObjectURL(url);
   };
 
-  return (
-    <button onClick={handleExport}>
-      Download Achievement Data
-    </button>
-  );
+  return <button onClick={handleExport}>Download achievement data</button>;
 }
 ```
 
-## Pattern 4: Import Achievement Data
+## Import Achievement Data
 
 Restore achievements from a backup file:
 
@@ -118,131 +150,39 @@ function ImportButton() {
     const reader = new FileReader();
     reader.onload = (e) => {
       const content = e.target?.result as string;
-      const result = importData(content, {
-        strategy: 'merge', // or 'replace' or 'preserve'
-        validate: true,
-      });
+      const result = importData(content, { merge: true });
 
       if (result.success) {
-        alert(`Imported ${result.imported?.achievements} achievements!`);
+        alert('Achievement data imported.');
       } else {
-        alert(`Import failed: ${result.errors?.join(', ')}`);
+        alert(`Import failed: ${result.errors?.join(', ') || 'Unknown error'}`);
       }
     };
     reader.readAsText(file);
   };
 
-  return (
-    <input
-      type="file"
-      accept=".json"
-      onChange={handleImport}
-    />
-  );
+  return <input type="file" accept=".json" onChange={handleImport} />;
 }
 ```
 
-## Pattern 5: Get Current Metrics
+## Level Progress
 
-Display current progress toward achievements:
-
-```tsx
-import { useAchievements } from 'react-achievements';
-
-function ProgressDashboard() {
-  const { getState } = useAchievements();
-
-  const handleShowProgress = () => {
-    const state = getState();
-    console.log('Current metrics:', state.metrics);
-    console.log('Unlocked achievements:', state.unlocked);
-
-    // Example: Show progress to next achievement
-    const currentScore = state.metrics.score?.[0] ?? 0;
-    console.log(`Current score: ${currentScore}`);
-    console.log(`Next milestone: 1000 points`);
-    console.log(`Progress: ${(currentScore / 1000) * 100}%`);
-  };
-
-  return (
-    <button onClick={handleShowProgress}>
-      Show Progress
-    </button>
-  );
-}
-```
-
-## Pattern 6: Achievement Progress Bar
-
-Show visual progress toward a specific achievement:
-
-```tsx
-import { useAchievements } from 'react-achievements';
-
-function AchievementProgress({ threshold = 1000 }) {
-  const { getState } = useAchievements();
-  const state = getState();
-  const currentScore = state.metrics.score?.[0] ?? 0;
-  const progress = Math.min((currentScore / threshold) * 100, 100);
-
-  return (
-    <div>
-      <p>Progress to 1000 points: {currentScore} / {threshold}</p>
-      <div style={{
-        width: '100%',
-        height: '20px',
-        backgroundColor: '#eee',
-        borderRadius: '10px',
-        overflow: 'hidden'
-      }}>
-        <div style={{
-          width: `${progress}%`,
-          height: '100%',
-          backgroundColor: '#4caf50',
-          transition: 'width 0.3s ease'
-        }} />
-      </div>
-    </div>
-  );
-}
-```
-
-## Pattern 7: Level Progress (Out-of-the-Box)
-
-Use the built-in LevelProgress component for a ready-made, theme-aware progress bar:
+Use the built-in `LevelProgress` component for a ready-made, theme-aware progress bar:
 
 ```tsx
 import { LevelProgress } from 'react-achievements';
 
-function LevelStatus({ level, currentXP, nextLevelXP }) {
-  return (
-    <LevelProgress
-      level={level}
-      currentXP={currentXP}
-      nextLevelXP={nextLevelXP}
-      theme="gamified"
-    />
-  );
-}
-```
-
-Customize styling to match your app:
-
-```tsx
 <LevelProgress
   level={3}
   currentXP={120}
   nextLevelXP={200}
-  styles={{
-    container: { background: '#111827', color: '#f9fafb' },
-    progressBar: { backgroundColor: '#22d3ee' },
-  }}
+  theme="gamified"
 />
 ```
 
-## Pattern 8: Reset All Achievements (Development/Testing)
+## Reset All Achievements
 
-Clear all achievement data:
+Clear all achievement data during development or from a user-facing reset flow:
 
 ```tsx
 import { useAchievements } from 'react-achievements';
@@ -250,24 +190,17 @@ import { useAchievements } from 'react-achievements';
 function ResetButton() {
   const { reset } = useAchievements();
 
-  const handleReset = () => {
-    if (confirm('Reset all achievement data? This cannot be undone.')) {
-      reset();
-      alert('All achievements have been reset.');
-    }
-  };
-
   return (
-    <button onClick={handleReset} style={{ color: 'red' }}>
-      Reset All Achievements
+    <button onClick={reset}>
+      Reset achievements
     </button>
   );
 }
 ```
 
-## Pattern 8: Event-Based Tracking
+## Event-Based Tracking
 
-Use semantic events instead of direct metric updates:
+Use semantic events instead of direct metric updates for larger apps:
 
 ```tsx
 import { useAchievementEngine } from 'react-achievements';
@@ -275,64 +208,31 @@ import { useAchievementEngine } from 'react-achievements';
 function GameComponent() {
   const engine = useAchievementEngine();
 
-  const handlePlayerAction = (action: string, data: any) => {
-    // Emit semantic events
-    engine.emit(action, data);
-  };
-
   return (
-    <div>
-      <button onClick={() => handlePlayerAction('userScored', { points: 100 })}>
-        Score Points
-      </button>
-      <button onClick={() => handlePlayerAction('userLeveledUp', { level: 5 })}>
-        Level Up
-      </button>
-      <button onClick={() => handlePlayerAction('bossDefeated', { bossName: 'Dragon' })}>
-        Defeat Boss
-      </button>
-    </div>
+    <button onClick={() => engine.emit('userScored', { points: 100 })}>
+      Score points
+    </button>
   );
 }
 ```
 
-**When to use:** Multi-framework projects, larger applications, semantic event names
-
-## Pattern 9: Listening to Achievement Events
-
-React to achievement unlocks with custom logic:
+Listen to achievement events for analytics or custom workflows:
 
 ```tsx
-import { useAchievementEngine } from 'react-achievements';
 import { useEffect } from 'react';
+import { useAchievementEngine } from 'react-achievements';
 
-function NotificationHandler() {
+function AchievementAnalytics() {
   const engine = useAchievementEngine();
 
   useEffect(() => {
-    // Subscribe to achievement unlocks
-    const unsubscribe = engine.on('achievement:unlocked', (event) => {
-      console.log(`Unlocked: ${event.achievementTitle}`);
-      console.log(event.achievementDescription);
-
-      // Custom notification logic
-      // Send to analytics, trigger custom animations, etc.
+    return engine.on('achievement:unlocked', (event) => {
+      analytics.track('Achievement Unlocked', {
+        achievementId: event.achievementId,
+      });
     });
-
-    // Cleanup on unmount
-    return () => unsubscribe();
   }, [engine]);
 
   return null;
 }
 ```
-
-**When to use:** Custom notifications, analytics tracking, special celebrations
-
-## More Examples
-
-For more advanced patterns and use cases, see:
-
-- **[API Reference](/docs/api-intro)** - Complete API documentation
-- **[Advanced Guide](/docs/advanced/custom-storage)** - Custom implementations
-- **[GitHub Examples](https://github.com/dave-b-b/react-achievements/tree/main/stories/examples)** - Full working demos

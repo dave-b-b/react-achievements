@@ -5,6 +5,62 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.0.0] - 2026-05-04
+
+### Added
+- **AchievementsWidget**: New v4 happy-path component that reads from `AchievementProvider` context, shows achievement count, and opens a built-in modal with locked and unlocked achievements
+- **AchievementsList**: New inline list component for drawers, sidebars, profile pages, and custom layouts
+- **AchievementsModal**: Built-in modal implementation used by the new widget and compatibility wrappers
+- **useAchievementState**: New state hook with explicit `unlockedIds`, `unlockedAchievements`, `allAchievements`, `unlockedCount`, `totalCount`, and `metrics`
+- **Headless Entry Point**: New `react-achievements/headless` export for DOM-free React integration and custom UI foundations
+- **Web Entry Point**: New `react-achievements/web` explicit alias for the web UI surface
+- **Storybook Widget Examples**: Added `AchievementsWidget` stories for floating buttons, navigation bars, drawers, dashboard cards, profile menus, and combined common placements
+- **Storybook Inline Examples**: Added inline `AchievementsList` stories and updated Context, Redux, Zustand, increment, provider, and built-in UI stories to show inline widgets and modal-from-existing-control patterns
+- **Storybook Progress Example**: Added an interactive `LevelProgress` story with live XP controls, level completion, reset, and theme switching
+- **Storybook Stacking Example**: Added a built-in UI story that unlocks multiple achievements from one update to demonstrate stacked notifications
+- **Storybook Headless Example**: Added headless provider stories that import from `react-achievements/headless` and render custom controls, achievement rows, and unlock activity without built-in web UI components
+- **Custom Widget Triggers**: `AchievementsWidget.renderTrigger` lets apps use their own drawer row, nav item, or profile menu trigger while keeping the built-in modal behavior
+- **Custom List Rows**: `AchievementsList.renderAchievement` supports fully custom inline row rendering while retaining provider state, filtering, and icon resolution
+- **Provider-Level UI Extension Points**: Provider `icons`, `ui.ModalComponent`, `ui.NotificationComponent`, and `ui.ConfettiComponent` now flow through the v4 widget/list/modal UI surface
+
+### Changed
+- **Built-in UI is now default**: `AchievementProvider` now renders built-in notifications and confetti without `useBuiltInUI`
+- **Root package optimized for web adoption**: `react-achievements` exports the web-friendly provider, widget, list, hooks, engine, and compatibility components
+- **Simple Hook Shape**: `useSimpleAchievements()` now returns explicit v4 state names while keeping v3 aliases temporarily
+- **Engine Hook**: `useAchievementEngine()` now works with both provider-created engines and injected engines
+- **Inline Widget Styling**: `AchievementsWidget` inline placement now inherits surrounding color and typography instead of forcing theme text styles
+- **Notification Stacking**: Built-in achievement notifications now stack when one update unlocks multiple achievements instead of replacing earlier notifications
+- **Context-Aware Modal**: `AchievementsModal` can now read achievements from `AchievementProvider` context, so apps can open the built-in modal from any existing control
+- **Build Outputs**: Package now emits root, `/web`, and `/headless` ESM/CJS/type declaration bundles
+- **Build Script**: Replaced the Rollup CLI command with a Rollup API runner to ensure the build process exits cleanly
+- **Package Contents**: npm package output is restricted to built distribution files and excludes stale test/mock declarations
+- **Compatibility Storybook Group**: Deprecated v3 UI wrappers now live under `Compatibility/*` stories so new examples point to the v4 widget/list/modal API
+
+### Deprecated
+- `useBuiltInUI` is now a no-op and will be removed in 4.2
+- `BadgesButton`, `BadgesModal`, `BadgesButtonWithModal`, and `ConfettiWrapper` remain as compatibility wrappers and will be removed in 4.2
+- `useSimpleAchievements().unlocked` and `useSimpleAchievements().all` remain as v3 aliases and will be removed in 4.2
+
+### Removed
+- Legacy dynamic detection for `react-toastify`, `react-modal`, `react-confetti`, and `react-use`
+- External UI peer dependency requirements for `react-toastify`, `react-modal`, `react-confetti`, and `react-use`
+
+### Documentation
+- Rewrote README, quick start, intro, installation, styling, theming, and direct update docs around the v4 `AchievementsWidget` happy path
+- Updated Storybook documentation around the v4 widget/list workflow
+- Documented stacked notifications and live progress Storybook coverage
+- Documented headless custom UI usage with provider, hooks, custom rows, and React Native guidance
+- Aligned Builder API documentation with the current `achievements-engine` helpers, including value achievements and bulk score/level helpers
+- Added a v3 to v4 migration guide
+- Updated `AGENTS.md` with the v4 agent integration prompt
+
+### Breaking Changes
+- Built-in UI behavior is the default; legacy external UI libraries are no longer auto-detected or used
+- The recommended badge/modal integration is now `AchievementsWidget`, not manually passing `unlocked` IDs into badge components
+- Apps using external UI libraries through automatic detection should migrate to custom `ui.NotificationComponent` / `ui.ConfettiComponent` or the built-in UI
+
+---
+
 ## [3.9.1] - 2026-02-07
 
 ### Added
@@ -416,9 +472,8 @@ import { AchievementProvider, StorageType } from 'react-achievements';
 
 - **Full Builder Control (Tier 3)**: Complex achievement logic for power users
   - `AchievementBuilder.create()` - Start a new complex achievement
-  - `.withId(id)` - Set unique achievement identifier
   - `.withMetric(metric)` - Specify tracked metric
-  - `.withCondition(fn)` - Custom condition functions with full state access
+  - `.withCondition(fn)` - Custom condition functions with access to current metrics
   - `.withAward(award)` - Set achievement rewards
   - `.build()` - Finalize achievement configuration
   - Support for complex types: Date, null, undefined handling
@@ -445,9 +500,8 @@ const custom = AchievementBuilder.createScoreAchievement(500)
 
 // Tier 3: Complex logic
 const advanced = AchievementBuilder.create()
-  .withId('perfect_combo')
-  .withMetric('gameState')
-  .withCondition((value, state) => state.score >= 1000 && state.accuracy === 100)
+  .withMetric('perfect_combo')
+  .withCondition((metrics) => metrics.score >= 1000 && metrics.accuracy === 100)
   .withAward({ title: 'Perfect!', icon: '💎' })
   .build();
 

@@ -12,6 +12,12 @@ export interface NotificationProps {
   position?: NotificationPosition;
   theme?: string;
   icons?: Record<string, string>;
+  /**
+   * Position in the active notification stack.
+   * Built-in notifications use this to avoid overlap when multiple
+   * achievements unlock from the same update.
+   */
+  stackIndex?: number;
 }
 
 export type NotificationComponent = React.FC<NotificationProps>;
@@ -96,33 +102,27 @@ export interface ThemeConfig {
 export interface UIConfig {
   /**
    * Custom notification component
-   * If not provided, uses built-in or legacy component based on detection
+   * If not provided, uses the built-in notification component.
    */
   NotificationComponent?: NotificationComponent;
 
   /**
-   * Custom modal component
-   * If not provided, uses built-in or legacy component based on detection
+   * Custom modal component used by AchievementsWidget and AchievementsModal.
+   * If not provided, uses the built-in AchievementsModal implementation.
    */
   ModalComponent?: ModalComponent;
 
   /**
    * Custom confetti component
-   * If not provided, uses built-in or legacy component based on detection
+   * If not provided, uses the built-in confetti component.
    */
   ConfettiComponent?: ConfettiComponent;
 
   /**
-   * Theme to use (built-in name or registered custom theme name)
+   * Built-in theme name.
    * Built-in themes: 'modern' (default), 'minimal', 'gamified'
    */
   theme?: string;
-
-  /**
-   * Direct theme configuration override
-   * Takes precedence over theme name
-   */
-  customTheme?: ThemeConfig;
 
   /**
    * Notification positioning
@@ -141,10 +141,4 @@ export interface UIConfig {
    * @default true
    */
   enableConfetti?: boolean;
-
-  /**
-   * Enable/disable modal
-   * @default true
-   */
-  enableModal?: boolean;
 }

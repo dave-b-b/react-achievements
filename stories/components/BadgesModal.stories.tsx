@@ -1,14 +1,7 @@
-import _React from 'react';
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Modal from 'react-modal';
-import { BadgesModal } from '../../src/core/components/BadgesModal';
-import { AchievementDetails, AchievementWithStatus } from '../../src/core/types';
-import { defaultAchievementIcons } from '../../src/core/icons/defaultIcons';
-
-// Set up Modal for Storybook environment
-if (typeof window !== 'undefined') {
-  Modal.setAppElement('#storybook-root');
-}
+import { BadgesModal } from '../../src';
+import type { AchievementDetails, AchievementWithStatus } from '../../src';
 
 /**
  * The BadgesModal component displays a list of achievements in a modal dialog.
@@ -26,13 +19,14 @@ if (typeof window !== 'undefined') {
  * ```
  */
 const meta: Meta<typeof BadgesModal> = {
-  title: 'Components/BadgesModal',
+  title: 'Compatibility/BadgesModal',
   component: BadgesModal,
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
     docs: {
       description: {
-        component: 'A modal component that displays user achievements with customizable styling and icons.'
+        component:
+          '`BadgesModal` is a deprecated v3 compatibility wrapper. Use `AchievementsModal` for new modal integrations, or `AchievementsWidget` when you want the trigger and modal together.'
       }
     }
   },
@@ -59,6 +53,44 @@ const meta: Meta<typeof BadgesModal> = {
 
 export default meta;
 type Story = StoryObj<typeof BadgesModal>;
+type BadgesModalArgs = React.ComponentProps<typeof BadgesModal>;
+
+const previewFrameStyles: React.CSSProperties = {
+  position: 'relative',
+  minHeight: '560px',
+  overflow: 'hidden',
+  background:
+    'linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%)',
+};
+
+const getPreviewModalStyles = (
+  styles: BadgesModalArgs['styles'] = {}
+): BadgesModalArgs['styles'] => ({
+  ...styles,
+  overlay: {
+    position: 'absolute',
+    inset: 0,
+    minHeight: '560px',
+    padding: '32px',
+    boxSizing: 'border-box',
+    ...styles.overlay,
+  },
+  content: {
+    maxHeight: 'calc(100% - 64px)',
+    maxWidth: '560px',
+    ...styles.content,
+  },
+});
+
+const renderModalPreview = (args: BadgesModalArgs) => (
+  <div style={previewFrameStyles}>
+    <BadgesModal
+      {...args}
+      isOpen={true}
+      styles={getPreviewModalStyles(args.styles)}
+    />
+  </div>
+);
 
 const sampleAchievements: AchievementDetails[] = [
   {
@@ -81,12 +113,17 @@ const sampleAchievements: AchievementDetails[] = [
   },
 ];
 
-// Using the built-in defaultAchievementIcons for the story
-// You can also define custom icons that override the defaults
+const legacyStoryIcons = {
+  firstStep: '🚪',
+  achievement: '🌟',
+  writer: '✍️',
+  community: '🤝',
+  winner: '🏆',
+};
+
 const customIcons = {
-  // Custom icons will take precedence over default icons with the same key
-  achievement: '🌟', // Override the default icon for 'achievement'
-  customIcon: '🚀', // Add a new icon not in the defaults
+  ...legacyStoryIcons,
+  achievement: '🚀',
 };
 
 export const Default: Story = {
@@ -94,8 +131,9 @@ export const Default: Story = {
     isOpen: true,
     onClose: () => {},
     achievements: sampleAchievements,
-    icons: defaultAchievementIcons, // Explicitly set default icons
+    icons: legacyStoryIcons,
   },
+  render: renderModalPreview,
 };
 
 export const WithCustomIcons: Story = {
@@ -105,6 +143,7 @@ export const WithCustomIcons: Story = {
     achievements: sampleAchievements,
     icons: customIcons,
   },
+  render: renderModalPreview,
 };
 
 export const Empty: Story = {
@@ -112,8 +151,9 @@ export const Empty: Story = {
     isOpen: true,
     onClose: () => {},
     achievements: [],
-    icons: defaultAchievementIcons,
+    icons: legacyStoryIcons,
   },
+  render: renderModalPreview,
 };
 
 export const CustomStyling: Story = {
@@ -121,7 +161,7 @@ export const CustomStyling: Story = {
     isOpen: true,
     onClose: () => {},
     achievements: sampleAchievements,
-    icons: defaultAchievementIcons,
+    icons: legacyStoryIcons,
     styles: {
       overlay: {
         backgroundColor: 'rgba(0, 0, 0, 0.85)',
@@ -148,6 +188,7 @@ export const CustomStyling: Story = {
       },
     },
   },
+  render: renderModalPreview,
 };
 
 // Sample achievements with unlock status for the new feature
@@ -200,8 +241,9 @@ export const ShowAllAchievements: Story = {
     achievements: [],
     showAllAchievements: true,
     allAchievements: achievementsWithStatus,
-    icons: defaultAchievementIcons,
+    icons: legacyStoryIcons,
   },
+  render: renderModalPreview,
 };
 
 /**
@@ -216,6 +258,7 @@ export const WithUnlockConditions: Story = {
     showAllAchievements: true,
     showUnlockConditions: true,
     allAchievements: achievementsWithStatus,
-    icons: defaultAchievementIcons,
+    icons: legacyStoryIcons,
   },
+  render: renderModalPreview,
 }; 

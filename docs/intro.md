@@ -1,103 +1,54 @@
 ---
-sidebar_position: 1
-slug: /
+sidebar_position: 0
 ---
 
-# Introduction
+# React Achievements
 
-Welcome to **React Achievements** - a flexible and powerful achievement system for React applications!
+React Achievements adds gamification to React apps with progress tracking, unlock notifications, confetti, and a ready-made achievement widget.
 
-## What is React Achievements?
-
-React Achievements is a comprehensive library that makes it easy to add gamification features to your React applications. Track user progress, unlock achievements, and celebrate milestones with beautiful notifications and confetti animations.
-
-### Key Features
-
-- **🎯 Two Tracking Patterns** - Choose direct updates or event-based tracking
-- **🎨 Built-in UI** - Beautiful, customizable notification and modal components
-- **💾 Flexible Storage** - Choose from 5 storage options (LocalStorage, Memory, IndexedDB, REST API, Offline Queue)
-- **🔧 TypeScript** - Full TypeScript support with comprehensive type definitions
-- **🎭 Theming** - 3 built-in themes (modern, minimal, gamified) + custom theme support
-- **📦 Tiny Bundle** - Zero external UI dependencies when using built-in components
-- **⚡ Performance** - Optimistic updates and eager loading for async storage
-- **🔄 Data Portability** - Export/import achievement data for backups or migrations
-
-## Quick Example
-
-Here's a complete working example to get you started:
+## v4 Happy Path
 
 ```tsx
-import { AchievementProvider, useSimpleAchievements, BadgesButton, BadgesModal } from 'react-achievements';
-import { useState } from 'react';
+import {
+  AchievementProvider,
+  AchievementsWidget,
+  useSimpleAchievements,
+} from 'react-achievements';
 
 const achievements = {
   score: {
     100: { title: 'Century!', description: 'Score 100 points', icon: '🏆' },
-    500: { title: 'High Scorer!', description: 'Score 500 points', icon: '⭐' },
   },
-  completedTutorial: {
-    true: { title: 'Tutorial Master', description: 'Complete the tutorial', icon: '📚' }
-  }
 };
 
-function AchievementsUI() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const { track, unlocked, getAllAchievements } = useSimpleAchievements();
-
-  return (
-    <>
-      <button onClick={() => track('score', 100)}>Score 100</button>
-      <button onClick={() => track('completedTutorial', true)}>Complete Tutorial</button>
-
-      <BadgesButton
-        onClick={() => setModalOpen(true)}
-        unlockedAchievements={unlocked}
-      />
-
-      <BadgesModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        showAllAchievements={true}
-        allAchievements={getAllAchievements()}
-      />
-    </>
-  );
+function Game() {
+  const { track } = useSimpleAchievements();
+  return <button onClick={() => track('score', 100)}>Score 100</button>;
 }
 
-function App() {
+export default function App() {
   return (
-    <AchievementProvider achievements={achievements} useBuiltInUI={true}>
-      <AchievementsUI />
+    <AchievementProvider achievements={achievements}>
+      <Game />
+      <AchievementsWidget />
     </AchievementProvider>
   );
 }
 ```
 
-> **Note**: This library supports two tracking patterns:
-> - **Direct Updates**: Update metrics directly (shown above)
-> - **Event-Based**: Emit semantic events (see [Event-Based Tracking](/docs/guides/event-based-tracking))
->
-> Both patterns are fully supported. Choose based on your needs!
+## What You Get
 
-## What's Next?
+- A Simple API for numeric, boolean, string, and custom-condition achievements
+- Built-in notifications and confetti by default
+- `AchievementsWidget` for badge button plus modal
+- `AchievementsList` for drawers, sidebars, and settings pages
+- Event-based tracking through `AchievementEngine`
+- A DOM-free `/headless` entry point for custom UI and React Native preparation
 
-Ready to add achievements to your app? Here's where to go:
+## Next Steps
 
-- **[Installation](/docs/getting-started/installation)** - Install and configure React Achievements
-- **[Quick Start](/docs/getting-started/quick-start)** - Build your first achievement system
-- **[Direct Updates Guide](/docs/guides/direct-updates)** - Learn the metric-based tracking pattern
-- **[Event-Based Tracking](/docs/guides/event-based-tracking)** - Learn the event-driven pattern
-- **[API Reference](/docs/api-intro)** - Complete API documentation
-
-## Version Information
-
-This documentation is for **React Achievements v3.6+**. The library is actively maintained and fully production-ready with 100% test coverage.
-
-### Recent Updates
-
-- **v3.6.0** - Built-in UI components with theme system (no external dependencies required)
-- **v3.5.0** - Show all achievements feature with locked/unlocked states
-- **v3.4.0** - Async storage system (IndexedDB, REST API, Offline Queue)
-- **v3.3.0** - Error handling system with data export/import
-
-See the [Changelog](https://github.com/dave-b-b/react-achievements/blob/main/CHANGELOG.md) for complete version history.
+- [Installation](/docs/getting-started/installation)
+- [Quick Start](/docs/getting-started/quick-start)
+- [v4 Feature Setup](/docs/getting-started/v4-feature-setup)
+- [Direct Updates](/docs/guides/direct-updates)
+- [Event-Based Tracking](/docs/guides/event-based-tracking)

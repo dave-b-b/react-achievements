@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { AchievementProvider, AchievementEngine, StorageType, BuiltInModal, useAchievementEngine } from '../src/index';
+import { AchievementProvider, AchievementEngine, StorageType, AchievementsModal, useAchievementEngine } from '../src/index';
 import type { SimpleAchievementConfig, EventMapping } from '../src/index';
 
 /**
@@ -17,7 +17,7 @@ import type { SimpleAchievementConfig, EventMapping } from '../src/index';
  * This is based on the game structure in the /game directory.
  */
 const meta: Meta<typeof AchievementProvider> = {
-  title: 'Game Demo/LearnQuest',
+  title: 'Examples/LearnQuest',
   component: AchievementProvider,
   parameters: {
     layout: 'fullscreen',
@@ -540,12 +540,11 @@ const LearnQuestApp = () => {
         onViewAchievements={() => setModalOpen(true)}
       />
 
-      {/* Achievements Modal - Built-in from react-achievements with gamified theme */}
-      <BuiltInModal
+      {/* Achievements Modal - built-in v4 modal from react-achievements */}
+      <AchievementsModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         achievements={allAchievements}
-        theme="gamified"
       />
     </div>
   );
@@ -555,7 +554,7 @@ type Story = StoryObj<typeof meta>;
 
 export const LearnQuestGame: Story = {
   render: () => (
-    <AchievementProvider engine={achievementEngine} useBuiltInUI={true}>
+    <AchievementProvider engine={achievementEngine}>
       <LearnQuestApp />
     </AchievementProvider>
   )

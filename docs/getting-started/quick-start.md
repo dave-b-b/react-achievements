@@ -4,231 +4,169 @@ sidebar_position: 2
 
 # Quick Start
 
-Build your first achievement system in 5 minutes.
+Build your first achievement system with the v4 Simple API.
 
-## Step 1: Install
-
-```bash npm2yarn
-npm install react-achievements
-```
-
-## Step 2: Choose Your Tracking Pattern
-
-React Achievements supports two ways to track progress:
-
-### Direct Updates (Recommended for Beginners)
-
-Update metrics directly in your React components. Simple and straightforward.
-
-```tsx
-const { track } = useSimpleAchievements();
-track('score', 100);
-```
-
-**Best for**: Simple apps, React-only projects, quick prototypes
-
-### Event-Based Tracking (Recommended for Larger Apps)
-
-Emit semantic events that get mapped to metric updates.
-
-```tsx
-const engine = useAchievementEngine();
-engine.emit('userScored', { points: 100 });
-```
-
-**Best for**: Multi-framework projects, complex logic, better testing
-
----
-
-**This guide uses Direct Updates.** For Event-Based, see the [Event-Based Tracking Guide](/docs/guides/event-based-tracking).
-
-## Step 3: Define Achievements
-
-Create an achievements configuration using the Simple API:
+## 1. Define Achievements
 
 ```tsx title="achievements.ts"
-export const gameAchievements = {
-  // Score-based achievements
+export const achievements = {
   score: {
     100: { title: 'Century!', description: 'Score 100 points', icon: '🏆' },
     500: { title: 'High Scorer!', description: 'Score 500 points', icon: '⭐' },
-    1000: { title: 'Legend!', description: 'Score 1000 points', icon: '💎' },
   },
-
-  // Boolean achievements
   completedTutorial: {
-    true: { title: 'Tutorial Master', description: 'Complete the tutorial', icon: '📚' }
+    true: { title: 'Tutorial Master', description: 'Complete the tutorial', icon: '📚' },
   },
-
-  // Custom condition
-  perfectGame: {
-    custom: {
-      title: 'Perfect Game',
-      description: 'Score 1000+ with 100% accuracy',
-      icon: '🎯',
-      condition: (metrics) => metrics.score >= 1000 && metrics.accuracy === 100
-    }
-  }
 };
 ```
 
-## Step 4: Wrap Your App
-
-Wrap your application with the `AchievementProvider`:
+## 2. Wrap Your App
 
 ```tsx title="App.tsx"
-import { AchievementProvider } from 'react-achievements';
-import { gameAchievements } from './achievements';
+import { AchievementProvider, AchievementsWidget } from 'react-achievements';
+import { achievements } from './achievements';
 import Game from './Game';
 
-function App() {
+export default function App() {
   return (
-    <AchievementProvider
-      achievements={gameAchievements}
-      useBuiltInUI={true}  // Use built-in UI components
-    >
+    <AchievementProvider achievements={achievements}>
       <Game />
+      <AchievementsWidget />
     </AchievementProvider>
   );
 }
-
-export default App;
 ```
 
-## Step 5: Track Progress
+`AchievementsWidget` shows the unlocked count and opens a modal with all locked and unlocked achievements.
 
-Use the `useSimpleAchievements` hook to track user progress:
+## 3. Track Progress
 
 ```tsx title="Game.tsx"
 import { useSimpleAchievements } from 'react-achievements';
 
-function Game() {
+export default function Game() {
   const { track, increment } = useSimpleAchievements();
 
-  const handleScorePoints = (points: number) => {
-    track('score', points);
-  };
-
-  const handleCompleteTutorial = () => {
-    track('completedTutorial', true);
-  };
-
   return (
     <div>
-      <button onClick={() => handleScorePoints(100)}>Score 100</button>
-      <button onClick={() => handleScorePoints(500)}>Score 500</button>
-      <button onClick={handleCompleteTutorial}>Complete Tutorial</button>
-    </div>
-  );
-}
-
-export default Game;
-```
-
-## Step 6: Display Achievements
-
-Add the `BadgesButtonWithModal` component to show unlocked achievements:
-
-```tsx title="Game.tsx"
-import { useSimpleAchievements, BadgesButtonWithModal } from 'react-achievements';
-
-function Game() {
-  const { track, unlocked, getAllAchievements } = useSimpleAchievements();
-
-  return (
-    <div>
-      {/* Your game UI */}
       <button onClick={() => track('score', 100)}>Score 100</button>
-
-      {/* Achievement UI - no state management needed! */}
-      <BadgesButtonWithModal
-        unlockedAchievements={unlocked}
-        showAllAchievements={true}
-        allAchievements={getAllAchievements()}
-      />
+      <button onClick={() => increment('score', 50)}>Add 50</button>
+      <button onClick={() => track('completedTutorial', true)}>Complete Tutorial</button>
     </div>
   );
 }
 ```
 
-**Advanced: Manual State Management**
+## 4. Place The Widget Anywhere
 
-For complex scenarios (multiple triggers, custom state), use the separate components:
+Use the default fixed button:
 
-```tsx title="Game.tsx (Advanced)"
+```tsx
+<AchievementsWidget />
+```
+
+Use inline placement for a drawer, nav bar, or sidebar:
+
+```tsx
+<AchievementsWidget placement="inline" />
+```
+
+Use your own existing drawer row, nav item, or menu button while keeping the built-in modal:
+
+```tsx
+<AchievementsWidget
+  placement="inline"
+  renderTrigger={({ buttonProps, unlockedCount, totalCount }) => (
+    <button {...buttonProps} className="drawer-row">
+      Achievements
+      <span>{unlockedCount}/{totalCount}</span>
+    </button>
+  )}
+/>
+```
+
+Or control the modal yourself from any existing UI:
+
+```tsx
 import { useState } from 'react';
-import { useSimpleAchievements, BadgesButton, BadgesModal } from 'react-achievements';
+import { AchievementsModal } from 'react-achievements';
 
-function Game() {
-  const [modalOpen, setModalOpen] = useState(false);
-  const { track, unlocked, getAllAchievements } = useSimpleAchievements();
+function AchievementMenuItem() {
+  const [open, setOpen] = useState(false);
 
   return (
-    <div>
-      {/* Your game UI */}
-      <button onClick={() => track('score', 100)}>Score 100</button>
-
-      {/* Achievement UI with manual state */}
-      <BadgesButton
-        onClick={() => setModalOpen(true)}
-        unlockedAchievements={unlocked}
-      />
-
-      <BadgesModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        showAllAchievements={true}
-        allAchievements={getAllAchievements()}
-      />
-    </div>
+    <>
+      <button onClick={() => setOpen(true)}>Achievements</button>
+      <AchievementsModal isOpen={open} onClose={() => setOpen(false)} />
+    </>
   );
 }
 ```
 
-## What Happens Next?
+Render the achievement content directly:
 
-When a user scores 100 points:
+```tsx
+import { AchievementsList } from 'react-achievements';
 
-1. **Track**: `track('score', 100)` is called
-2. **Evaluate**: Provider checks if any achievements are unlocked
-3. **Notify**: A beautiful notification appears: "🏆 Century! - Score 100 points"
-4. **Celebrate**: Confetti animation plays
-5. **Persist**: Achievement is saved to localStorage
+<AchievementsList />
+```
 
-That's it! You've built a complete achievement system.
+## Provider Icons
 
-## Alternative: Event-Based Pattern
+Custom icon keys can be defined once on the provider:
 
-Want to try the event-based approach? Here's the same example:
+```tsx
+<AchievementProvider
+  achievements={{
+    login: {
+      true: { title: 'First Login', icon: 'login' },
+    },
+  }}
+  icons={{ login: '🔑' }}
+>
+  <AchievementsWidget />
+</AchievementProvider>
+```
+
+## Hook State
+
+```tsx
+const {
+  unlockedIds,
+  unlockedAchievements,
+  allAchievements,
+  unlockedCount,
+  totalCount,
+} = useSimpleAchievements();
+```
+
+`unlocked` remains as a deprecated v3 alias for `unlockedIds` until 4.2.
+
+## Event-Based Alternative
 
 ```tsx title="achievementEngine.ts"
 import { AchievementEngine } from 'react-achievements';
-import { gameAchievements } from './achievements';
+import { achievements } from './achievements';
 
-// Create engine outside React
 export const engine = new AchievementEngine({
-  achievements: gameAchievements,
+  achievements,
   eventMapping: {
-    'userScored': (data) => ({ score: data.points }),
-    'tutorialCompleted': () => ({ completedTutorial: true }),
-    'gameCompleted': (data) => ({
-      score: data.score,
-      accuracy: data.accuracy
-    })
+    userScored: (data) => ({ score: data.points }),
+    tutorialCompleted: () => ({ completedTutorial: true }),
   },
-  storage: 'local'
+  storage: 'local',
 });
 ```
 
 ```tsx title="App.tsx"
-import { AchievementProvider } from 'react-achievements';
+import { AchievementProvider, AchievementsWidget } from 'react-achievements';
 import { engine } from './achievementEngine';
-import Game from './Game';
 
-function App() {
+export default function App() {
   return (
-    <AchievementProvider engine={engine} useBuiltInUI={true}>
+    <AchievementProvider engine={engine}>
       <Game />
+      <AchievementsWidget />
     </AchievementProvider>
   );
 }
@@ -237,111 +175,17 @@ function App() {
 ```tsx title="Game.tsx"
 import { useAchievementEngine } from 'react-achievements';
 
-function Game() {
+export default function Game() {
   const engine = useAchievementEngine();
 
-  const handleScorePoints = (points: number) => {
-    // Emit semantic events
-    engine.emit('userScored', { points });
-  };
-
-  const handleCompleteTutorial = () => {
-    engine.emit('tutorialCompleted');
-  };
-
   return (
-    <div>
-      <button onClick={() => handleScorePoints(100)}>Score 100</button>
-      <button onClick={() => handleScorePoints(500)}>Score 500</button>
-      <button onClick={handleCompleteTutorial}>Complete Tutorial</button>
-    </div>
+    <button onClick={() => engine.emit('userScored', { points: 100 })}>
+      Score 100
+    </button>
   );
 }
 ```
 
-**Learn more**: [Event-Based Tracking Guide](/docs/guides/event-based-tracking)
+## Full Setup Checklist
 
-## Next Steps
-
-Now that you have the basics working, explore more features:
-
-- **[Direct Updates Guide](/docs/guides/direct-updates)** - Learn all direct update patterns
-- **[Event-Based Tracking](/docs/guides/event-based-tracking)** - Try the event-driven pattern
-- **[Theming](/docs/guides/theming)** - Customize the look and feel
-- **[Common Patterns](/docs/recipes/common-patterns)** - Ready-to-use code examples
-
-## Common Customizations
-
-### Change Notification Position
-
-```tsx
-<AchievementProvider
-  achievements={gameAchievements}
-  useBuiltInUI={true}
-  ui={{
-    notificationPosition: 'top-right', // top-left, top-center, top-right, bottom-left, bottom-center, bottom-right
-  }}
->
-```
-
-### Use a Different Theme
-
-```tsx
-<AchievementProvider
-  achievements={gameAchievements}
-  useBuiltInUI={true}
-  ui={{
-    theme: 'gamified', // modern, minimal, gamified
-  }}
->
-```
-
-### Disable Confetti
-
-```tsx
-<AchievementProvider
-  achievements={gameAchievements}
-  useBuiltInUI={true}
-  ui={{
-    enableConfetti: false,
-  }}
->
-```
-
-## Troubleshooting
-
-### Achievements not unlocking?
-
-Make sure you're calling `track()` with the correct metric name and value:
-
-```tsx
-// ✅ Correct
-track('score', 100);
-
-// ❌ Wrong - metric name doesn't match
-track('points', 100);
-```
-
-### Modal showing "achievements.all" instead of real achievements?
-
-Use `getAllAchievements()` instead of `achievements.all`:
-
-```tsx
-// ✅ Correct
-<BadgesModal
-  showAllAchievements={true}
-  allAchievements={getAllAchievements()}
-/>
-
-// ❌ Wrong
-<BadgesModal
-  showAllAchievements={true}
-  allAchievements={achievements.all}
-/>
-```
-
-### Need help?
-
-- Check the [API Reference](/docs/api-intro)
-- Browse [Common Patterns](/docs/recipes/common-patterns)
-- Open an [issue on GitHub](https://github.com/dave-b-b/react-achievements/issues)
+See [v4 Feature Setup](/docs/getting-started/v4-feature-setup) for storage, custom UI components, import/export, event-based tracking, headless usage, and React Native guidance.

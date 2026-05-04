@@ -37,8 +37,8 @@ function App() {
 
 ```typescript
 function YourComponent() {
-  const { update, achievements, reset, getState } = useAchievements();
-  const { unlockedAchievements, resetAchievements } = useAchievementsStore();
+  const { update, reset } = useAchievements();
+  const { resetAchievements } = useAchievementsStore();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   // Update achievements
@@ -55,19 +55,21 @@ function YourComponent() {
       <button onClick={handleScore}>Score 100 points</button>
       <button onClick={handleReset}>Reset</button>
       
-      {/* Display achievements using provided components */}
-      <BadgesButton 
-        position="bottom-right" 
-        onClick={() => setIsModalOpen(true)}
-        unlockedAchievements={unlockedAchievements}
+      {/* Context-aware v4 UI works with Zustand-backed storage */}
+      <AchievementsWidget />
+      <AchievementsWidget
+        placement="inline"
+        label="Drawer achievements"
       />
       
-      <BadgesModal 
+      {/* Existing app controls can open the same modal */}
+      <button onClick={() => setIsModalOpen(true)}>Open achievements</button>
+      <AchievementsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        achievements={unlockedAchievements}
-        icons={defaultAchievementIcons}
       />
+
+      <AchievementsList />
     </div>
   );
 }

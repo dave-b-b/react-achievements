@@ -14,6 +14,7 @@ export const BuiltInNotification: React.FC<NotificationProps> = ({
   position = 'top-center',
   theme = 'modern',
   icons = {},
+  stackIndex = 0,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
@@ -42,6 +43,7 @@ export const BuiltInNotification: React.FC<NotificationProps> = ({
   }, [duration, onClose]);
 
   const getPositionStyles = (): React.CSSProperties => {
+    const stackedOffset = 20 + stackIndex * 104;
     const base: React.CSSProperties = {
       position: 'fixed',
       zIndex: 9999,
@@ -51,29 +53,29 @@ export const BuiltInNotification: React.FC<NotificationProps> = ({
       case 'top-center':
         return {
           ...base,
-          top: 20,
+          top: stackedOffset,
           left: '50%',
           transform: 'translateX(-50%)',
         };
       case 'top-left':
-        return { ...base, top: 20, left: 20 };
+        return { ...base, top: stackedOffset, left: 20 };
       case 'top-right':
-        return { ...base, top: 20, right: 20 };
+        return { ...base, top: stackedOffset, right: 20 };
       case 'bottom-center':
         return {
           ...base,
-          bottom: 20,
+          bottom: stackedOffset,
           left: '50%',
           transform: 'translateX(-50%)',
         };
       case 'bottom-left':
-        return { ...base, bottom: 20, left: 20 };
+        return { ...base, bottom: stackedOffset, left: 20 };
       case 'bottom-right':
-        return { ...base, bottom: 20, right: 20 };
+        return { ...base, bottom: stackedOffset, right: 20 };
       default:
         return {
           ...base,
-          top: 20,
+          top: stackedOffset,
           left: '50%',
           transform: 'translateX(-50%)',
         };

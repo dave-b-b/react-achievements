@@ -1,15 +1,18 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { AchievementProvider } from '../src/providers/AchievementProvider';
-import { useAchievementEngine } from '../src/hooks/useAchievementEngine';
-import { AchievementEngine, StorageType } from '../src/index';
-import { BadgesButton } from '../src/core/components/BadgesButton';
-import { BadgesModal } from '../src/core/components/BadgesModal';
-import type { SimpleAchievementConfig } from '../src/core/types';
-import type { EventMapping } from '../src/index';
+import {
+  AchievementEngine,
+  AchievementProvider,
+  AchievementsModal,
+  AchievementsWidget,
+  StorageType,
+  useAchievementEngine,
+  useAchievementState,
+} from '../src';
+import type { EventMapping, SimpleAchievementConfig } from '../src';
 
 /**
- * The Event-Based API (NEW in v3.8.0) provides a framework-agnostic way to track achievements
+ * The Event-Based API provides a framework-agnostic way to track achievements
  * using semantic events rather than direct metric updates. This pattern is more flexible and
  * allows for better separation of concerns.
  *
@@ -20,11 +23,9 @@ import type { EventMapping } from '../src/index';
  * - **Better Testing**: Events are easier to mock and test
  * - **Separation of Concerns**: Business logic separated from achievement tracking
  *
- * ## Migration Path
- * - **OLD Pattern (v3.7 and earlier)**: `<AchievementProvider achievements={config}>`
- * - **NEW Pattern (v3.8+)**: `<AchievementProvider engine={myEngine}>`
- *
- * Both patterns are fully supported and can coexist. The old pattern is not deprecated.
+ * ## v4 UI
+ * Use `AchievementsWidget` for the default modal trigger, `renderTrigger` for
+ * app-owned drawer/nav controls, or `AchievementsModal` from any existing button.
  */
 const meta: Meta<typeof AchievementProvider> = {
   title: 'Event-Based API/Overview',
@@ -33,7 +34,7 @@ const meta: Meta<typeof AchievementProvider> = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: 'Demonstrates the new event-based achievement pattern using AchievementEngine. This is the recommended pattern for new projects.'
+        component: 'Demonstrates event-based achievement tracking with AchievementEngine and the v4 UI components.'
       }
     }
   },
@@ -80,14 +81,13 @@ const achievementEngine = new AchievementEngine({
 const EventBasedDemo = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const engine = useAchievementEngine();
+  const { unlockedCount, metrics } = useAchievementState();
   const [currentScore, setCurrentScore] = React.useState(0);
   const [currentLevel, setCurrentLevel] = React.useState(1);
 
-  // Get current metrics from engine
-  const metrics = engine.getMetrics();
-  const unlockedCount = engine.getUnlocked().length;
-  const allAchievements = engine.getAllAchievements();
-  const unlockedAchievements = allAchievements.filter(a => a.isUnlocked);
+  const tutorialCompleted = Array.isArray(metrics.completedTutorial)
+    ? metrics.completedTutorial[0] === true
+    : metrics.completedTutorial === true;
 
   const handleScorePoints = (points: number) => {
     const newScore = currentScore + points;
@@ -133,9 +133,9 @@ const EventBasedDemo = () => {
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '1000px', margin: '0 auto' }}>
-      <h1>Event-Based API Demo (NEW in v3.8.0)</h1>
+      <h1>Event-Based API Demo</h1>
       <p>
-        This demo shows the new event-based pattern using <code>AchievementEngine</code> and semantic events.
+        This demo shows event-based tracking using <code>AchievementEngine</code> and semantic events.
         Instead of updating metrics directly, you emit events that represent business actions.
       </p>
 
@@ -157,7 +157,7 @@ const EventBasedDemo = () => {
 
       <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
         <h3 style={{ marginTop: 0 }}>Current Progress</h3>
-        <p><strong>Score:</strong> {metrics.score || 0} | <strong>Level:</strong> {metrics.level || 1} | <strong>Tutorial:</strong> {metrics.completedTutorial ? 'Completed' : 'Not Started'}</p>
+        <p><strong>Score:</strong> {currentScore} | <strong>Level:</strong> {currentLevel} | <strong>Tutorial:</strong> {tutorialCompleted ? 'Completed' : 'Not Started'}</p>
         <p><strong>Achievements Unlocked:</strong> {unlockedCount}</p>
       </div>
 
@@ -202,19 +202,19 @@ const EventBasedDemo = () => {
           <p style={{ fontSize: '14px', color: '#666' }}>Emit: <code>engine.emit('tutorialCompleted')</code></p>
           <button
             onClick={handleCompleteTutorial}
-            disabled={metrics.completedTutorial === true}
+            disabled={tutorialCompleted}
             style={{
               padding: '8px 12px',
               margin: '5px',
-              backgroundColor: metrics.completedTutorial ? '#ccc' : '#009688',
+              backgroundColor: tutorialCompleted ? '#ccc' : '#009688',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
-              cursor: metrics.completedTutorial ? 'not-allowed' : 'pointer',
+              cursor: tutorialCompleted ? 'not-allowed' : 'pointer',
               width: '100%'
             }}
           >
-            {metrics.completedTutorial ? 'Tutorial Completed' : 'Complete Tutorial'}
+            {tutorialCompleted ? 'Tutorial Completed' : 'Complete Tutorial'}
           </button>
         </div>
 
@@ -276,16 +276,20 @@ const MyComponent = () => {
         </pre>
       </div>
 
-      <BadgesButton
-        onClick={() => setIsModalOpen(true)}
-        unlockedAchievements={unlockedAchievements}
+      <AchievementsWidget
+        placement="inline"
+        label="Inline Achievement Widget"
+        buttonStyles={{
+          maxWidth: '260px',
+          border: '1px solid #d8e0ea',
+          color: '#172033',
+        }}
       />
 
       {isModalOpen && (
-        <BadgesModal
+        <AchievementsModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          achievements={engine.getAllAchievements()}
         />
       )}
     </div>
@@ -296,7 +300,7 @@ type Story = StoryObj<typeof meta>;
 
 export const EventBasedPattern: Story = {
   render: () => (
-    <AchievementProvider engine={achievementEngine} useBuiltInUI={true}>
+    <AchievementProvider engine={achievementEngine}>
       <EventBasedDemo />
     </AchievementProvider>
   )
@@ -305,12 +309,12 @@ export const EventBasedPattern: Story = {
 export const ComparisonWithOldPattern: Story = {
   render: () => (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '1200px', margin: '0 auto' }}>
-      <h1>Pattern Comparison: Old vs New</h1>
+      <h1>Pattern Comparison: Direct Metrics vs Event-Based</h1>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '30px' }}>
         <div style={{ padding: '20px', border: '2px solid #4CAF50', borderRadius: '8px' }}>
-          <h2 style={{ color: '#4CAF50', marginTop: 0 }}>OLD Pattern (Metric-Based)</h2>
-          <p><strong>Supported:</strong> ✅ Still fully supported, not deprecated</p>
+          <h2 style={{ color: '#4CAF50', marginTop: 0 }}>Direct Metric Tracking</h2>
+          <p><strong>Best for:</strong> Simple React apps and quick integrations</p>
           <h3>Setup:</h3>
           <pre style={{ backgroundColor: '#f5f5f5', padding: '10px', borderRadius: '4px', fontSize: '12px', overflow: 'auto' }}>
 {`<AchievementProvider achievements={config}>
@@ -335,8 +339,8 @@ update({ score: 100 });`}
         </div>
 
         <div style={{ padding: '20px', border: '2px solid #2196F3', borderRadius: '8px' }}>
-          <h2 style={{ color: '#2196F3', marginTop: 0 }}>NEW Pattern (Event-Based)</h2>
-          <p><strong>Recommended for:</strong> New projects, larger apps</p>
+          <h2 style={{ color: '#2196F3', marginTop: 0 }}>Event-Based Tracking</h2>
+          <p><strong>Recommended for:</strong> Larger apps, multi-framework projects, event-driven flows</p>
           <h3>Setup:</h3>
           <pre style={{ backgroundColor: '#f5f5f5', padding: '10px', borderRadius: '4px', fontSize: '12px', overflow: 'auto' }}>
 {`const engine = new AchievementEngine({
@@ -369,9 +373,9 @@ engine.emit('userScored', { points: 100 });`}
       <div style={{ marginTop: '30px', padding: '20px', backgroundColor: '#e8f5e9', borderRadius: '8px' }}>
         <h2 style={{ marginTop: 0 }}>Migration Guide</h2>
         <p><strong>Can I use both patterns?</strong> Yes! They can coexist in the same app.</p>
-        <p><strong>Should I migrate?</strong> Not required. The old pattern is fully supported and not deprecated.</p>
-        <p><strong>When to use NEW pattern?</strong> New projects, larger apps, framework-agnostic needs, better testing.</p>
-        <p><strong>When to use OLD pattern?</strong> Simple apps, quick prototypes, React-only projects.</p>
+        <p><strong>Should I migrate?</strong> Not required. Direct metric tracking is still the recommended path for simple React apps.</p>
+        <p><strong>When to use event-based tracking?</strong> Larger apps, framework-agnostic needs, analytics-style event streams, and cleaner isolated tests.</p>
+        <p><strong>When to use direct metric tracking?</strong> Simple apps, quick prototypes, and React-only projects.</p>
       </div>
     </div>
   )

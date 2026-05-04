@@ -175,6 +175,24 @@ describe('BuiltInNotification', () => {
         }
       });
     });
+
+    it('offsets notifications by stack index', async () => {
+      render(
+        <BuiltInNotification
+          achievement={mockAchievement}
+          position="bottom-right"
+          stackIndex={2}
+        />,
+      );
+
+      await act(async () => {
+        jest.advanceTimersByTime(10);
+      });
+
+      const notification = screen.getByTestId('built-in-notification');
+      expect(notification).toHaveStyle('bottom: 228px');
+      expect(notification).toHaveStyle('right: 20px');
+    });
   });
 
   it('handles achievements with no description', async () => {

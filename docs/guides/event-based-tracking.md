@@ -43,7 +43,7 @@ const eventMapping = {
 const engine = new AchievementEngine({
   achievements,
   eventMapping,
-  storage: 'local' // 'local', 'memory', 'indexedDB', or custom
+  storage: 'local' // 'local', 'memory', 'indexeddb', 'restapi', or custom
 });
 ```
 
@@ -52,12 +52,13 @@ const engine = new AchievementEngine({
 Pass the engine to `AchievementProvider`:
 
 ```tsx
-import { AchievementProvider } from 'react-achievements';
+import { AchievementProvider, AchievementsWidget } from 'react-achievements';
 
 function App() {
   return (
-    <AchievementProvider engine={engine} useBuiltInUI={true}>
+    <AchievementProvider engine={engine}>
       <YourApp />
+      <AchievementsWidget />
     </AchievementProvider>
   );
 }
@@ -296,16 +297,19 @@ interface MetricUpdatedEvent {
   metric: string;
   oldValue: any;
   newValue: any;
+  timestamp: number;
 }
 
 interface StateChangedEvent {
-  metrics: Record<string, any>;
-  unlockedAchievements: string[];
+  metrics: Record<string, any[]>;
+  unlocked: string[];
+  timestamp: number;
 }
 
 interface ErrorEvent {
   error: Error;
   context?: string;
+  timestamp: number;
 }
 ```
 
@@ -620,14 +624,15 @@ engine.on('achievement:unlocked', (event) => {
 ```
 
 ```tsx title="App.tsx"
-import { AchievementProvider } from 'react-achievements';
+import { AchievementProvider, AchievementsWidget } from 'react-achievements';
 import { engine } from './achievementEngine';
 import Game from './Game';
 
 function App() {
   return (
-    <AchievementProvider engine={engine} useBuiltInUI={true}>
+    <AchievementProvider engine={engine}>
       <Game />
+      <AchievementsWidget />
     </AchievementProvider>
   );
 }
@@ -730,7 +735,6 @@ You can migrate from direct updates to event-based tracking incrementally:
 ### Before (Direct Updates)
 
 ```tsx
-// Old pattern
 <AchievementProvider achievements={config}>
   <App />
 </AchievementProvider>
@@ -744,7 +748,6 @@ track('completedTutorial', true);
 ### After (Event-Based)
 
 ```tsx
-// New pattern - create engine
 const engine = new AchievementEngine({
   achievements: config,
   eventMapping: {
@@ -768,7 +771,7 @@ engine.emit('tutorialCompleted');
 **No** - The provider enforces one pattern per app. However, you can:
 - Use different patterns in different applications
 - Migrate one component at a time by creating a new provider with the engine pattern
-- The engine created internally by the old pattern can emit events, but doesn't use event mapping
+- The engine created internally by direct tracking can emit events, but does not use event mapping
 
 ## Comparison with Direct Updates
 

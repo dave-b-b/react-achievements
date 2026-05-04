@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
-import { AchievementProvider, AchievementContext } from '../providers/AchievementProvider';
+import { AchievementContext } from '../providers/AchievementProvider';
+import { AchievementProvider } from '../providers/WebAchievementProvider';
 import { StorageType } from '../core/types';
 import '@testing-library/jest-dom';
 

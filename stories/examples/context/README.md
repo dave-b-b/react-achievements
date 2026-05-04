@@ -37,9 +37,8 @@ function App() {
 
 ```typescript
 function YourComponent() {
-  const { update, achievements, reset, getState } = useAchievements();
+  const { update, reset } = useAchievements();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const { unlockedAchievements } = useAchievementsState();
 
   // Update achievements
   const handleScore = () => update({ score: 100 });
@@ -54,19 +53,22 @@ function YourComponent() {
       <button onClick={handleScore}>Score 100 points</button>
       <button onClick={handleReset}>Reset</button>
       
-      {/* Display achievements using provided components */}
-      <BadgesButton 
-        position="bottom-right" 
-        onClick={() => setIsModalOpen(true)}
-        unlockedAchievements={unlockedAchievements}
+      {/* Floating or inline widget */}
+      <AchievementsWidget />
+      <AchievementsWidget
+        placement="inline"
+        label="Drawer achievements"
       />
       
-      <BadgesModal 
+      {/* Existing controls can open the v4 modal */}
+      <button onClick={() => setIsModalOpen(true)}>Open achievements</button>
+      <AchievementsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        achievements={unlockedAchievements}
-        icons={defaultAchievementIcons}
       />
+
+      {/* Inline list for profile, settings, or drawer content */}
+      <AchievementsList />
     </div>
   );
 }

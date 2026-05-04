@@ -4,7 +4,9 @@ sidebar_position: 3
 
 # Builder API
 
-The Builder API provides a three-tier system for configuring achievements, from simple smart defaults to full custom control.
+The Builder API provides a three-tier system for configuring achievements, from smart defaults to full custom control.
+
+For most v4 React apps, the threshold-based object configuration is still the shortest path. Use the Builder API when you want reusable factory helpers, bulk score/level achievements, or a fluent way to express custom conditions.
 
 ## Overview
 
@@ -52,14 +54,14 @@ Pre-configured achievements for common patterns with intelligent defaults.
 import { AchievementBuilder } from 'react-achievements';
 
 const achievements = AchievementBuilder.combine([
-  AchievementBuilder.createScoreAchievement(100),  // "Score 100 points"
-  AchievementBuilder.createScoreAchievement(500),  // "Score 500 points"
-  AchievementBuilder.createScoreAchievement(1000)  // "Score 1000 points"
+  AchievementBuilder.createScoreAchievement(100),  // "Score 100!"
+  AchievementBuilder.createScoreAchievement(500),  // "Score 500!"
+  AchievementBuilder.createScoreAchievement(1000)  // "Score 1000!"
 ]);
 ```
 
 **Smart Defaults:**
-- Auto-generated title: "Score \{threshold\} points"
+- Auto-generated title: "Score \{threshold\}!"
 - Auto-generated ID: `score_{threshold}`
 - Trophy icon: 🏆
 - Metric: `score`
@@ -68,16 +70,16 @@ const achievements = AchievementBuilder.combine([
 
 ```tsx
 const achievements = AchievementBuilder.combine([
-  AchievementBuilder.createLevelAchievement(5),   // "Reach level 5"
-  AchievementBuilder.createLevelAchievement(10),  // "Reach level 10"
-  AchievementBuilder.createLevelAchievement(25)   // "Reach level 25"
+  AchievementBuilder.createLevelAchievement(5),   // "Level 5!"
+  AchievementBuilder.createLevelAchievement(10),  // "Level 10!"
+  AchievementBuilder.createLevelAchievement(25)   // "Level 25!"
 ]);
 ```
 
 **Smart Defaults:**
-- Auto-generated title: "Reach level \{threshold\}"
+- Auto-generated title: "Level \{threshold\}!"
 - Auto-generated ID: `level_{threshold}`
-- Star icon: ⭐
+- Progress icon: 📈
 - Metric: `level`
 
 ### Boolean Achievements
@@ -91,10 +93,50 @@ const achievements = AchievementBuilder.combine([
 ```
 
 **Smart Defaults:**
-- Auto-generated title from metric name (camelCase → "Completed Tutorial")
+- Auto-generated title from metric name (for example, `completedTutorial` → "Completed tutorial!")
 - Auto-generated ID: `{metricName}_true`
 - Checkmark icon: ✅
 - Condition: value === true
+
+For customer-facing copy, use `.withAward()` to set the exact title and description you want.
+
+### Value Achievements
+
+Use value achievements for string or enum-style metrics such as class, role, plan, theme, or difficulty.
+
+```tsx
+const achievements = AchievementBuilder.combine([
+  AchievementBuilder.createValueAchievement('characterClass', 'wizard')
+    .withAward({ title: 'Arcane Scholar', icon: '🧙' }),
+  AchievementBuilder.createValueAchievement('difficulty', 'hard')
+    .withAward({ title: 'Hard Mode', icon: '🔥' })
+]);
+```
+
+**Smart Defaults:**
+- Auto-generated title from the value (for example, `wizard` → "Wizard!")
+- Auto-generated ID: `{metricName}_{value}`
+- Target icon: 🎯
+- Condition: metric value equals the configured value
+
+### Bulk Score And Level Achievements
+
+Use bulk helpers when the default `score` or `level` metric works for your app:
+
+```tsx
+const scoreAchievements = AchievementBuilder.createScoreAchievements([
+  100,
+  [500, { title: 'High Scorer!', icon: '⭐' }],
+  1000,
+]);
+
+const levelAchievements = AchievementBuilder.createLevelAchievements([
+  5,
+  [10, { title: 'Double Digits', icon: '🔟' }],
+]);
+
+const achievements = AchievementBuilder.combine([scoreAchievements, levelAchievements]);
+```
 
 ---
 
@@ -138,6 +180,8 @@ const achievements = AchievementBuilder.combine([
   }
 ]);
 ```
+
+This is the main ergonomic gap in the current Builder API: custom metric thresholds require object configuration instead of a builder helper.
 
 ---
 
@@ -325,6 +369,48 @@ Creates a boolean (true/false) achievement.
 
 **Returns:** Chainable builder instance
 
+### AchievementBuilder.createValueAchievement(metricName, value)
+
+Creates a value-based achievement for string or enum-style metrics.
+
+**Parameters:**
+- `metricName` (string): The metric name to track
+- `value` (string): The value that unlocks the achievement
+
+**Returns:** Chainable builder instance
+
+### AchievementBuilder.createScoreAchievements(thresholds)
+
+Creates multiple score achievements at once.
+
+```tsx
+AchievementBuilder.createScoreAchievements([
+  100,
+  [500, { title: 'High Scorer!', icon: '⭐' }],
+]);
+```
+
+**Parameters:**
+- `thresholds` (`number | [number, AwardDetails]` array): Score thresholds with optional award overrides
+
+**Returns:** Complete achievement config
+
+### AchievementBuilder.createLevelAchievements(levels)
+
+Creates multiple level achievements at once.
+
+```tsx
+AchievementBuilder.createLevelAchievements([
+  5,
+  [10, { title: 'Double Digits', icon: '🔟' }],
+]);
+```
+
+**Parameters:**
+- `levels` (`number | [number, AwardDetails]` array): Level thresholds with optional award overrides
+
+**Returns:** Complete achievement config
+
 ### AchievementBuilder.create()
 
 Creates a fully custom achievement.
@@ -353,7 +439,7 @@ Sets the condition function.
 
 ```tsx
 // Single metric
-.withCondition((value) => value >= 100)
+.withCondition((metrics) => metrics.score >= 100)
 
 // Multiple metrics
 .withCondition((metrics) => metrics.score >= 100 && metrics.level >= 5)
@@ -423,6 +509,7 @@ Only use Tier 3 when you need custom conditions:
 ```tsx
 // ✅ Good: Complex logic requires Tier 3
 AchievementBuilder.create()
+  .withMetric('champion')
   .withCondition((metrics) =>
     metrics.wins >= 10 &&
     metrics.winRate > 0.7 &&

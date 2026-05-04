@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { LevelProgress } from '../core/components/LevelProgress';
 
@@ -79,5 +79,39 @@ describe('LevelProgress', () => {
 
     const progressBar = getProgressBar(container);
     expect(progressBar).toHaveStyle({ backgroundColor: '#f97316' });
+  });
+
+  it('updates the displayed progress when live state changes', () => {
+    const LiveProgressDemo = () => {
+      const [currentXP, setCurrentXP] = React.useState(120);
+
+      return (
+        <>
+          <LevelProgress level={3} currentXP={currentXP} nextLevelXP={200} />
+          <button onClick={() => setCurrentXP(160)}>Set 160 XP</button>
+          <button onClick={() => setCurrentXP(250)}>Overfill XP</button>
+        </>
+      );
+    };
+
+    const { container } = render(<LiveProgressDemo />);
+
+    fireEvent.click(screen.getByText('Set 160 XP'));
+
+    expect(screen.getByText('160 / 200 XP')).toBeInTheDocument();
+    expect(screen.getByText('80%')).toBeInTheDocument();
+
+    let progressTrack = container.querySelector('[role="progressbar"]');
+    expect(progressTrack).toHaveAttribute('aria-valuenow', '160');
+    expect(getProgressBar(container)).toHaveStyle({ width: '80%' });
+
+    fireEvent.click(screen.getByText('Overfill XP'));
+
+    expect(screen.getByText('200 / 200 XP')).toBeInTheDocument();
+    expect(screen.getByText('100%')).toBeInTheDocument();
+
+    progressTrack = container.querySelector('[role="progressbar"]');
+    expect(progressTrack).toHaveAttribute('aria-valuenow', '200');
+    expect(getProgressBar(container)).toHaveStyle({ width: '100%' });
   });
 });

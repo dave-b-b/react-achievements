@@ -3,20 +3,6 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { BadgesButtonWithModal } from '../../../core/components/BadgesButtonWithModal';
 import { AchievementDetails, AchievementWithStatus } from '../../../core/types';
 
-
-jest.mock('react-modal', () => ({
-    __esModule: true,
-    default: ({ isOpen, children, onRequestClose }: any) =>
-        isOpen ? (
-            <div data-testid="modal">
-                <button onClick={onRequestClose} data-testid="modal-close">
-                    Close
-                </button>
-                {children}
-            </div>
-        ) : null,
-}));
-
 describe('BadgesButtonWithModal', () => {
     const mockUnlockedAchievements: AchievementDetails[] = [
         {
@@ -71,14 +57,14 @@ describe('BadgesButtonWithModal', () => {
         const button = screen.getByTestId('badges-button');
 
         // Modal should not be visible initially
-        expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('achievements-modal')).not.toBeInTheDocument();
 
         // Click button to open modal
         fireEvent.click(button);
 
         // Modal should now be visible
         await waitFor(() => {
-            expect(screen.getByTestId('modal')).toBeInTheDocument();
+            expect(screen.getByTestId('achievements-modal')).toBeInTheDocument();
         });
     });
 
@@ -93,15 +79,15 @@ describe('BadgesButtonWithModal', () => {
         fireEvent.click(button);
 
         await waitFor(() => {
-            expect(screen.getByTestId('modal')).toBeInTheDocument();
+            expect(screen.getByTestId('achievements-modal')).toBeInTheDocument();
         });
 
         // Close modal
-        const closeButton = screen.getByTestId('modal-close');
+        const closeButton = screen.getByLabelText('Close');
         fireEvent.click(closeButton);
 
         await waitFor(() => {
-            expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('achievements-modal')).not.toBeInTheDocument();
         });
     });
 
@@ -156,12 +142,12 @@ describe('BadgesButtonWithModal', () => {
         fireEvent.click(button);
 
         await waitFor(() => {
-            expect(screen.getByTestId('modal')).toBeInTheDocument();
+            expect(screen.getByTestId('achievements-modal')).toBeInTheDocument();
         });
 
         // Modal should display all achievements (both locked and unlocked)
         // The actual rendering is handled by BadgesModal, so we just verify modal is open
-        expect(screen.getByTestId('modal')).toBeInTheDocument();
+        expect(screen.getByTestId('achievements-modal')).toBeInTheDocument();
     });
 
     it('should pass showUnlockConditions to modal', async () => {
@@ -178,10 +164,10 @@ describe('BadgesButtonWithModal', () => {
         fireEvent.click(button);
 
         await waitFor(() => {
-            expect(screen.getByTestId('modal')).toBeInTheDocument();
+            expect(screen.getByTestId('achievements-modal')).toBeInTheDocument();
         });
 
-        expect(screen.getByTestId('modal')).toBeInTheDocument();
+        expect(screen.getByTestId('achievements-modal')).toBeInTheDocument();
     });
 
     it('should manage modal state internally', async () => {
@@ -192,24 +178,24 @@ describe('BadgesButtonWithModal', () => {
         const button = screen.getByTestId('badges-button');
 
         // Initially closed
-        expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
+        expect(screen.queryByTestId('achievements-modal')).not.toBeInTheDocument();
 
         // Open
         fireEvent.click(button);
         await waitFor(() => {
-            expect(screen.getByTestId('modal')).toBeInTheDocument();
+            expect(screen.getByTestId('achievements-modal')).toBeInTheDocument();
         });
 
         // Close
-        fireEvent.click(screen.getByTestId('modal-close'));
+        fireEvent.click(screen.getByLabelText('Close'));
         await waitFor(() => {
-            expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
+            expect(screen.queryByTestId('achievements-modal')).not.toBeInTheDocument();
         });
 
         // Re-open
         fireEvent.click(button);
         await waitFor(() => {
-            expect(screen.getByTestId('modal')).toBeInTheDocument();
+            expect(screen.getByTestId('achievements-modal')).toBeInTheDocument();
         });
     });
 
@@ -239,10 +225,10 @@ describe('BadgesButtonWithModal', () => {
         fireEvent.click(button);
 
         await waitFor(() => {
-            expect(screen.getByTestId('modal')).toBeInTheDocument();
+            expect(screen.getByTestId('achievements-modal')).toBeInTheDocument();
         });
 
-        expect(screen.getByTestId('modal')).toBeInTheDocument();
+        expect(screen.getByTestId('achievements-modal')).toBeInTheDocument();
     });
 
     it('should apply custom button styles', () => {
