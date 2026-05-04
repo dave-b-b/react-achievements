@@ -22,6 +22,14 @@ The API reference is generated from the TypeScript source. For v4 application se
 - Import/export helpers and achievement builder utilities
 - Error classes and guards such as `AchievementError`, `StorageError`, `isAchievementError`, and `isRecoverableError`
 
+## Common UI Props
+
+- `AchievementsWidget.density` - use `"compact"` for square achievement badges or omit it for the default comfortable layout
+- `AchievementsWidget.modalBackdropBlur` - set modal backdrop blur with a number of pixels or a CSS length string
+- `AchievementsWidget.hideModalScrollbar` - hide visible modal scrollbar chrome while preserving scroll
+- `AchievementsModal.density`, `AchievementsModal.backdropBlur`, and `AchievementsModal.hideScrollbar` - the same controls when opening the modal yourself
+- `AchievementsList.density` - render inline achievement content as the same compact square badge grid
+
 ## Browse API Documentation
 
 Use the sidebar to explore generated pages by category:

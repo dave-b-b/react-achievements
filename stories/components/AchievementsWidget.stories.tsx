@@ -23,6 +23,21 @@ const meta: Meta<typeof AchievementsWidget> = {
     },
   },
   tags: ['autodocs'],
+  argTypes: {
+    density: {
+      control: 'inline-radio',
+      options: ['comfortable', 'compact'],
+      description: 'Controls the achievement layout in the modal.',
+    },
+    hideModalScrollbar: {
+      control: 'boolean',
+      description: 'Hide modal scrollbar chrome while preserving scroll behavior.',
+    },
+    modalBackdropBlur: {
+      control: { type: 'number', min: 0, step: 0.5 },
+      description: 'Backdrop blur in pixels when the modal is open.',
+    },
+  },
 };
 
 export default meta;
@@ -39,6 +54,21 @@ const demoAchievements: SimpleAchievementConfig = {
   },
   profileComplete: {
     true: { title: 'Profile Ready', description: 'Complete your profile', icon: '👤' },
+  },
+};
+
+const scrollbarDemoAchievements: SimpleAchievementConfig = {
+  missions: {
+    1: { title: 'First Mission', description: 'Complete your first mission', icon: '🚀' },
+    2: { title: 'Second Step', description: 'Complete two missions', icon: '✅' },
+    3: { title: 'Steady Pace', description: 'Complete three missions', icon: '📈' },
+    4: { title: 'Focused', description: 'Complete four missions', icon: '🎯' },
+    5: { title: 'On Track', description: 'Complete five missions', icon: '🧭' },
+    6: { title: 'Committed', description: 'Complete six missions', icon: '💪' },
+    7: { title: 'Persistent', description: 'Complete seven missions', icon: '⭐' },
+    8: { title: 'Momentum', description: 'Complete eight missions', icon: '⚡' },
+    9: { title: 'Advanced', description: 'Complete nine missions', icon: '🏅' },
+    10: { title: 'Champion', description: 'Complete ten missions', icon: '🏆' },
   },
 };
 
@@ -103,6 +133,36 @@ const DemoActions: React.FC = () => {
       </button>
       <button style={secondaryButtonStyles} onClick={() => track('profileComplete', true)}>
         Complete Profile
+      </button>
+      <button style={secondaryButtonStyles} onClick={reset}>
+        Reset
+      </button>
+    </div>
+  );
+};
+
+const MissionActions: React.FC = () => {
+  const { increment, track, reset, unlockedCount, totalCount } = useSimpleAchievements();
+
+  return (
+    <div
+      style={{
+        ...panelStyles,
+        padding: '14px',
+        display: 'flex',
+        gap: '10px',
+        alignItems: 'center',
+        flexWrap: 'wrap',
+      }}
+    >
+      <strong style={{ marginRight: 'auto' }}>
+        {unlockedCount} / {totalCount} unlocked
+      </strong>
+      <button style={actionButtonStyles} onClick={() => increment('missions')}>
+        Complete Mission
+      </button>
+      <button style={secondaryButtonStyles} onClick={() => track('missions', 10)}>
+        Finish Campaign
       </button>
       <button style={secondaryButtonStyles} onClick={reset}>
         Reset
@@ -301,7 +361,11 @@ const ExistingDrawerModalExample: React.FC = () => {
           <AchievementsList />
         </div>
       </main>
-      <AchievementsModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <AchievementsModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        hideScrollbar
+      />
     </div>
   );
 };
@@ -311,6 +375,80 @@ export const ExistingDrawerControlOpensModal: Story = {
     <WidgetProvider>
       <ExistingDrawerModalExample />
     </WidgetProvider>
+  ),
+};
+
+export const HiddenModalScrollbar: Story = {
+  render: () => (
+    <AchievementProvider
+      achievements={scrollbarDemoAchievements}
+      storage={StorageType.Memory}
+      ui={{ enableNotifications: false, enableConfetti: false }}
+    >
+      <div style={providerStyles}>
+        <main style={{ maxWidth: '860px', margin: '0 auto', padding: '32px' }}>
+          <h1 style={{ marginTop: 0 }}>Achievement Catalog</h1>
+          <p style={{ color: '#5d6b7a', maxWidth: '620px' }}>
+            Mission milestones, progress badges, and completion rewards.
+          </p>
+          <AchievementsWidget
+            label="Open Achievements"
+            hideModalScrollbar
+            modalStyles={{
+              content: {
+                maxHeight: '360px',
+              },
+            }}
+          />
+        </main>
+      </div>
+    </AchievementProvider>
+  ),
+};
+
+export const CompactAchievementsModal: Story = {
+  render: () => (
+    <AchievementProvider
+      achievements={scrollbarDemoAchievements}
+      storage={StorageType.Memory}
+      ui={{ enableNotifications: false, enableConfetti: false }}
+    >
+      <div style={providerStyles}>
+        <main style={{ maxWidth: '980px', margin: '0 auto', padding: '32px' }}>
+          <h1 style={{ marginTop: 0 }}>Operations Milestones</h1>
+          <MissionActions />
+          <section
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '18px',
+              alignItems: 'start',
+              marginTop: '20px',
+            }}
+          >
+            <div style={{ ...panelStyles, padding: '18px' }}>
+              <h2 style={{ margin: '0 0 10px' }}>Compact Modal</h2>
+              <AchievementsWidget
+                density="compact"
+                label="Open Compact Achievements"
+                hideModalScrollbar
+                modalBackdropBlur={2}
+                modalStyles={{
+                  content: {
+                    maxWidth: '440px',
+                    maxHeight: '420px',
+                  },
+                }}
+              />
+            </div>
+            <div style={{ ...panelStyles, padding: '16px' }}>
+              <h2 style={{ margin: '0 0 12px' }}>Compact List</h2>
+              <AchievementsList density="compact" />
+            </div>
+          </section>
+        </main>
+      </div>
+    </AchievementProvider>
   ),
 };
 

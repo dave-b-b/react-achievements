@@ -59,6 +59,48 @@ Customize modal title and empty state:
 />
 ```
 
+Hide scrollbar chrome while keeping the modal scrollable:
+
+```tsx
+<AchievementsModal
+  isOpen={open}
+  onClose={() => setOpen(false)}
+  hideScrollbar
+/>
+
+<AchievementsWidget hideModalScrollbar />
+```
+
+Blur the page behind the modal:
+
+```tsx
+<AchievementsModal
+  isOpen={open}
+  onClose={() => setOpen(false)}
+  backdropBlur={2}
+/>
+
+<AchievementsWidget modalBackdropBlur={2} />
+```
+
+Pass a number for pixels or a CSS length string such as `"0.25rem"`. Omit the prop or pass `0` to disable backdrop blur.
+
+Use compact square achievement badges when the modal or list needs to show more items at once:
+
+```tsx
+<AchievementsWidget density="compact" />
+
+<AchievementsModal
+  isOpen={open}
+  onClose={() => setOpen(false)}
+  density="compact"
+/>
+
+<AchievementsList density="compact" />
+```
+
+`density` defaults to `"comfortable"`. Custom `renderAchievement` functions receive the active `density`, so custom rows can switch between row and badge layouts.
+
 ## Inline Lists
 
 Use `AchievementsList` in drawers, profile pages, settings panels, or custom layouts.

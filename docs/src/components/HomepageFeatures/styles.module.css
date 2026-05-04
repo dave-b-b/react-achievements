@@ -1,11 +1,109 @@
 .features {
-  display: flex;
-  align-items: center;
-  padding: 2rem 0;
+  padding: 4rem 0;
   width: 100%;
+  background: #ffffff;
 }
 
-.featureSvg {
-  height: 200px;
-  width: 200px;
+[data-theme='dark'] .features {
+  background: #050914;
+}
+
+.sectionHeader {
+  max-width: 780px;
+  margin-bottom: 2rem;
+}
+
+.sectionKicker {
+  margin: 0 0 0.65rem;
+  color: #0b91a8;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+[data-theme='dark'] .sectionKicker {
+  color: #36e4ff;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  font-size: 2.35rem;
+  line-height: 1.12;
+}
+
+.featureColumn {
+  margin-bottom: 1rem;
+}
+
+.featureCard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-top: 4px solid #11c5df;
+  border-radius: 8px;
+  padding: 1.35rem;
+  background: var(--ifm-background-surface-color);
+}
+
+.featureCard[data-accent='gold'] {
+  border-top-color: #f4b942;
+}
+
+.featureCard[data-accent='green'] {
+  border-top-color: #34c759;
+}
+
+.featureLabel {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+  background: rgba(17, 197, 223, 0.12);
+  color: #087d92;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.featureCard[data-accent='gold'] .featureLabel {
+  background: rgba(244, 185, 66, 0.16);
+  color: #8a5d00;
+}
+
+.featureCard[data-accent='green'] .featureLabel {
+  background: rgba(52, 199, 89, 0.14);
+  color: #18763a;
+}
+
+[data-theme='dark'] .featureLabel {
+  color: #36e4ff;
+}
+
+[data-theme='dark'] .featureCard[data-accent='gold'] .featureLabel {
+  color: #ffd166;
+}
+
+[data-theme='dark'] .featureCard[data-accent='green'] .featureLabel {
+  color: #7ee0a1;
+}
+
+.featureCard h3 {
+  margin: 1rem 0 0;
+}
+
+.featureCard p {
+  flex: 1;
+  margin: 0.7rem 0 1.2rem;
+  color: var(--ifm-color-emphasis-700);
+  line-height: 1.65;
+}
+
+.featureLink {
+  font-weight: 700;
+}
+
+@media screen and (max-width: 996px) {
+  .sectionHeader h2 {
+    font-size: 1.9rem;
+  }
 }

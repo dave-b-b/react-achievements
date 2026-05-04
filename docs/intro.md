@@ -42,6 +42,8 @@ export default function App() {
 - Built-in notifications and confetti by default
 - `AchievementsWidget` for badge button plus modal
 - `AchievementsList` for drawers, sidebars, and settings pages
+- Compact square badge grids for dense achievement catalogs
+- Modal controls for backdrop blur and hidden scrollbar chrome
 - Event-based tracking through `AchievementEngine`
 - A DOM-free `/headless` entry point for custom UI and React Native preparation
 

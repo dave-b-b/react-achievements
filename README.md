@@ -6,6 +6,16 @@
 
 [![npm version](https://img.shields.io/npm/v/react-achievements.svg)](https://www.npmjs.com/package/react-achievements) [![License](https://img.shields.io/badge/license-Dual%20(MIT%20%2B%20Commercial)-blue.svg)](./LICENSE) [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 
+<p align="center">
+  <a href="https://github.com/dave-b-b/react-achievements/raw/main/assets/Demo.mov">
+    <img
+      src="https://raw.githubusercontent.com/dave-b-b/react-achievements/main/assets/compact.png"
+      alt="React Achievements demo showing a LearnQuest achievements modal"
+      width="900"
+    />
+  </a>
+</p>
+
 ## Installation
 
 ```bash
@@ -81,15 +91,30 @@ import {
 // Inline nav, drawer, sidebar, or profile menu item
 <AchievementsWidget placement="inline" label="Badges" />
 
+// Compact square badge grid for dense achievement catalogs
+<AchievementsWidget density="compact" />
+
+// Optional: blur the page behind the modal
+<AchievementsWidget modalBackdropBlur={2} />
+
 // Existing button or drawer row that opens the built-in modal
 const [open, setOpen] = useState(false);
 
 <button onClick={() => setOpen(true)}>View achievements</button>
-<AchievementsModal isOpen={open} onClose={() => setOpen(false)} />
+
+// Optional: hide scrollbar chrome while preserving scroll
+<AchievementsModal
+  isOpen={open}
+  onClose={() => setOpen(false)}
+  hideScrollbar
+  backdropBlur={2}
+/>
 
 // Inline achievements page, panel, drawer, or settings section
 <AchievementsList showLocked />
 ```
+
+For modal blur props, pass a number for pixels or a CSS length string. Omit the prop or pass `0` when you do not want backdrop blur.
 
 Storybook includes examples for floating buttons, nav buttons, drawer rows, existing controls that open a modal, dashboard cards, profile menus, and inline lists.
 
@@ -200,7 +225,7 @@ export function App() {
 }
 ```
 
-React Native UI components are not included in `4.0`; use `achievements-engine` or the `/headless` React APIs with your own native UI.
+React Native UI components are not included in the web package; use `achievements-engine` or the `/headless` React APIs with your own native UI.
 
 ## Entry Points
 

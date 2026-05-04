@@ -102,6 +102,61 @@ describe('BuiltInModal', () => {
         screen.getByText('No achievements yet. Start exploring to unlock them!')
       ).toBeInTheDocument();
     });
+
+    it('should hide scrollbar chrome when requested', () => {
+      render(
+        <BuiltInModal
+          isOpen={true}
+          onClose={mockOnClose}
+          achievements={mockAchievements}
+          hideScrollbar
+        />
+      );
+
+      const modal = screen.getByTestId('built-in-modal');
+
+      expect(modal).toHaveAttribute('data-hide-scrollbar', 'true');
+      expect(modal).toHaveStyle({ overflow: 'auto' });
+      expect(document.head.innerHTML + document.body.innerHTML).toContain(
+        '::-webkit-scrollbar'
+      );
+    });
+
+    it('should support compact density', () => {
+      render(
+        <BuiltInModal
+          isOpen={true}
+          onClose={mockOnClose}
+          achievements={mockAchievements}
+          density="compact"
+        />
+      );
+
+      const modal = screen.getByTestId('built-in-modal');
+
+      expect(modal).toHaveAttribute('data-density', 'compact');
+      expect(modal).toHaveStyle({
+        padding: '18px',
+        maxWidth: '520px',
+      });
+      expect(screen.getByText('Century!')).toHaveStyle({ fontSize: '12px' });
+    });
+
+    it('should support configurable backdrop blur', () => {
+      render(
+        <BuiltInModal
+          isOpen={true}
+          onClose={mockOnClose}
+          achievements={mockAchievements}
+          backdropBlur={4}
+        />
+      );
+
+      expect(screen.getByTestId('built-in-modal-overlay')).toHaveAttribute(
+        'data-backdrop-blur',
+        'blur(4px)'
+      );
+    });
   });
 
   describe('Icon Resolution (Bug Fix)', () => {

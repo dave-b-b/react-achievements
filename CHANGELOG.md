@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.0] - 2026-05-04
+
+### Added
+- **Compact Achievement Badges**: `density="compact"` on `AchievementsWidget`, `AchievementsModal`, `AchievementsList`, and `BuiltInModal` renders achievements as compact square badge grids
+- **Configurable Modal Backdrop Blur**: `AchievementsModal.backdropBlur`, `AchievementsWidget.modalBackdropBlur`, and `ModalProps.backdropBlur` let apps set the backdrop blur amount with a number of pixels or CSS length
+- **Modal Scrollbar Control**: `AchievementsModal.hideScrollbar`, `AchievementsWidget.hideModalScrollbar`, and `ModalProps.hideScrollbar` hide scrollbar chrome while preserving modal scrolling
+- **Storybook Examples**: Added compact achievement modal examples and a LearnQuest compact achievement story with lighter backdrop blur
+
+### Changed
+- **LearnQuest Modal Styling**: Reduced the default LearnQuest modal backdrop blur from the hard-coded `6px` overlay style to the configurable `2px` default
+- **BuiltInModal Compact Layout**: Compact density now uses the badge grid layout instead of compressed horizontal rows
+
+### Documentation
+- Documented compact badge density, modal backdrop blur, and modal scrollbar controls in README and the styling guide
+
+---
+
 ## [4.0.0] - 2026-05-04
 
 ### Added

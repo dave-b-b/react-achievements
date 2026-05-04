@@ -1,9 +1,15 @@
 import React, { useContext, useEffect } from 'react';
 import { AchievementContext } from '../../providers/AchievementProvider';
 import { AchievementUIContext } from '../../providers/WebAchievementProvider';
-import { AchievementWithStatus, StylesProps } from '../types';
+import type {
+  AchievementUIBackdropBlur,
+  AchievementUIDensity,
+  AchievementWithStatus,
+  StylesProps,
+} from '../types';
 import { defaultAchievementIcons } from '../icons/defaultIcons';
 import { defaultStyles } from '../styles/defaultStyles';
+import { getBackdropBlurFilter, getBackdropBlurStyles } from '../utils/backdropBlur';
 import { AchievementsList, AchievementsListProps } from './AchievementsList';
 
 export interface AchievementsModalProps {
@@ -18,6 +24,9 @@ export interface AchievementsModalProps {
   emptyState?: React.ReactNode;
   renderAchievement?: AchievementsListProps['renderAchievement'];
   theme?: string;
+  hideScrollbar?: boolean;
+  density?: AchievementUIDensity;
+  backdropBlur?: AchievementUIBackdropBlur;
 }
 
 export const AchievementsModal: React.FC<AchievementsModalProps> = ({
@@ -32,6 +41,9 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({
   emptyState,
   renderAchievement,
   theme,
+  hideScrollbar = false,
+  density = 'comfortable',
+  backdropBlur,
 }) => {
   const context = useContext(AchievementContext);
   const uiContext = useContext(AchievementUIContext);
@@ -66,6 +78,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({
     ? sourceAchievements
     : sourceAchievements?.filter((achievement) => achievement.isUnlocked);
   const resolvedTheme = theme || uiContext.ui.theme || 'modern';
+  const backdropBlurFilter = getBackdropBlurFilter(backdropBlur);
   const mergedIcons = {
     ...defaultAchievementIcons,
     ...context?.icons,
@@ -87,23 +100,48 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({
         achievements={modalAchievements}
         icons={mergedIcons}
         theme={resolvedTheme}
+        hideScrollbar={hideScrollbar}
+        density={density}
+        backdropBlur={backdropBlur}
       />
     );
   }
 
   return (
     <div
-      style={{ ...defaultStyles.badgesModal.overlay, ...styles?.overlay }}
+      style={{
+        ...defaultStyles.badgesModal.overlay,
+        ...styles?.overlay,
+        ...getBackdropBlurStyles(backdropBlur),
+      }}
       role="presentation"
       onClick={onClose}
+      data-backdrop-blur={backdropBlurFilter}
       data-testid="achievements-modal-overlay"
     >
+      {hideScrollbar && (
+        <style>
+          {`
+            [data-react-achievements-modal-content][data-hide-scrollbar="true"] {
+              scrollbar-width: none;
+              -ms-overflow-style: none;
+            }
+
+            [data-react-achievements-modal-content][data-hide-scrollbar="true"]::-webkit-scrollbar {
+              display: none;
+            }
+          `}
+        </style>
+      )}
       <div
         style={{ ...defaultStyles.badgesModal.content, ...styles?.content }}
         role="dialog"
         aria-modal="true"
         aria-labelledby="achievements-modal-title"
         onClick={(event) => event.stopPropagation()}
+        data-hide-scrollbar={hideScrollbar ? 'true' : undefined}
+        data-density={density}
+        data-react-achievements-modal-content
         data-testid="achievements-modal"
       >
         <div style={{ ...defaultStyles.badgesModal.header, ...styles?.header }}>
@@ -126,6 +164,7 @@ export const AchievementsModal: React.FC<AchievementsModalProps> = ({
           styles={styles}
           emptyState={emptyState}
           renderAchievement={renderAchievement}
+          density={density}
         />
       </div>
     </div>

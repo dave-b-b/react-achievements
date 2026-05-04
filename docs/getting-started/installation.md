@@ -17,7 +17,7 @@ npm install react-achievements
 
 ## Peer Dependencies
 
-React Achievements 4.0 only requires `react` and `achievements-engine`. The previous optional UI peer dependencies are no longer needed because built-in UI is the default.
+React Achievements v4 only requires `react` and `achievements-engine`. The previous optional UI peer dependencies are no longer needed because built-in UI is the default.
 
 ## Verify Installation
 
@@ -80,7 +80,7 @@ export function App() {
 }
 ```
 
-React Native UI components are not included in 4.0. Use the headless APIs or `achievements-engine` with native components.
+React Native UI components are not included in the web package. Use the headless APIs or `achievements-engine` with native components.
 
 ## Next Steps
 

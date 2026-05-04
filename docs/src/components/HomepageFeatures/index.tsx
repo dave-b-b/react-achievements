@@ -1,59 +1,66 @@
 import type {ReactNode} from 'react';
 import clsx from 'clsx';
+import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
-import MountainSvg from '@site/static/img/undraw_docusaurus_mountain.svg';
-import TreeSvg from '@site/static/img/undraw_docusaurus_tree.svg';
-import ReactSvg from '@site/static/img/undraw_docusaurus_react.svg';
 
 type FeatureItem = {
+  label: string;
   title: string;
-  Svg: React.ComponentType<React.ComponentProps<'svg'>>;
   description: ReactNode;
+  to: string;
+  accent: 'cyan' | 'gold' | 'green';
 };
 
 const FeatureList: FeatureItem[] = [
   {
-    title: 'Simple API',
-    Svg: MountainSvg,
+    label: 'Track',
+    title: 'Use the v4 Simple API',
     description: (
       <>
-        Get started in minutes with the Simple API. Define achievements using intuitive
-        threshold-based configuration that reduces complexity by 90%.
+        Define score, streak, onboarding, profile, and custom achievements in one config,
+        then update progress with `track`, `increment`, or event-based engine calls.
       </>
     ),
+    to: '/docs/getting-started/quick-start',
+    accent: 'cyan',
   },
   {
-    title: 'Framework Agnostic',
-    Svg: TreeSvg,
+    label: 'Display',
+    title: 'Ship the widget or inline list',
     description: (
       <>
-        Works with Redux, Zustand, Context API, or any state management solution.
-        Built-in persistence and automatic notifications out of the box.
+        Drop in `AchievementsWidget`, open `AchievementsModal` from an existing control,
+        or render `AchievementsList` directly inside a drawer, profile page, or dashboard.
       </>
     ),
+    to: '/docs/recipes/common-patterns',
+    accent: 'gold',
   },
   {
-    title: 'Fully Customizable',
-    Svg: ReactSvg,
+    label: 'Customize',
+    title: 'Tune the achievement experience',
     description: (
       <>
-        Customize every aspect from UI components to storage backends. Built with React
-        and TypeScript for type-safe achievement tracking.
+        Use compact badge grids, set modal backdrop blur, hide scrollbar chrome, theme the
+        built-in UI, or replace notifications, modals, and confetti entirely.
       </>
     ),
+    to: '/docs/guides/styling',
+    accent: 'green',
   },
 ];
 
-function Feature({title, Svg, description}: FeatureItem) {
+function Feature({label, title, description, to, accent}: FeatureItem) {
   return (
-    <div className={clsx('col col--4')}>
-      <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
-      </div>
-      <div className="text--center padding-horiz--md">
+    <div className={clsx('col col--4', styles.featureColumn)}>
+      <div className={styles.featureCard} data-accent={accent}>
+        <span className={styles.featureLabel}>{label}</span>
         <Heading as="h3">{title}</Heading>
         <p>{description}</p>
+        <Link className={styles.featureLink} to={to}>
+          Read the guide
+        </Link>
       </div>
     </div>
   );
@@ -63,6 +70,10 @@ export default function HomepageFeatures(): ReactNode {
   return (
     <section className={styles.features}>
       <div className="container">
+        <div className={styles.sectionHeader}>
+          <p className={styles.sectionKicker}>Built for real React apps</p>
+          <Heading as="h2">Achievement tracking, UI, and persistence in one package.</Heading>
+        </div>
         <div className="row">
           {FeatureList.map((props, idx) => (
             <Feature key={idx} {...props} />

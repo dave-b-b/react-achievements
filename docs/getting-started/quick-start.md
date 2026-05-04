@@ -111,6 +111,40 @@ import { AchievementsList } from 'react-achievements';
 <AchievementsList />
 ```
 
+## 5. Tune The Modal
+
+Use compact square badges when you want the modal or list to show more achievements at once:
+
+```tsx
+<AchievementsWidget density="compact" />
+
+<AchievementsModal
+  isOpen={open}
+  onClose={() => setOpen(false)}
+  density="compact"
+/>
+
+<AchievementsList density="compact" />
+```
+
+Control the modal backdrop blur and scrollbar chrome:
+
+```tsx
+<AchievementsWidget
+  modalBackdropBlur={2}
+  hideModalScrollbar
+/>
+
+<AchievementsModal
+  isOpen={open}
+  onClose={() => setOpen(false)}
+  backdropBlur="2px"
+  hideScrollbar
+/>
+```
+
+For `backdropBlur`, pass a number for pixels or a CSS length string. Omit it or pass `0` to disable backdrop blur. Scrollbar hiding only removes the visible scrollbar chrome; the modal still scrolls.
+
 ## Provider Icons
 
 Custom icon keys can be defined once on the provider:

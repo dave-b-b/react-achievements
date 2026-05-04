@@ -60,6 +60,52 @@ function AchievementAction() {
 
 `AchievementsModal` reads achievement state from the nearest `AchievementProvider`, so you do not need to map unlocked IDs into achievement objects.
 
+## Compact Badge Modal
+
+Use compact density when the achievement modal should show square badges instead of roomier rows:
+
+```tsx
+<AchievementsWidget density="compact" />
+```
+
+The same density works when you control the modal yourself:
+
+```tsx
+<AchievementsModal
+  isOpen={open}
+  onClose={() => setOpen(false)}
+  density="compact"
+/>
+```
+
+## Modal Backdrop And Scrollbars
+
+Use a lighter backdrop blur when the app underneath should stay more readable:
+
+```tsx
+<AchievementsWidget modalBackdropBlur={2} />
+
+<AchievementsModal
+  isOpen={open}
+  onClose={() => setOpen(false)}
+  backdropBlur="2px"
+/>
+```
+
+Pass a number for pixels or a CSS length string. Omit the prop or pass `0` to disable backdrop blur.
+
+Hide scrollbar chrome while preserving modal scrolling:
+
+```tsx
+<AchievementsWidget hideModalScrollbar />
+
+<AchievementsModal
+  isOpen={open}
+  onClose={() => setOpen(false)}
+  hideScrollbar
+/>
+```
+
 ## Inline Achievement List
 
 Use `AchievementsList` for profile pages, settings pages, drawers, or dashboard panels.
@@ -68,6 +114,12 @@ Use `AchievementsList` for profile pages, settings pages, drawers, or dashboard 
 import { AchievementsList } from 'react-achievements';
 
 <AchievementsList />
+```
+
+Use compact square badges for denser panels:
+
+```tsx
+<AchievementsList density="compact" />
 ```
 
 Only show earned achievements:

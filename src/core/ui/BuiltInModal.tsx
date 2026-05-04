@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
-import { ModalProps } from './interfaces';
+import type { ModalProps } from './interfaces';
 import { getTheme, builtInThemes } from './themes';
 import { defaultAchievementIcons } from '../icons/defaultIcons';
+import { getBackdropBlurFilter, getBackdropBlurStyles } from '../utils/backdropBlur';
 
 /**
  * Built-in modal component
@@ -13,6 +14,9 @@ export const BuiltInModal: React.FC<ModalProps> = ({
   achievements,
   icons = {},
   theme = 'modern',
+  hideScrollbar = false,
+  density = 'comfortable',
+  backdropBlur,
 }) => {
   // Merge custom icons with defaults
   const mergedIcons: Record<string, string> = { ...defaultAchievementIcons, ...icons };
@@ -20,6 +24,8 @@ export const BuiltInModal: React.FC<ModalProps> = ({
   // Get theme configuration
   const themeConfig = getTheme(theme) || builtInThemes.modern;
   const { modal: themeStyles } = themeConfig;
+  const isCompact = density === 'compact';
+  const backdropBlurFilter = getBackdropBlurFilter(backdropBlur);
 
   useEffect(() => {
     if (isOpen) {
@@ -49,13 +55,14 @@ export const BuiltInModal: React.FC<ModalProps> = ({
     justifyContent: 'center',
     zIndex: 10000,
     animation: 'fadeIn 0.3s ease-in-out',
+    ...getBackdropBlurStyles(backdropBlur),
   };
 
   const modalStyles: React.CSSProperties = {
     background: themeStyles.background,
     borderRadius: themeStyles.borderRadius,
-    padding: '32px',
-    maxWidth: '600px',
+    padding: isCompact ? '18px' : '32px',
+    maxWidth: isCompact ? '520px' : '600px',
     width: '90%',
     maxHeight: '80vh',
     overflow: 'auto',
@@ -68,20 +75,20 @@ export const BuiltInModal: React.FC<ModalProps> = ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '24px',
+    marginBottom: isCompact ? '16px' : '24px',
   };
 
   const titleStyles: React.CSSProperties = {
     margin: 0,
     color: themeStyles.textColor,
-    fontSize: themeStyles.headerFontSize || '28px',
+    fontSize: isCompact ? '22px' : themeStyles.headerFontSize || '28px',
     fontWeight: 'bold',
   };
 
   const closeButtonStyles: React.CSSProperties = {
     background: 'none',
     border: 'none',
-    fontSize: '32px',
+    fontSize: isCompact ? '26px' : '32px',
     cursor: 'pointer',
     color: themeStyles.textColor,
     opacity: 0.6,
@@ -90,18 +97,18 @@ export const BuiltInModal: React.FC<ModalProps> = ({
     lineHeight: 1,
   };
 
-  const isBadgeLayout = (themeStyles as any).achievementLayout === 'badge';
+  const isBadgeLayout = isCompact || (themeStyles as any).achievementLayout === 'badge';
 
   const listStyles: React.CSSProperties = isBadgeLayout
     ? {
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
-        gap: '16px',
+        gridTemplateColumns: `repeat(auto-fill, minmax(${isCompact ? '112px' : '140px'}, 1fr))`,
+        gap: isCompact ? '10px' : '16px',
       }
     : {
         display: 'flex',
         flexDirection: 'column',
-        gap: '12px',
+        gap: isCompact ? '8px' : '12px',
       };
 
   const getAchievementItemStyles = (isUnlocked: boolean): React.CSSProperties => {
@@ -126,17 +133,17 @@ export const BuiltInModal: React.FC<ModalProps> = ({
         alignItems: 'center',
         justifyContent: 'center',
         textAlign: 'center',
-        padding: '20px 12px',
+        padding: isCompact ? '12px 8px' : '20px 12px',
         aspectRatio: '1 / 1.1', // Slightly taller than wide
-        minHeight: '160px',
+        minHeight: isCompact ? '118px' : '160px',
       };
     } else {
       // Horizontal layout (default)
       return {
         ...baseStyles,
         display: 'flex',
-        gap: '16px',
-        padding: '16px',
+        gap: isCompact ? '10px' : '16px',
+        padding: isCompact ? '10px 12px' : '16px',
       };
     }
   };
@@ -144,14 +151,14 @@ export const BuiltInModal: React.FC<ModalProps> = ({
   const getIconContainerStyles = (isUnlocked: boolean): React.CSSProperties => {
     if (isBadgeLayout) {
       return {
-        fontSize: '48px',
+        fontSize: isCompact ? '32px' : '48px',
         lineHeight: 1,
-        marginBottom: '8px',
+        marginBottom: isCompact ? '6px' : '8px',
         opacity: isUnlocked ? 1 : 0.3,
       };
     }
     return {
-      fontSize: '40px',
+      fontSize: isCompact ? '28px' : '40px',
       flexShrink: 0,
       lineHeight: 1,
       opacity: isUnlocked ? 1 : 0.3,
@@ -171,14 +178,14 @@ export const BuiltInModal: React.FC<ModalProps> = ({
     ? {
         margin: '0 0 4px 0',
         color: themeStyles.textColor,
-        fontSize: '14px',
+        fontSize: isCompact ? '12px' : '14px',
         fontWeight: 'bold',
         lineHeight: '1.3',
       }
     : {
-        margin: '0 0 8px 0',
+        margin: isCompact ? '0 0 4px 0' : '0 0 8px 0',
         color: themeStyles.textColor,
-        fontSize: '18px',
+        fontSize: isCompact ? '14px' : '18px',
         fontWeight: 'bold',
         overflow: 'hidden',
         textOverflow: 'ellipsis',
@@ -190,28 +197,28 @@ export const BuiltInModal: React.FC<ModalProps> = ({
         margin: 0,
         color: themeStyles.textColor,
         opacity: 0.7,
-        fontSize: '11px',
+        fontSize: isCompact ? '10px' : '11px',
         lineHeight: '1.3',
       }
     : {
         margin: 0,
         color: themeStyles.textColor,
         opacity: 0.8,
-        fontSize: '14px',
+        fontSize: isCompact ? '12px' : '14px',
       };
 
   const getLockIconStyles = (): React.CSSProperties => {
     if (isBadgeLayout) {
       return {
         position: 'absolute',
-        top: '8px',
-        right: '8px',
-        fontSize: '18px',
+        top: isCompact ? '6px' : '8px',
+        right: isCompact ? '6px' : '8px',
+        fontSize: isCompact ? '14px' : '18px',
         opacity: 0.6,
       };
     }
     return {
-      fontSize: '24px',
+      fontSize: isCompact ? '18px' : '24px',
       flexShrink: 0,
       opacity: 0.5,
     };
@@ -235,16 +242,29 @@ export const BuiltInModal: React.FC<ModalProps> = ({
               opacity: 1;
             }
           }
+
+          [data-react-achievements-built-in-modal][data-hide-scrollbar="true"] {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+          }
+
+          [data-react-achievements-built-in-modal][data-hide-scrollbar="true"]::-webkit-scrollbar {
+            display: none;
+          }
         `}
       </style>
       <div
         style={overlayStyles}
         onClick={onClose}
+        data-backdrop-blur={backdropBlurFilter}
         data-testid="built-in-modal-overlay"
       >
         <div
           style={modalStyles}
           onClick={(e) => e.stopPropagation()}
+          data-hide-scrollbar={hideScrollbar ? 'true' : undefined}
+          data-density={density}
+          data-react-achievements-built-in-modal
           data-testid="built-in-modal"
         >
           {/* Header */}
