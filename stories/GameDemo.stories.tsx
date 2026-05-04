@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { AchievementProvider, AchievementEngine, StorageType, AchievementsModal, useAchievementEngine } from '../src/index';
-import type { SimpleAchievementConfig, EventMapping } from '../src/index';
+import type {
+  AchievementsListRenderItemProps,
+  AchievementUIBackdropBlur,
+  AchievementUIDensity,
+  EventMapping,
+  SimpleAchievementConfig,
+  StylesProps,
+} from '../src/index';
 
 /**
  * LearnQuest Game Demo
@@ -158,12 +165,170 @@ const eventMapping: EventMapping = {
   })
 };
 
-// Create the engine instance
-const achievementEngine = new AchievementEngine({
+const createLearnQuestEngine = () => new AchievementEngine({
   achievements: achievementConfig,
   eventMapping,
   storage: StorageType.Memory, // Use Memory for storybook demo
 });
+
+const learnQuestModalStyles: StylesProps['badgesModal'] = {
+  overlay: {
+    backgroundColor: 'rgba(15, 23, 42, 0.82)',
+  },
+  content: {
+    background: '#1e1b4b',
+    border: '2px solid #6366f1',
+    color: '#fff',
+    boxShadow: '0 20px 60px rgba(15, 23, 42, 0.65), 0 0 30px rgba(99, 102, 241, 0.28)',
+  },
+  header: {
+    color: '#a5b4fc',
+    borderBottom: '1px solid rgba(165, 180, 252, 0.18)',
+    paddingBottom: '16px',
+  },
+  closeButton: {
+    color: '#fff',
+    opacity: 0.8,
+  },
+  achievementList: {
+    gap: '12px',
+  },
+};
+
+const renderLearnQuestAchievement = ({
+  achievement,
+  density,
+  isLocked,
+  icon,
+}: AchievementsListRenderItemProps) => {
+  const isCompact = density === 'compact';
+
+  if (isCompact) {
+    return (
+      <div
+        style={{
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textAlign: 'center',
+          gap: '6px',
+          aspectRatio: '1 / 1',
+          minHeight: 120,
+          padding: '12px 10px',
+          background: isLocked ? 'rgba(255,255,255,0.05)' : 'rgba(99,102,241,0.18)',
+          border: `1px solid ${isLocked ? 'rgba(255,255,255,0.1)' : '#6366f1'}`,
+          borderRadius: 8,
+          opacity: isLocked ? 0.6 : 1,
+        }}
+        data-unlocked={achievement.isUnlocked ? 'true' : 'false'}
+      >
+        {isLocked && (
+          <span
+            style={{
+              position: 'absolute',
+              top: 8,
+              right: 8,
+              fontSize: 14,
+              opacity: 0.7,
+            }}
+          >
+            🔒
+          </span>
+        )}
+        <div
+          style={{
+            fontSize: 34,
+            lineHeight: 1,
+            opacity: isLocked ? 0.35 : 1,
+          }}
+        >
+          {icon}
+        </div>
+        <h3
+          style={{
+            margin: 0,
+            color: isLocked ? '#a5b4fc' : '#fff',
+            fontSize: 13,
+            lineHeight: 1.2,
+          }}
+        >
+          {achievement.achievementTitle}
+        </h3>
+        {achievement.achievementDescription && (
+          <p
+            style={{
+              margin: 0,
+              color: isLocked ? '#94a3b8' : '#c7d2fe',
+              fontSize: 11,
+              lineHeight: 1.25,
+            }}
+          >
+            {achievement.achievementDescription}
+          </p>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '14px',
+        padding: '14px',
+        background: isLocked ? 'rgba(255,255,255,0.05)' : 'rgba(99,102,241,0.18)',
+        border: `1px solid ${isLocked ? 'rgba(255,255,255,0.1)' : '#6366f1'}`,
+        borderRadius: 8,
+        opacity: isLocked ? 0.72 : 1,
+      }}
+      data-unlocked={achievement.isUnlocked ? 'true' : 'false'}
+    >
+      <div
+        style={{
+          width: 46,
+          height: 46,
+          borderRadius: 8,
+          background: isLocked ? 'rgba(15,23,42,0.5)' : 'rgba(99,102,241,0.26)',
+          border: `1px solid ${isLocked ? 'rgba(148,163,184,0.16)' : 'rgba(165,180,252,0.35)'}`,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 26,
+          flexShrink: 0,
+        }}
+      >
+        {isLocked ? '🔒' : icon}
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <h3
+          style={{
+            margin: '0 0 4px 0',
+            color: isLocked ? '#a5b4fc' : '#fff',
+            fontSize: 17,
+            lineHeight: 1.25,
+          }}
+        >
+          {achievement.achievementTitle}
+        </h3>
+        {achievement.achievementDescription && (
+          <p
+            style={{
+              margin: 0,
+              color: isLocked ? '#94a3b8' : '#c7d2fe',
+              fontSize: 14,
+              lineHeight: 1.35,
+            }}
+          >
+            {achievement.achievementDescription}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+};
 
 // Achievements Drawer Component
 const AchievementsDrawer = ({ open, onClose, unlockedCount, onViewAchievements }: {
@@ -253,8 +418,16 @@ const AchievementsDrawer = ({ open, onClose, unlockedCount, onViewAchievements }
   );
 };
 
+interface LearnQuestAppProps {
+  achievementDensity?: AchievementUIDensity;
+  achievementBackdropBlur?: AchievementUIBackdropBlur;
+}
+
 // Main App Component (same structure as game/src/App.jsx)
-const LearnQuestApp = () => {
+const LearnQuestApp = ({
+  achievementBackdropBlur = 2,
+  achievementDensity = 'comfortable',
+}: LearnQuestAppProps) => {
   // Get engine from context using hook
   const engine = useAchievementEngine();
 
@@ -545,6 +718,11 @@ const LearnQuestApp = () => {
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
         achievements={allAchievements}
+        styles={learnQuestModalStyles}
+        renderAchievement={renderLearnQuestAchievement}
+        hideScrollbar
+        density={achievementDensity}
+        backdropBlur={achievementBackdropBlur}
       />
     </div>
   );
@@ -552,10 +730,24 @@ const LearnQuestApp = () => {
 
 type Story = StoryObj<typeof meta>;
 
+const LearnQuestStoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [engine] = useState(() => createLearnQuestEngine());
+
+  return <AchievementProvider engine={engine}>{children}</AchievementProvider>;
+};
+
 export const LearnQuestGame: Story = {
   render: () => (
-    <AchievementProvider engine={achievementEngine}>
+    <LearnQuestStoryProvider>
       <LearnQuestApp />
-    </AchievementProvider>
+    </LearnQuestStoryProvider>
+  )
+};
+
+export const LearnQuestGameCompactAchievements: Story = {
+  render: () => (
+    <LearnQuestStoryProvider>
+      <LearnQuestApp achievementDensity="compact" achievementBackdropBlur={2} />
+    </LearnQuestStoryProvider>
   )
 };

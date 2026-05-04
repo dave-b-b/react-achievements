@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # Theming
 
-React Achievements 4.0 uses built-in UI by default. Configure notifications, confetti, and widget styling through provider `ui` options and widget props.
+React Achievements v4 uses built-in UI by default. Configure notifications, confetti, and widget styling through provider `ui` options and widget props.
 
 ## Provider Theme
 
@@ -70,7 +70,7 @@ Custom `NotificationComponent` implementations receive `stackIndex` and can use 
 </AchievementProvider>
 ```
 
-`ModalComponent` is used by `AchievementsWidget` and `AchievementsModal`. It receives `isOpen`, `onClose`, `achievements`, `icons`, and `theme`.
+`ModalComponent` is used by `AchievementsWidget` and `AchievementsModal`. It receives `isOpen`, `onClose`, `achievements`, `icons`, `theme`, `hideScrollbar`, `density`, and `backdropBlur`.
 
 ## Provider Icons
 
@@ -101,6 +101,16 @@ Use `buttonStyles` and `modalStyles` for targeted overrides:
   modalStyles={{
     content: { maxWidth: 720 },
   }}
+/>
+```
+
+Use compact density and modal controls when a themed modal should be denser or let more of the page remain visible:
+
+```tsx
+<AchievementsWidget
+  density="compact"
+  modalBackdropBlur={2}
+  hideModalScrollbar
 />
 ```
 

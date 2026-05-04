@@ -20,6 +20,9 @@ export interface AchievementWithStatus extends AchievementDetails {
     isUnlocked: boolean;
 }
 
+export type AchievementUIDensity = 'comfortable' | 'compact';
+export type AchievementUIBackdropBlur = number | string;
+
 export interface AchievementCondition {
     isConditionMet: (value: AchievementMetricArrayValue, state: AchievementState) => boolean;
     achievementDetails: AchievementDetails | AchievementWithStatus

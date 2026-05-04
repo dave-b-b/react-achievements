@@ -8,6 +8,8 @@ export type {
     CustomAchievementDetails,
     AchievementDetails,
     AchievementWithStatus,
+    AchievementUIDensity,
+    AchievementUIBackdropBlur,
     AchievementCondition,
     AchievementMetricValue,
     AchievementMetricArrayValue,

@@ -1,7 +1,12 @@
 import React, { useContext, useState } from 'react';
 import { AchievementUIContext } from '../../providers/WebAchievementProvider';
 import { useAchievementState } from '../../hooks/useAchievementState';
-import { AchievementWithStatus, StylesProps } from '../types';
+import type {
+  AchievementUIBackdropBlur,
+  AchievementUIDensity,
+  AchievementWithStatus,
+  StylesProps,
+} from '../types';
 import { builtInThemes, getTheme } from '../ui/themes';
 import { AchievementsListProps } from './AchievementsList';
 import { AchievementsModal } from './AchievementsModal';
@@ -37,6 +42,7 @@ export interface AchievementsWidgetProps {
   showCount?: boolean;
   icons?: Record<string, string>;
   theme?: string;
+  density?: AchievementUIDensity;
   label?: string;
   icon?: React.ReactNode;
   triggerClassName?: string;
@@ -46,6 +52,8 @@ export interface AchievementsWidgetProps {
   modalTitle?: React.ReactNode;
   emptyState?: React.ReactNode;
   renderAchievement?: AchievementsListProps['renderAchievement'];
+  hideModalScrollbar?: boolean;
+  modalBackdropBlur?: AchievementUIBackdropBlur;
 }
 
 const getPositionStyles = (
@@ -77,6 +85,7 @@ export const AchievementsWidget: React.FC<AchievementsWidgetProps> = ({
   showCount = true,
   icons,
   theme,
+  density = 'comfortable',
   label = 'Achievements',
   icon = '🏆',
   triggerClassName,
@@ -86,6 +95,8 @@ export const AchievementsWidget: React.FC<AchievementsWidgetProps> = ({
   modalTitle,
   emptyState,
   renderAchievement,
+  hideModalScrollbar = false,
+  modalBackdropBlur,
 }) => {
   const uiContext = useContext(AchievementUIContext);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -183,6 +194,9 @@ export const AchievementsWidget: React.FC<AchievementsWidgetProps> = ({
         emptyState={emptyState}
         renderAchievement={renderAchievement}
         theme={resolvedTheme}
+        hideScrollbar={hideModalScrollbar}
+        density={density}
+        backdropBlur={modalBackdropBlur}
       />
     </>
   );

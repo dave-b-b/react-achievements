@@ -1,23 +1,220 @@
-/**
- * CSS files with the .module.css suffix will be treated as CSS modules
- * and scoped locally.
- */
-
 .heroBanner {
-  padding: 4rem 0;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
+  padding: 5rem 0 4rem;
+  color: #ffffff;
+  background: #050914;
 }
 
-@media screen and (max-width: 996px) {
-  .heroBanner {
-    padding: 2rem;
-  }
+.heroGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(420px, 1.1fr);
+  gap: 3rem;
+  align-items: center;
+}
+
+.heroContent {
+  max-width: 610px;
+}
+
+.heroPreview {
+  margin: 0;
+  min-width: 0;
+}
+
+.heroImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid rgba(54, 228, 255, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
+}
+
+.heroKicker,
+.sectionKicker {
+  margin: 0 0 0.75rem;
+  color: #36e4ff;
+  font-size: 0.92rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  color: #ffffff;
+  font-size: 4rem;
+  line-height: 1;
+}
+
+.heroSubtitle {
+  max-width: 680px;
+  margin: 1rem 0 0;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 1.25rem;
+  line-height: 1.65;
 }
 
 .buttons {
   display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
   align-items: center;
-  justify-content: center;
+  margin-top: 2rem;
+}
+
+.primaryButton {
+  border-color: #11c5df;
+  background: #11c5df;
+  color: #07111f;
+}
+
+.primaryButton:hover {
+  border-color: #67edff;
+  background: #67edff;
+  color: #07111f;
+}
+
+.secondaryButton {
+  border-color: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.secondaryButton:hover {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+
+.heroStats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  max-width: 640px;
+  margin: 2.5rem 0 0;
+}
+
+.heroStats div {
+  border-top: 1px solid rgba(255, 255, 255, 0.24);
+  padding-top: 1rem;
+}
+
+.heroStats dt {
+  color: #ffd166;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.heroStats dd {
+  margin: 0.25rem 0 0;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.quickStart {
+  padding: 4rem 0;
+  background: #f6f9fc;
+}
+
+[data-theme='dark'] .quickStart {
+  background: #070b16;
+}
+
+.quickStartGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(320px, 1.05fr);
+  gap: 2rem;
+  align-items: center;
+}
+
+.sectionKicker {
+  color: #0b91a8;
+}
+
+[data-theme='dark'] .sectionKicker {
+  color: #36e4ff;
+}
+
+.sectionTitle {
+  max-width: 680px;
+  font-size: 2.3rem;
+  line-height: 1.12;
+}
+
+.sectionText {
+  max-width: 640px;
+  margin: 1rem 0 0;
+  color: var(--ifm-color-emphasis-700);
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.inlineLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 1.4rem;
+  font-weight: 700;
+}
+
+.codePanel {
+  margin: 0;
+  border: 1px solid rgba(17, 197, 223, 0.22);
+  border-radius: 8px;
+  padding: 1.4rem;
+  overflow-x: auto;
+  background: #07111f;
+  box-shadow: 0 18px 48px rgba(7, 17, 31, 0.16);
+  color: #d8f7ff;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+@media screen and (max-width: 996px) {
+  .heroBanner {
+    padding: 4rem 0 3rem;
+  }
+
+  .heroGrid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .heroTitle {
+    font-size: 3rem;
+  }
+
+  .quickStartGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .heroBanner {
+    padding: 3rem 0 2.5rem;
+  }
+
+  .heroTitle {
+    font-size: 2.35rem;
+  }
+
+  .heroSubtitle {
+    font-size: 1.05rem;
+  }
+
+  .buttons {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .heroStats {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+    margin-top: 2rem;
+  }
+
+  .heroStats div {
+    padding-top: 0.7rem;
+  }
+
+  .sectionTitle {
+    font-size: 1.8rem;
+  }
 }

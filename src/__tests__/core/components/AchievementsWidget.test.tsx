@@ -142,6 +142,228 @@ describe('AchievementsWidget', () => {
     expect(screen.getByText('Tutorial Complete')).toBeInTheDocument();
   });
 
+  it('renders compact achievement badges in the modal', () => {
+    render(
+      <AchievementProvider
+        achievements={achievements}
+        storage={StorageType.Memory}
+        ui={{ enableNotifications: false, enableConfetti: false }}
+      >
+        <AchievementsModal isOpen onClose={() => undefined} density="compact" />
+      </AchievementProvider>
+    );
+
+    expect(screen.getByTestId('achievements-modal')).toHaveAttribute(
+      'data-density',
+      'compact'
+    );
+    expect(screen.getByTestId('achievements-list')).toHaveAttribute(
+      'data-density',
+      'compact'
+    );
+    expect(screen.getByTestId('achievements-list')).toHaveStyle({
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))',
+    });
+    expect(screen.getAllByTestId('achievement-list-item')[0]).toHaveStyle(
+      'flex-direction: column; min-height: 120px; text-align: center;'
+    );
+    expect(screen.getByText('Century!')).toHaveStyle({ fontSize: '13px' });
+  });
+
+  it('passes compact density from the widget to the modal list', () => {
+    render(
+      <AchievementProvider
+        achievements={achievements}
+        storage={StorageType.Memory}
+        ui={{ enableNotifications: false, enableConfetti: false }}
+      >
+        <AchievementsWidget density="compact" />
+      </AchievementProvider>
+    );
+
+    fireEvent.click(screen.getByTestId('achievements-widget-button'));
+
+    expect(screen.getByTestId('achievements-modal')).toHaveAttribute(
+      'data-density',
+      'compact'
+    );
+    expect(screen.getByTestId('achievements-list')).toHaveAttribute(
+      'data-density',
+      'compact'
+    );
+  });
+
+  it('can blur the modal backdrop by a configured amount', () => {
+    render(
+      <AchievementProvider
+        achievements={achievements}
+        storage={StorageType.Memory}
+        ui={{ enableNotifications: false, enableConfetti: false }}
+      >
+        <AchievementsModal
+          isOpen
+          onClose={() => undefined}
+          backdropBlur={2}
+        />
+      </AchievementProvider>
+    );
+
+    expect(screen.getByTestId('achievements-modal-overlay')).toHaveAttribute(
+      'data-backdrop-blur',
+      'blur(2px)'
+    );
+  });
+
+  it('passes modalBackdropBlur from the widget to the modal overlay', () => {
+    render(
+      <AchievementProvider
+        achievements={achievements}
+        storage={StorageType.Memory}
+        ui={{ enableNotifications: false, enableConfetti: false }}
+      >
+        <AchievementsWidget modalBackdropBlur="1.5px" />
+      </AchievementProvider>
+    );
+
+    fireEvent.click(screen.getByTestId('achievements-widget-button'));
+
+    expect(screen.getByTestId('achievements-modal-overlay')).toHaveAttribute(
+      'data-backdrop-blur',
+      'blur(1.5px)'
+    );
+  });
+
+  it('can hide modal scrollbar chrome while preserving modal overflow', () => {
+    render(
+      <AchievementProvider
+        achievements={achievements}
+        storage={StorageType.Memory}
+        ui={{ enableNotifications: false, enableConfetti: false }}
+      >
+        <AchievementsModal isOpen onClose={() => undefined} hideScrollbar />
+      </AchievementProvider>
+    );
+
+    const modal = screen.getByTestId('achievements-modal');
+
+    expect(modal).toHaveAttribute('data-hide-scrollbar', 'true');
+    expect(modal).toHaveStyle({ overflow: 'auto' });
+    expect(document.head.innerHTML + document.body.innerHTML).toContain(
+      '::-webkit-scrollbar'
+    );
+  });
+
+  it('passes hideModalScrollbar from the widget to the modal', () => {
+    render(
+      <AchievementProvider
+        achievements={achievements}
+        storage={StorageType.Memory}
+        ui={{ enableNotifications: false, enableConfetti: false }}
+      >
+        <AchievementsWidget hideModalScrollbar />
+      </AchievementProvider>
+    );
+
+    fireEvent.click(screen.getByTestId('achievements-widget-button'));
+
+    expect(screen.getByTestId('achievements-modal')).toHaveAttribute(
+      'data-hide-scrollbar',
+      'true'
+    );
+  });
+
+  it('passes hideScrollbar to provider-level custom modals', () => {
+    const CustomModal = ({ isOpen, hideScrollbar }: ModalProps) =>
+      isOpen ? (
+        <div data-testid="custom-achievements-modal">
+          {hideScrollbar ? 'hidden-scrollbar' : 'default-scrollbar'}
+        </div>
+      ) : null;
+
+    render(
+      <AchievementProvider
+        achievements={achievements}
+        storage={StorageType.Memory}
+        ui={{
+          enableNotifications: false,
+          enableConfetti: false,
+          ModalComponent: CustomModal,
+        }}
+      >
+        <AchievementsModal
+          isOpen
+          onClose={() => undefined}
+          hideScrollbar
+        />
+      </AchievementProvider>
+    );
+
+    expect(screen.getByTestId('custom-achievements-modal')).toHaveTextContent(
+      'hidden-scrollbar'
+    );
+  });
+
+  it('passes density to provider-level custom modals', () => {
+    const CustomModal = ({ isOpen, density }: ModalProps) =>
+      isOpen ? (
+        <div data-testid="custom-achievements-modal">
+          {density}
+        </div>
+      ) : null;
+
+    render(
+      <AchievementProvider
+        achievements={achievements}
+        storage={StorageType.Memory}
+        ui={{
+          enableNotifications: false,
+          enableConfetti: false,
+          ModalComponent: CustomModal,
+        }}
+      >
+        <AchievementsModal
+          isOpen
+          onClose={() => undefined}
+          density="compact"
+        />
+      </AchievementProvider>
+    );
+
+    expect(screen.getByTestId('custom-achievements-modal')).toHaveTextContent(
+      'compact'
+    );
+  });
+
+  it('passes backdropBlur to provider-level custom modals', () => {
+    const CustomModal = ({ isOpen, backdropBlur }: ModalProps) =>
+      isOpen ? (
+        <div data-testid="custom-achievements-modal">
+          {backdropBlur}
+        </div>
+      ) : null;
+
+    render(
+      <AchievementProvider
+        achievements={achievements}
+        storage={StorageType.Memory}
+        ui={{
+          enableNotifications: false,
+          enableConfetti: false,
+          ModalComponent: CustomModal,
+        }}
+      >
+        <AchievementsModal
+          isOpen
+          onClose={() => undefined}
+          backdropBlur={3}
+        />
+      </AchievementProvider>
+    );
+
+    expect(screen.getByTestId('custom-achievements-modal')).toHaveTextContent('3');
+  });
+
   it('uses a provider-level custom modal component when configured', () => {
     const CustomModal = ({ isOpen, achievements, icons = {}, theme }: ModalProps) =>
       isOpen ? (

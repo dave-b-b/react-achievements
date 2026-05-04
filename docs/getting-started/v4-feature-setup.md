@@ -96,6 +96,32 @@ Use inline content for profile, settings, drawer, or dashboard surfaces:
 <AchievementsList showLocked />
 ```
 
+Use compact square badges for denser achievement catalogs:
+
+```tsx
+<AchievementsWidget density="compact" />
+<AchievementsModal isOpen={open} onClose={() => setOpen(false)} density="compact" />
+<AchievementsList density="compact" />
+```
+
+Tune the modal backdrop and scrollbar chrome from either the widget or the modal:
+
+```tsx
+<AchievementsWidget
+  modalBackdropBlur={2}
+  hideModalScrollbar
+/>
+
+<AchievementsModal
+  isOpen={open}
+  onClose={() => setOpen(false)}
+  backdropBlur="2px"
+  hideScrollbar
+/>
+```
+
+For `backdropBlur` and `modalBackdropBlur`, pass a number for pixels or a CSS length string. Omit the prop or pass `0` to disable backdrop blur. Scrollbar hiding keeps the modal scrollable.
+
 ## 4. Icons And Themes
 
 Provider-level icons are inherited by notifications, widgets, modals, and lists.
@@ -139,6 +165,8 @@ Replace built-in notification, modal, or confetti components through `ui`.
 ```
 
 Custom `NotificationComponent` implementations receive `stackIndex` so they can preserve the same stacking behavior for simultaneous unlocks.
+
+Custom `ModalComponent` implementations receive `hideScrollbar`, `density`, and `backdropBlur` in addition to the base modal props. Honor those props when you want `AchievementsWidget` and `AchievementsModal` controls to work with a provider-level custom modal.
 
 For custom inline rows, use `AchievementsList.renderAchievement`.
 

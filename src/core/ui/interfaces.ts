@@ -1,5 +1,9 @@
 import React from 'react';
-import { AchievementWithStatus } from '../types';
+import type {
+  AchievementUIBackdropBlur,
+  AchievementUIDensity,
+  AchievementWithStatus,
+} from '../types';
 
 /**
  * Notification component interface
@@ -32,6 +36,9 @@ export interface ModalProps {
   achievements: AchievementWithStatus[];
   icons?: Record<string, string>;
   theme?: string;
+  hideScrollbar?: boolean;
+  density?: AchievementUIDensity;
+  backdropBlur?: AchievementUIBackdropBlur;
 }
 
 export type ModalComponent = React.FC<ModalProps>;
