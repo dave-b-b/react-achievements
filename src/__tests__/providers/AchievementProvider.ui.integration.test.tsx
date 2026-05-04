@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { AchievementProvider } from '../../providers/AchievementProvider';
+import { AchievementProvider } from '../../providers/WebAchievementProvider';
 import { useAchievements } from '../../hooks/useAchievements';
 import { AchievementWithStatus } from '../../core/types';
 import { AchievementEngine } from 'achievements-engine';
@@ -280,5 +280,4 @@ describe('AchievementProvider UI with Event-Based Engine', () => {
         }, { timeout: 3000 });
     });
 });
-
 

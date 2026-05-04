@@ -1,23 +1,19 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { AchievementProvider } from '../../src/providers/AchievementProvider';
-import { StorageType, SimpleAchievementConfig, AchievementDetails, AchievementConfiguration } from '../../src/core/types';
-import { BadgesButton } from '../../src/core/components/BadgesButton';
-import { BadgesModal } from '../../src/core/components/BadgesModal';
-import { useAchievements } from '../../src/hooks/useAchievements';
-import { useSimpleAchievements } from '../../src/hooks/useSimpleAchievements';
+import {
+  AchievementProvider,
+  AchievementsList,
+  AchievementsWidget,
+  StorageType,
+  useAchievements,
+  useSimpleAchievements,
+} from '../../src';
+import type { SimpleAchievementConfig } from '../../src';
 
 /**
- * The `AchievementProvider` is the core component of the React Achievements system.
- * It manages achievement state, handles achievement unlocking logic, and provides
- * the achievement context to child components.
- * 
- * ## Features
- * - Manages achievement state and unlocking logic
- * - Supports multiple storage types (Memory, Local)
- * - Provides achievement context to child components
- * - Handles achievement notifications and animations
- * - Supports custom achievement icons
+ * `AchievementProvider` is the v4 web provider. It creates or accepts an
+ * achievement engine, provides hooks, and renders built-in notifications and
+ * confetti by default.
  */
 const meta: Meta<typeof AchievementProvider> = {
   title: 'Providers/AchievementProvider',
@@ -26,350 +22,202 @@ const meta: Meta<typeof AchievementProvider> = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: 'A provider component that manages achievement state and unlocking logic in your React application.'
-      }
-    }
+        component:
+          'Wrap an app with AchievementProvider, track progress with hooks, and render AchievementsWidget or AchievementsList anywhere in the tree.',
+      },
+    },
   },
   tags: ['autodocs'],
   argTypes: {
     achievements: {
       description: 'Configuration object defining achievements and their unlock conditions',
-      control: 'object'
+      control: 'object',
     },
     storage: {
       description: 'Storage type for persisting achievement state',
       control: 'select',
       options: [StorageType.Memory, StorageType.Local],
       table: {
-        defaultValue: { summary: StorageType.Memory }
-      }
-    },
-    icons: {
-      description: 'Custom icons mapping for achievements',
-      control: 'object'
+        defaultValue: { summary: StorageType.Memory },
+      },
     },
     children: {
-      description: 'Child components that will have access to the achievement context',
-      control: false
-    }
-  }
+      description: 'Child components that can use achievement hooks and UI',
+      control: false,
+    },
+  },
 };
 
 export default meta;
+type Story = StoryObj<typeof AchievementProvider>;
 
-// Achievement configuration for the demo
-const achievementConfig: AchievementConfiguration = {
-  score: [{
-    isConditionMet: (value: any) => (value as number) >= 100,
-    achievementDetails: {
-      achievementId: 'score_100',
-      achievementTitle: 'Century!',
-      achievementDescription: 'Score 100 points',
-      achievementIconKey: 'trophy'
-    }
-  }, {
-    isConditionMet: (value: any) => (value as number) >= 200,
-    achievementDetails: {
-      achievementId: 'score_200',
-      achievementTitle: 'Double Century!',
-      achievementDescription: 'Score 200 points',
-      achievementIconKey: 'star'
-    }
-  }],
-  login: [{
-    isConditionMet: (value: any) => (value as boolean) === true,
-    achievementDetails: {
-      achievementId: 'first_login',
-      achievementTitle: 'First Login',
-      achievementDescription: 'You logged in for the first time',
-      achievementIconKey: 'login'
-    }
-  }]
+const achievementConfig: SimpleAchievementConfig = {
+  score: {
+    100: { title: 'Century', description: 'Score 100 points', icon: '🏆' },
+    200: { title: 'Double Century', description: 'Score 200 points', icon: '⭐' },
+  },
+  login: {
+    true: { title: 'First Login', description: 'Log in for the first time', icon: '🔑' },
+  },
 };
 
-const icons = {
-  trophy: '🏆',
-  star: '⭐',
-  login: '🔑',
-  default: '🎖️'
-};
-
-// Demo component showcasing achievement functionality
-const DemoComponent = () => {
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const { update, achievements, reset, getState } = useAchievements();
+const ProviderDemo = () => {
+  const { update, reset, getState } = useAchievements();
+  const { unlockedIds, unlockedCount } = useSimpleAchievements();
 
   return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>Achievement Demo</h1>
-      <p>Click the buttons below to trigger achievements:</p>
-      
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-        <button 
-          onClick={() => update({ score: 100 })}
-          style={{ padding: '10px 15px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
-          Score 100 points
+    <div style={{ padding: '32px', fontFamily: 'Arial, sans-serif', maxWidth: '920px', margin: '0 auto' }}>
+      <h1>Achievement Provider Demo</h1>
+      <p>Click the buttons below to update metrics and unlock achievements.</p>
+
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
+        <button onClick={() => update({ score: 100 })} style={buttonStyle('#4CAF50')}>
+          Score 100
         </button>
-        
-        <button 
-          onClick={() => update({ score: 200 })}
-          style={{ padding: '10px 15px', backgroundColor: '#2196F3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
-          Score 200 points
+        <button onClick={() => update({ score: 200 })} style={buttonStyle('#2196F3')}>
+          Score 200
         </button>
-        
-        <button 
-          onClick={() => update({ login: true })}
-          style={{ padding: '10px 15px', backgroundColor: '#9C27B0', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
+        <button onClick={() => update({ login: true })} style={buttonStyle('#7C3AED')}>
           Login
         </button>
-        
-        <button 
-          onClick={reset}
-          style={{ padding: '10px 15px', backgroundColor: '#F44336', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
-          Reset Achievements
-        </button>
-      </div>
-      
-      <div style={{ marginBottom: '20px' }}>
-        <h2>Unlocked Achievements: {achievements.unlocked.length}</h2>
-        <pre style={{ backgroundColor: '#f5f5f5', padding: '10px', borderRadius: '4px' }}>
-          {JSON.stringify(achievements.unlocked, null, 2)}
-        </pre>
-      </div>
-      
-      <div style={{ marginBottom: '20px' }}>
-        <h2>Current Metrics:</h2>
-        <pre style={{ backgroundColor: '#f5f5f5', padding: '10px', borderRadius: '4px' }}>
-          {JSON.stringify(getState().metrics, null, 2)}
-        </pre>
-      </div>
-      
-      <BadgesButton 
-        position="bottom-right" 
-        onClick={() => setIsModalOpen(true)}
-        unlockedAchievements={achievements.unlocked.map(id => {
-          let achievement;
-          Object.values(achievementConfig).forEach(categoryAchievements => {
-            categoryAchievements.forEach(a => {
-              if (a.achievementDetails.achievementId === id) {
-                achievement = a.achievementDetails;
-              }
-            });
-          });
-          return achievement;
-        }).filter(Boolean) as unknown as AchievementDetails[]}
-      />
-      
-      <BadgesModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        achievements={achievements.unlocked.map(id => {
-          let achievement;
-          Object.values(achievementConfig).forEach(categoryAchievements => {
-            categoryAchievements.forEach(a => {
-              if (a.achievementDetails.achievementId === id) {
-                achievement = a.achievementDetails;
-              }
-            });
-          });
-          return achievement;
-        }).filter(Boolean) as unknown as AchievementDetails[]}
-        icons={icons}
-      />
-    </div>
-  );
-};
-
-/**
- * The Memory Storage variant stores achievement data in memory.
- * This is useful for:
- * - Development and testing
- * - Temporary achievement tracking
- * - Scenarios where persistence isn't needed
- */
-export const WithMemoryStorage: StoryObj<typeof AchievementProvider> = {
-  args: {
-    achievements: achievementConfig,
-    storage: StorageType.Memory,
-    icons: icons
-  },
-  render: (args) => (
-    <AchievementProvider {...args}>
-      <DemoComponent />
-    </AchievementProvider>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: 'Uses in-memory storage for achievement data. Data is cleared when the page refreshes.'
-      }
-    }
-  }
-};
-
-/**
- * The Local Storage variant persists achievement data in the browser.
- * This is useful for:
- * - Persisting achievements between sessions
- * - Production applications
- * - Long-term achievement tracking
- */
-export const WithLocalStorage: StoryObj<typeof AchievementProvider> = {
-  args: {
-    achievements: achievementConfig,
-    storage: StorageType.Local,
-    icons: icons
-  },
-  render: (args) => (
-    <AchievementProvider {...args}>
-      <DemoComponent />
-    </AchievementProvider>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: 'Uses localStorage to persist achievement data between page refreshes and browser sessions.'
-      }
-    }
-  }
-};
-
-/**
- * Example of using custom achievement configuration.
- * Demonstrates how to:
- * - Define custom achievement conditions
- * - Structure achievement details
- * - Set up achievement categories
- */
-export const CustomAchievements: StoryObj<typeof AchievementProvider> = {
-  args: {
-    achievements: {
-      customMetric: [{
-        isConditionMet: (value: any) => (value as number) > 10,
-        achievementDetails: {
-          achievementId: 'custom_achievement',
-          achievementTitle: 'Custom Achievement',
-          achievementDescription: 'Unlocked through custom logic',
-          achievementIconKey: 'star'
-        }
-      }]
-    },
-    storage: StorageType.Memory,
-    icons: icons
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Shows how to configure custom achievements with unique unlock conditions.'
-      }
-    }
-  }
-};
-
-/**
- * The Simple API reduces configuration complexity by 90% for common use cases.
- * Define achievements using simple threshold values instead of complex condition functions.
- */
-export const SimpleAPI: StoryObj<typeof AchievementProvider> = {
-  args: {
-    achievements: {
-      score: {
-        100: { title: 'Century!', description: 'Score 100 points', icon: '🏆' },
-        500: { title: 'High Scorer!', description: 'Score 500 points', icon: '⭐' }
-      },
-      level: {
-        5: { title: 'Leveling Up', description: 'Reach level 5', icon: '📈' }
-      },
-      completedTutorial: {
-        true: { title: 'Tutorial Master', description: 'Complete the tutorial', icon: '📚' }
-      }
-    } as SimpleAchievementConfig,
-    storage: StorageType.Memory
-  },
-  render: (args) => (
-    <AchievementProvider {...args}>
-      <SimpleAPIDemoComponent />
-    </AchievementProvider>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: 'Demonstrates the new Simple API that dramatically reduces configuration complexity while maintaining full functionality.'
-      }
-    }
-  }
-};
-
-// Demo component for Simple API
-const SimpleAPIDemoComponent = () => {
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const { track, unlocked, unlockedCount, reset } = useSimpleAchievements();
-
-  return (
-    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>Simple API Demo</h1>
-      <p>Much cleaner achievement configuration with the same functionality!</p>
-      
-      <div style={{ display: 'flex', gap: '10px', marginBottom: '20px', flexWrap: 'wrap' }}>
-        <button 
-          onClick={() => track('score', 100)}
-          style={{ padding: '10px 15px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
-          Score 100 points
-        </button>
-        
-        <button 
-          onClick={() => track('score', 500)}
-          style={{ padding: '10px 15px', backgroundColor: '#2196F3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
-          Score 500 points
-        </button>
-        
-        <button 
-          onClick={() => track('level', 5)}
-          style={{ padding: '10px 15px', backgroundColor: '#FF9800', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
-          Reach Level 5
-        </button>
-        
-        <button 
-          onClick={() => track('completedTutorial', true)}
-          style={{ padding: '10px 15px', backgroundColor: '#9C27B0', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
-          Complete Tutorial
-        </button>
-        
-        <button 
-          onClick={reset}
-          style={{ padding: '10px 15px', backgroundColor: '#F44336', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
+        <button onClick={reset} style={buttonStyle('#6B7280')}>
           Reset
         </button>
       </div>
-      
-      <div style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
-        <h2>Achievement Status</h2>
-        <p><strong>Unlocked:</strong> {unlockedCount}</p>
-        <div style={{ fontSize: '14px', fontFamily: 'monospace' }}>
-          {unlocked.map(id => <div key={id}>{id}</div>)}
-        </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
+        <section style={panelStyle}>
+          <h2 style={{ marginTop: 0 }}>State</h2>
+          <p><strong>Unlocked:</strong> {unlockedCount}</p>
+          <pre style={preStyle}>{JSON.stringify(unlockedIds, null, 2)}</pre>
+          <pre style={preStyle}>{JSON.stringify(getState().metrics, null, 2)}</pre>
+        </section>
+
+        <section style={panelStyle}>
+          <h2 style={{ marginTop: 0 }}>Inline List</h2>
+          <AchievementsList />
+        </section>
       </div>
-      
-      <BadgesButton 
-        position="bottom-right" 
-        onClick={() => setIsModalOpen(true)}
-        unlockedAchievements={[]}
-      />
-      
-      <BadgesModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        achievements={[]}
-      />
+
+      <AchievementsWidget />
     </div>
   );
-}; 
+};
+
+const InlineWidgetDemo = () => (
+  <div style={{ minHeight: '100vh', display: 'grid', gridTemplateColumns: '280px 1fr', fontFamily: 'Arial, sans-serif' }}>
+    <aside style={{ background: '#111827', color: '#F9FAFB', padding: '20px', display: 'grid', alignContent: 'start', gap: '8px' }}>
+      <strong style={{ padding: '10px 12px' }}>Product Console</strong>
+      <span style={drawerItemStyle}>Overview</span>
+      <span style={drawerItemStyle}>Reports</span>
+      <AchievementsWidget
+        placement="inline"
+        label="Achievements"
+        renderTrigger={({ buttonProps, unlockedCount, totalCount }) => (
+          <button
+            {...buttonProps}
+            style={{
+              ...drawerItemStyle,
+              color: '#F9FAFB',
+              background: 'rgba(255, 255, 255, 0.08)',
+              border: 0,
+              display: 'flex',
+              justifyContent: 'space-between',
+              width: '100%',
+              cursor: 'pointer',
+            }}
+          >
+            <span>Achievements</span>
+            <span>{unlockedCount}/{totalCount}</span>
+          </button>
+        )}
+      />
+    </aside>
+    <main style={{ padding: '32px' }}>
+      <ProviderDemo />
+    </main>
+  </div>
+);
+
+export const WithMemoryStorage: Story = {
+  args: {
+    achievements: achievementConfig,
+    storage: StorageType.Memory,
+  },
+  render: (args) => (
+    <AchievementProvider {...args}>
+      <ProviderDemo />
+    </AchievementProvider>
+  ),
+};
+
+export const WithLocalStorage: Story = {
+  args: {
+    achievements: achievementConfig,
+    storage: StorageType.Local,
+  },
+  render: (args) => (
+    <AchievementProvider {...args}>
+      <ProviderDemo />
+    </AchievementProvider>
+  ),
+};
+
+export const InlineDrawerWidget: Story = {
+  args: {
+    achievements: achievementConfig,
+    storage: StorageType.Memory,
+  },
+  render: (args) => (
+    <AchievementProvider {...args}>
+      <InlineWidgetDemo />
+    </AchievementProvider>
+  ),
+};
+
+export const InlineAchievementsList: Story = {
+  args: {
+    achievements: achievementConfig,
+    storage: StorageType.Memory,
+  },
+  render: (args) => (
+    <AchievementProvider {...args}>
+      <div style={{ padding: '32px', maxWidth: '760px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
+        <ProviderDemo />
+        <section style={{ ...panelStyle, marginTop: '20px' }}>
+          <h2 style={{ marginTop: 0 }}>Unlocked Only</h2>
+          <AchievementsList showLocked={false} emptyState="No achievements unlocked yet." />
+        </section>
+      </div>
+    </AchievementProvider>
+  ),
+};
+
+const buttonStyle = (backgroundColor: string): React.CSSProperties => ({
+  padding: '10px 15px',
+  backgroundColor,
+  color: 'white',
+  border: 'none',
+  borderRadius: '6px',
+  cursor: 'pointer',
+});
+
+const panelStyle: React.CSSProperties = {
+  padding: '18px',
+  backgroundColor: '#fff',
+  border: '1px solid #D8E0EA',
+  borderRadius: '8px',
+};
+
+const preStyle: React.CSSProperties = {
+  backgroundColor: '#F5F7FA',
+  padding: '10px',
+  borderRadius: '6px',
+  overflow: 'auto',
+};
+
+const drawerItemStyle: React.CSSProperties = {
+  padding: '11px 12px',
+  borderRadius: '6px',
+  color: '#D1D5DB',
+};

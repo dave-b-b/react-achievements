@@ -1,13 +1,18 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { ConfettiWrapper } from '../../src/core/components/ConfettiWrapper';
-import { defaultAchievementIcons } from '../../src/core/icons/defaultIcons';
+import { ConfettiWrapper, defaultAchievementIcons } from '../../src';
 
 const meta: Meta<typeof ConfettiWrapper> = {
-  title: 'Components/ConfettiWrapper',
+  title: 'Compatibility/ConfettiWrapper',
   component: ConfettiWrapper,
   parameters: {
     layout: 'fullscreen',
+    docs: {
+      description: {
+        component:
+          '`ConfettiWrapper` is retained for v3 compatibility. New integrations should use provider `ui` options or the built-in confetti defaults.',
+      },
+    },
   },
   tags: ['autodocs'],
 };

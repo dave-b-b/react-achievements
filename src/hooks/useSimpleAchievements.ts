@@ -1,82 +1,50 @@
 import { useAchievements } from './useAchievements';
+import { useAchievementState } from './useAchievementState';
 
 /**
  * A simplified hook for achievement tracking.
- * Provides an easier API for common use cases while maintaining access to advanced features.
+ * Provides the v4 happy path for direct metric updates plus explicit state names.
  */
 export const useSimpleAchievements = () => {
-  const { update, achievements, reset, getState, exportData, importData, getAllAchievements } = useAchievements();
+  const { update, reset, getState, exportData, importData } = useAchievements();
+  const achievementState = useAchievementState();
+
+  const track = (metric: string, value: any) => update({ [metric]: value });
+
+  const increment = (metric: string, amount: number = 1) => {
+    const currentState = getState();
+    const currentMetricArray = currentState.metrics[metric] || [0];
+    const currentValue = Array.isArray(currentMetricArray)
+      ? currentMetricArray[0]
+      : currentMetricArray;
+    const newValue = (typeof currentValue === 'number' ? currentValue : 0) + amount;
+    update({ [metric]: newValue });
+  };
+
+  const trackMultiple = (metrics: Record<string, any>) => update(metrics);
 
   return {
-    /**
-     * Track a metric value for achievements
-     * @param metric - The metric name (e.g., 'score', 'level')
-     * @param value - The metric value
-     */
-    track: (metric: string, value: any) => update({ [metric]: value }),
-    
-    /**
-     * Increment a numeric metric by a specified amount
-     * @param metric - The metric name (e.g., 'buttonClicks', 'score')
-     * @param amount - The amount to increment by (defaults to 1)
-     */
-    increment: (metric: string, amount: number = 1) => {
-      const currentState = getState();
-      const currentMetricArray = currentState.metrics[metric] || [0];
-      const currentValue = Array.isArray(currentMetricArray) ? currentMetricArray[0] : currentMetricArray;
-      const newValue = (typeof currentValue === 'number' ? currentValue : 0) + amount;
-      update({ [metric]: newValue });
-    },
-    
-    /**
-     * Track multiple metrics at once
-     * @param metrics - Object with metric names as keys and values
-     */
-    trackMultiple: (metrics: Record<string, any>) => update(metrics),
-    
-    /**
-     * Array of unlocked achievement IDs
-     */
-    unlocked: achievements.unlocked,
-    
-    /**
-     * All available achievements
-     */
-    all: achievements.all,
-    
-    /**
-     * Number of unlocked achievements
-     */
-    unlockedCount: achievements.unlocked.length,
-    
-    /**
-     * Reset all achievement progress
-     */
+    track,
+    increment,
+    trackMultiple,
+    unlockedIds: achievementState.unlockedIds,
+    unlockedAchievements: achievementState.unlockedAchievements,
+    allAchievements: achievementState.allAchievements,
+    unlockedCount: achievementState.unlockedCount,
+    totalCount: achievementState.totalCount,
+    metrics: achievementState.metrics,
     reset,
-    
-    /**
-     * Get current state (advanced usage)
-     */
     getState,
-
-    /**
-     * Export achievement data to JSON string
-     * @returns JSON string containing all achievement data
-     */
     exportData,
-
-    /**
-     * Import achievement data from JSON string
-     * @param jsonString - JSON string containing exported achievement data
-     * @param options - Import options (merge strategy, validation)
-     * @returns Import result with success status and any errors
-     */
     importData,
-
+    getAllAchievements: () => achievementState.allAchievements,
     /**
-     * Get all achievements with their unlock status
-     * @returns Array of achievements with isUnlocked boolean property
+     * @deprecated Use `unlockedIds` instead. This alias will be removed in 4.2.
      */
-    getAllAchievements,
+    unlocked: achievementState.unlockedIds,
+    /**
+     * @deprecated Use `allAchievements` instead. This alias will be removed in 4.2.
+     */
+    all: achievementState.allAchievements,
   };
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { AchievementDetails } from '../types';
 import { getTheme, builtInThemes } from '../ui/themes';
+import { warnDeprecation } from '../utils/deprecation';
 
 export interface BadgesButtonProps {
     onClick: () => void;
@@ -46,6 +47,10 @@ const getPositionStyles = (
     }
 };
 
+/**
+ * @deprecated Use `AchievementsWidget` for new integrations. This v3
+ * compatibility wrapper will be removed in 4.2.
+ */
 export const BadgesButton: React.FC<BadgesButtonProps> = ({
     onClick,
     position = 'bottom-right',
@@ -54,6 +59,12 @@ export const BadgesButton: React.FC<BadgesButtonProps> = ({
     unlockedAchievements,
     theme = 'modern',
 }) => {
+    React.useEffect(() => {
+        warnDeprecation(
+            '`BadgesButton` is deprecated. Use `AchievementsWidget` instead. `BadgesButton` will be removed in 4.2.'
+        );
+    }, []);
+
     // Get theme configuration for consistent styling
     const themeConfig = getTheme(theme) || builtInThemes.modern;
     const accentColor = themeConfig.notification.accentColor;

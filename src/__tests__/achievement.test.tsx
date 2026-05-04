@@ -5,20 +5,7 @@ import {
   useAchievements,
   AchievementConfiguration
 } from '../index';
-import Modal from 'react-modal';
 import '@testing-library/jest-dom';
-
-// Mock react-confetti
-jest.mock('react-confetti', () => {
-  return function MockConfetti() {
-    return <div data-testid="mock-confetti" />;
-  };
-});
-
-// Set up Modal for testing
-beforeAll(() => {
-  Modal.setAppElement(document.createElement('div'));
-});
 
 // Mock the storage implementation for testing
 class MockStorage {

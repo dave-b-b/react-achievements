@@ -1,26 +1,13 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Modal from 'react-modal';
-import { BadgesButtonWithModal } from '../../src/core/components/BadgesButtonWithModal';
-import { BadgesButton } from '../../src/core/components/BadgesButton';
-import { BadgesModal } from '../../src/core/components/BadgesModal';
-import { AchievementDetails, AchievementWithStatus } from '../../src/core/types';
-import { defaultAchievementIcons } from '../../src/core/icons/defaultIcons';
-
-// Set up Modal for Storybook environment
-if (typeof window !== 'undefined') {
-  Modal.setAppElement('#storybook-root');
-}
+import { BadgesButtonWithModal, BadgesButton, BadgesModal } from '../../src';
+import type { AchievementDetails, AchievementWithStatus } from '../../src';
 
 /**
- * The BadgesButtonWithModal component combines BadgesButton and BadgesModal
- * with internal state management for a simplified API.
+ * Compatibility story for the deprecated BadgesButtonWithModal wrapper.
  *
- * This component is perfect for the common use case where you just want to
- * display achievements without managing modal state yourself.
- *
- * For advanced scenarios requiring multiple triggers or custom state management,
- * use BadgesButton and BadgesModal separately.
+ * New v4 integrations should use AchievementsWidget, AchievementsModal, and
+ * AchievementsList because they read provider state directly.
  *
  * @component
  * @example
@@ -31,24 +18,18 @@ if (typeof window !== 'undefined') {
  * ```
  */
 const meta: Meta<typeof BadgesButtonWithModal> = {
-  title: 'Components/BadgesButtonWithModal',
+  title: 'Compatibility/BadgesButtonWithModal',
   component: BadgesButtonWithModal,
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
     docs: {
       description: {
         component: `
-A convenience component that combines BadgesButton and BadgesModal with internal state management.
+A deprecated v3 compatibility component that combines BadgesButton and BadgesModal with internal state management.
 
-**When to use:**
-- Simple achievement display (90% of use cases)
-- You don't need custom modal state management
-- One button triggers one modal
+For new app integrations, use AchievementsWidget. It reads provider state directly and supports fixed, inline, and custom trigger placements.
 
-**When NOT to use (use separate components instead):**
-- Multiple triggers for the same modal (nav bar + shortcuts)
-- Custom modal state management (Redux, Zustand, etc.)
-- Complex modal interactions or animations
+These stories exist so existing v3 users can compare compatibility behavior while migrating.
         `
       }
     }
@@ -86,6 +67,59 @@ A convenience component that combines BadgesButton and BadgesModal with internal
 
 export default meta;
 type Story = StoryObj<typeof BadgesButtonWithModal>;
+type BadgesButtonWithModalArgs = React.ComponentProps<typeof BadgesButtonWithModal>;
+
+const previewFrameStyles: React.CSSProperties = {
+  position: 'relative',
+  minHeight: '560px',
+  overflow: 'hidden',
+  padding: '24px',
+  boxSizing: 'border-box',
+  background:
+    'linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%)',
+};
+
+const getPreviewModalStyles = (
+  styles: BadgesButtonWithModalArgs['modalStyles'] = {}
+): BadgesButtonWithModalArgs['modalStyles'] => ({
+  ...styles,
+  overlay: {
+    position: 'absolute',
+    inset: 0,
+    minHeight: '560px',
+    padding: '32px',
+    boxSizing: 'border-box',
+    ...styles.overlay,
+  },
+  content: {
+    maxHeight: 'calc(100% - 64px)',
+    maxWidth: '560px',
+    ...styles.content,
+  },
+});
+
+const getPreviewButtonStyles = (
+  args: BadgesButtonWithModalArgs
+): React.CSSProperties | undefined => {
+  if (args.placement === 'inline') {
+    return args.buttonStyles;
+  }
+
+  return {
+    position: 'absolute',
+    ...args.buttonStyles,
+  };
+};
+
+const renderCompatibilityPreview = (args: BadgesButtonWithModalArgs) => (
+  <div style={previewFrameStyles}>
+    <BadgesButtonWithModal
+      {...args}
+      buttonStyles={getPreviewButtonStyles(args)}
+      modalStyles={getPreviewModalStyles(args.modalStyles)}
+    />
+  </div>
+);
 
 const sampleUnlockedAchievements: AchievementDetails[] = [
   {
@@ -126,14 +160,23 @@ const allAchievementsWithStatus: AchievementWithStatus[] = [
   },
 ];
 
+const legacyStoryIcons = {
+  firstStep: '🚪',
+  achievement: '🌟',
+  writer: '✍️',
+  community: '🤝',
+  winner: '🏆',
+};
+
 /**
- * Default usage - simplest possible implementation.
- * Just pass unlocked achievements and it works!
+ * Default compatibility usage.
  */
 export const Default: Story = {
   args: {
     unlockedAchievements: sampleUnlockedAchievements,
+    icons: legacyStoryIcons,
   },
+  render: renderCompatibilityPreview,
 };
 
 /**
@@ -145,7 +188,9 @@ export const ShowAllAchievements: Story = {
     unlockedAchievements: sampleUnlockedAchievements,
     showAllAchievements: true,
     allAchievements: allAchievementsWithStatus,
+    icons: legacyStoryIcons,
   },
+  render: renderCompatibilityPreview,
 };
 
 /**
@@ -157,7 +202,9 @@ export const WithUnlockConditions: Story = {
     showAllAchievements: true,
     allAchievements: allAchievementsWithStatus,
     showUnlockConditions: true,
+    icons: legacyStoryIcons,
   },
+  render: renderCompatibilityPreview,
 };
 
 /**
@@ -167,30 +214,37 @@ export const TopRight: Story = {
   args: {
     unlockedAchievements: sampleUnlockedAchievements,
     position: 'top-right',
+    icons: legacyStoryIcons,
   },
+  render: renderCompatibilityPreview,
 };
 
 /**
- * Inline mode - perfect for navigation bars, drawers, and sidebars.
- * No fixed positioning, flows with your layout.
+ * Inline compatibility mode for navigation bars, drawers, and sidebars.
  */
 export const InlineMode: Story = {
   args: {
     unlockedAchievements: sampleUnlockedAchievements,
     placement: 'inline',
+    icons: legacyStoryIcons,
   },
-  decorators: [
-    (Story) => (
-      <div style={{
-        width: '250px',
-        background: '#2d2d2d',
-        borderRadius: '8px',
-        padding: '12px'
-      }}>
-        <Story />
+  render: (args) => (
+    <div style={previewFrameStyles}>
+      <div
+        style={{
+          width: '260px',
+          background: '#2d2d2d',
+          borderRadius: '8px',
+          padding: '12px',
+        }}
+      >
+        <BadgesButtonWithModal
+          {...args}
+          modalStyles={getPreviewModalStyles(args.modalStyles)}
+        />
       </div>
-    )
-  ]
+    </div>
+  ),
 };
 
 /**
@@ -200,7 +254,9 @@ export const GamifiedTheme: Story = {
   args: {
     unlockedAchievements: sampleUnlockedAchievements,
     theme: 'gamified',
+    icons: legacyStoryIcons,
   },
+  render: renderCompatibilityPreview,
 };
 
 /**
@@ -209,6 +265,7 @@ export const GamifiedTheme: Story = {
 export const CustomStyling: Story = {
   args: {
     unlockedAchievements: sampleUnlockedAchievements,
+    icons: legacyStoryIcons,
     buttonStyles: {
       backgroundColor: '#6200ea',
       borderRadius: '8px',
@@ -225,10 +282,11 @@ export const CustomStyling: Story = {
       },
     },
   },
+  render: renderCompatibilityPreview,
 };
 
 /**
- * Comparison: BadgesButtonWithModal vs Manual Approach
+ * Compatibility comparison: combined wrapper vs separate legacy wrappers.
  *
  * This story shows the difference between using the combined component
  * and managing state manually with separate components.
@@ -258,11 +316,14 @@ export const ComparisonWithManualApproach: Story = {
           <BadgesButton
             onClick={() => setIsModalOpen(true)}
             unlockedAchievements={sampleUnlockedAchievements}
+            placement="inline"
           />
           <BadgesModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             achievements={sampleUnlockedAchievements}
+            icons={legacyStoryIcons}
+            styles={getPreviewModalStyles()}
           />
         </div>
       );
@@ -278,14 +339,19 @@ export const ComparisonWithManualApproach: Story = {
         </pre>
         <BadgesButtonWithModal
           unlockedAchievements={sampleUnlockedAchievements}
+          placement="inline"
+          icons={legacyStoryIcons}
+          modalStyles={getPreviewModalStyles()}
         />
       </div>
     );
 
     return (
-      <div style={{ display: 'flex', gap: '40px', flexDirection: 'column' }}>
-        <SimplifiedApproach />
-        <ManualApproach />
+      <div style={previewFrameStyles}>
+        <div style={{ display: 'flex', gap: '40px', flexDirection: 'column' }}>
+          <SimplifiedApproach />
+          <ManualApproach />
+        </div>
       </div>
     );
   },

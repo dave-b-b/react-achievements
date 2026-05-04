@@ -220,7 +220,7 @@ const achievements = {
 
   // Builder API for multi-metric achievements
   ...AchievementBuilder.create()
-    .withId('perfect_game')
+    .withMetric('perfect_game')
     .withCondition((metrics) =>
       metrics.score >= 1000 && metrics.accuracy === 100
     )
@@ -257,19 +257,17 @@ achievementDetails: {
 // 'trophy', 'star', 'medal', 'crown', 'checkmark', 'fire', 'rocket', etc.
 ```
 
-### Custom Icon Components
+### Custom Icon Keys
 
 ```tsx
 achievementDetails: {
   achievementIconKey: 'custom_icon'
 }
 
-// Provide custom icons to AchievementProvider
+// Provide custom icon keys to AchievementProvider
 <AchievementProvider
   achievements={achievements}
-  customIcons={{
-    custom_icon: <MyCustomIcon />
-  }}
+  icons={{ custom_icon: '🌟' }}
 >
 ```
 
@@ -423,7 +421,7 @@ function Game() {
 ✅ **Maximum control** - Full control over condition logic
 ✅ **Type safety** - Can add complex type checking in conditions
 ✅ **Explicit** - Every field is clearly defined
-✅ **Backward compatible** - Works with all versions
+✅ **Backward compatible** - Supported by the current v4 provider for legacy configurations
 
 ### Disadvantages
 
@@ -481,7 +479,7 @@ const achievements = AchievementBuilder.combine([
 
   // 15%: Builder API for complex conditions
   AchievementBuilder.create()
-    .withId('perfect_game')
+    .withMetric('perfect_game')
     .withCondition((m) => m.score >= 1000 && m.accuracy === 100)
     .withAward({ title: 'Perfect Game', icon: '💎' })
     .build(),

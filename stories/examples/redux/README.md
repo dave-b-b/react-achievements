@@ -39,13 +39,9 @@ function App() {
 
 ```typescript
 function YourComponent() {
-  const { update, achievements, reset, getState } = useAchievements();
+  const { update, reset } = useAchievements();
   const dispatch = useDispatch();
-  
-  // Get achievement details from Redux store
-  const unlockedAchievementDetails = useSelector((state: RootState) => 
-    state.achievements.unlockedAchievements
-  );
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   // Update achievements
   const handleScore = () => update({ score: 100 });
@@ -61,19 +57,21 @@ function YourComponent() {
       <button onClick={handleScore}>Score 100 points</button>
       <button onClick={handleReset}>Reset</button>
       
-      {/* Display achievements using provided components */}
-      <BadgesButton 
-        position="bottom-right" 
-        onClick={() => setIsModalOpen(true)}
-        unlockedAchievements={unlockedAchievementDetails}
+      {/* Context-aware v4 UI works with Redux-backed storage */}
+      <AchievementsWidget />
+      <AchievementsWidget
+        placement="inline"
+        label="Drawer achievements"
       />
       
-      <BadgesModal 
+      {/* Existing Redux app controls can open the same modal */}
+      <button onClick={() => setIsModalOpen(true)}>Open achievements</button>
+      <AchievementsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        achievements={unlockedAchievementDetails}
-        icons={defaultAchievementIcons}
       />
+
+      <AchievementsList />
     </div>
   );
 }

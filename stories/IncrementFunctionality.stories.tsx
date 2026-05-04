@@ -1,10 +1,13 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { AchievementProvider } from '../src/providers/AchievementProvider';
-import { useSimpleAchievements } from '../src/hooks/useSimpleAchievements';
-import { BadgesButton } from '../src/core/components/BadgesButton';
-import { BadgesModal } from '../src/core/components/BadgesModal';
-import { StorageType, SimpleAchievementConfig, AchievementDetails } from '../src/core/types';
+import {
+  AchievementProvider,
+  AchievementsList,
+  AchievementsWidget,
+  StorageType,
+  useSimpleAchievements,
+} from '../src';
+import type { SimpleAchievementConfig } from '../src';
 
 /**
  * The increment functionality allows you to incrementally increase numeric metrics,
@@ -52,8 +55,7 @@ const incrementAchievements: SimpleAchievementConfig = {
 
 // Demo component showcasing increment functionality
 const IncrementDemo = () => {
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const { increment, unlocked, unlockedCount, reset, getState } = useSimpleAchievements();
+  const { increment, unlockedIds, unlockedCount, reset, getState } = useSimpleAchievements();
   const [metrics, setMetrics] = React.useState({ buttonClicks: 0, score: 0, coins: 0 });
 
   // Update local metrics display when state changes
@@ -64,7 +66,7 @@ const IncrementDemo = () => {
       score: Array.isArray(state.metrics.score) ? (state.metrics.score[0] as number) || 0 : 0,
       coins: Array.isArray(state.metrics.coins) ? (state.metrics.coins[0] as number) || 0 : 0
     });
-  }, [getState, unlocked.length]); // Re-run when achievements unlock
+  }, [getState, unlockedIds.length]); // Re-run when achievements unlock
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '1200px', margin: '0 auto' }}>
@@ -325,12 +327,12 @@ const IncrementDemo = () => {
             display: 'grid',
             gap: '8px'
           }}>
-            {unlocked.length === 0 ? (
+            {unlockedIds.length === 0 ? (
               <p style={{ margin: 0, fontStyle: 'italic', color: '#666' }}>
                 No achievements unlocked yet. Start clicking to earn your first achievements!
               </p>
             ) : (
-              unlocked.map(id => (
+              unlockedIds.map(id => (
                 <div 
                   key={id} 
                   style={{ 
@@ -350,49 +352,7 @@ const IncrementDemo = () => {
         </div>
       </div>
 
-      <BadgesButton 
-        position="bottom-right" 
-        onClick={() => setIsModalOpen(true)}
-        unlockedAchievements={unlocked.map(id => {
-          // Convert unlocked IDs back to achievement details for display
-          let achievement;
-          Object.entries(incrementAchievements).forEach(([metric, thresholds]) => {
-            Object.entries(thresholds).forEach(([threshold, details]) => {
-              if (id === `${metric}_${threshold}`) {
-                achievement = {
-                  achievementId: id,
-                  achievementTitle: details.title,
-                  achievementDescription: details.description || `Achieve ${threshold} for ${metric}`,
-                  achievementIconKey: details.icon || 'default'
-                };
-              }
-            });
-          });
-          return achievement;
-        }).filter(Boolean) as unknown as AchievementDetails[]}
-      />
-      
-      <BadgesModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        achievements={unlocked.map(id => {
-          let achievement;
-          Object.entries(incrementAchievements).forEach(([metric, thresholds]) => {
-            Object.entries(thresholds).forEach(([threshold, details]) => {
-              if (id === `${metric}_${threshold}`) {
-                achievement = {
-                  achievementId: id,
-                  achievementTitle: details.title,
-                  achievementDescription: details.description || `Achieve ${threshold} for ${metric}`,
-                  achievementIconKey: details.icon || 'default'
-                };
-              }
-            });
-          });
-          return achievement;
-        }).filter(Boolean) as unknown as AchievementDetails[]}
-        icons={{}}
-      />
+      <AchievementsWidget />
     </div>
   );
 };
@@ -450,7 +410,7 @@ export const BasicIncrementExampleStory: StoryObj<typeof AchievementProvider> = 
 
 // Basic example component
 const BasicIncrementExampleComponent = () => {
-  const { increment, unlocked, unlockedCount, getState } = useSimpleAchievements();
+  const { increment, unlockedIds, unlockedCount, getState } = useSimpleAchievements();
   const clicks = Array.isArray(getState().metrics.clicks) ? (getState().metrics.clicks[0] as number) || 0 : 0;
 
   return (
@@ -477,16 +437,41 @@ const BasicIncrementExampleComponent = () => {
 
       <div style={{ marginTop: '20px' }}>
         <h4>Unlocked Achievements:</h4>
-        {unlocked.length === 0 ? (
+        {unlockedIds.length === 0 ? (
           <p style={{ color: '#666', fontStyle: 'italic' }}>Click the button to unlock achievements!</p>
         ) : (
-          unlocked.map(id => (
+          unlockedIds.map(id => (
             <div key={id} style={{ margin: '5px 0', color: '#28a745', fontWeight: 'bold' }}>
               🏆 {id}
             </div>
           ))
         )}
       </div>
+      <div style={{ marginTop: '20px' }}>
+        <AchievementsWidget
+          placement="inline"
+          label="Achievements"
+          buttonStyles={{ justifyContent: 'center', border: '1px solid #d8e0ea' }}
+        />
+      </div>
     </div>
   );
+};
+
+export const InlineAchievementList: StoryObj<typeof AchievementProvider> = {
+  args: {
+    achievements: incrementAchievements,
+    storage: StorageType.Memory
+  },
+  render: (args) => (
+    <AchievementProvider {...args}>
+      <div style={{ padding: '32px', maxWidth: '720px', margin: '0 auto' }}>
+        <IncrementDemo />
+        <div style={{ marginTop: '24px', padding: '20px', background: '#fff', border: '1px solid #d8e0ea', borderRadius: '8px' }}>
+          <h3 style={{ marginTop: 0 }}>Inline Achievements</h3>
+          <AchievementsList />
+        </div>
+      </div>
+    </AchievementProvider>
+  ),
 };

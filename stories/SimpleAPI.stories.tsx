@@ -1,10 +1,13 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { AchievementProvider } from '../src/providers/AchievementProvider';
-import { useSimpleAchievements } from '../src/hooks/useSimpleAchievements';
-import { BadgesButton } from '../src/core/components/BadgesButton';
-import { BadgesModal } from '../src/core/components/BadgesModal';
-import { StorageType, SimpleAchievementConfig, AchievementDetails } from '../src/core/types';
+import {
+  AchievementProvider,
+  AchievementsList,
+  AchievementsWidget,
+  StorageType,
+  useSimpleAchievements,
+} from '../src';
+import type { SimpleAchievementConfig } from '../src';
 
 /**
  * The Simple API provides an easier way to define achievements using threshold-based 
@@ -66,8 +69,7 @@ const simpleAchievements: SimpleAchievementConfig = {
 
 // Demo component showcasing the simple API
 const SimpleAPIDemo = () => {
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const { track, trackMultiple, unlocked, unlockedCount, reset } = useSimpleAchievements();
+  const { track, trackMultiple, unlockedIds, unlockedCount, reset } = useSimpleAchievements();
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '1000px', margin: '0 auto' }}>
@@ -164,56 +166,15 @@ const SimpleAPIDemo = () => {
           <p><strong>Unlocked Count:</strong> {unlockedCount}</p>
           <p><strong>Unlocked IDs:</strong></p>
           <ul style={{ maxHeight: '150px', overflowY: 'auto' }}>
-            {unlocked.map(id => (
+            {unlockedIds.map(id => (
               <li key={id} style={{ fontSize: '14px', fontFamily: 'monospace' }}>{id}</li>
             ))}
           </ul>
         </div>
       </div>
 
-      <BadgesButton 
-        position="bottom-right" 
-        onClick={() => setIsModalOpen(true)}
-        unlockedAchievements={unlocked.map(id => {
-          // Convert unlocked IDs back to achievement details for display
-          let achievement;
-          Object.entries(simpleAchievements).forEach(([metric, thresholds]) => {
-            Object.entries(thresholds).forEach(([threshold, details]) => {
-              if (id === `${metric}_${threshold}`) {
-                achievement = {
-                  achievementId: id,
-                  achievementTitle: details.title,
-                  achievementDescription: details.description || `Achieve ${threshold} for ${metric}`,
-                  achievementIconKey: details.icon || 'default'
-                };
-              }
-            });
-          });
-          return achievement;
-        }).filter(Boolean) as unknown as AchievementDetails[]}
-      />
-      
-      <BadgesModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        achievements={unlocked.map(id => {
-          let achievement;
-          Object.entries(simpleAchievements).forEach(([metric, thresholds]) => {
-            Object.entries(thresholds).forEach(([threshold, details]) => {
-              if (id === `${metric}_${threshold}`) {
-                achievement = {
-                  achievementId: id,
-                  achievementTitle: details.title,
-                  achievementDescription: details.description || `Achieve ${threshold} for ${metric}`,
-                  achievementIconKey: details.icon || 'default'
-                };
-              }
-            });
-          });
-          return achievement;
-        }).filter(Boolean) as unknown as AchievementDetails[]}
-        icons={{}}
-      />
+      <AchievementsList showLocked={false} />
+      <AchievementsWidget />
     </div>
   );
 };
@@ -286,8 +247,7 @@ export const CustomConditionAchievements: StoryObj<typeof AchievementProvider> =
 
 // Demo component for custom conditions
 const CustomConditionDemo = () => {
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const { track, trackMultiple, unlocked, unlockedCount, reset } = useSimpleAchievements();
+  const { track, trackMultiple, unlockedIds, unlockedCount, reset } = useSimpleAchievements();
 
   return (
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '800px', margin: '0 auto' }}>
@@ -344,7 +304,7 @@ const CustomConditionDemo = () => {
         <h3>Achievement Status</h3>
         <p><strong>Unlocked:</strong> {unlockedCount}</p>
         <div style={{ fontSize: '14px', fontFamily: 'monospace' }}>
-          {unlocked.map(id => <div key={id}>{id}</div>)}
+          {unlockedIds.map(id => <div key={id}>{id}</div>)}
         </div>
       </div>
 
@@ -355,17 +315,7 @@ const CustomConditionDemo = () => {
         Reset All
       </button>
 
-      <BadgesButton 
-        position="bottom-right" 
-        onClick={() => setIsModalOpen(true)}
-        unlockedAchievements={[]}
-      />
-      
-      <BadgesModal 
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        achievements={[]}
-      />
+      <AchievementsWidget />
     </div>
   );
 };

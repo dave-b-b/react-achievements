@@ -4,33 +4,59 @@ This directory contains Storybook stories that demonstrate the components and pr
 
 ## Component Stories
 
-### BadgesButton
+### AchievementsWidget
 
-The BadgesButton component displays a button that shows the number of unlocked achievements and can open the achievements modal when clicked.
-
-Stories showcase:
-- Different positions (top-left, top-right, bottom-left, bottom-right)
-- Custom styling
-- Empty state (no achievements)
-
-### BadgesModal
-
-The BadgesModal component displays a modal with all the user's unlocked achievements.
+The AchievementsWidget component reads from provider context, shows the unlocked count, and opens the built-in achievements modal.
 
 Stories showcase:
-- Default appearance with achievements
-- Empty state (no achievements)
-- Custom styling
+- Floating button placement
+- Inline navigation button placement
+- Drawer/sidebar placement
+- Existing drawer controls that open `AchievementsModal`
+- Dashboard card placement
+- Profile menu placement
+- Custom triggers that inherit the surrounding app style
 
-### ConfettiWrapper
+### AchievementsList
 
-The ConfettiWrapper component displays confetti and a toast notification when an achievement is unlocked.
+The AchievementsList component renders locked and unlocked achievements inline for drawers, settings screens, profile pages, and custom layouts.
 
 Stories showcase:
-- Active state with confetti and toast
-- Hidden state
-- Default icons from defaultAchievementIcons
-- Custom icons that override default icons
+- Context-aware rendering
+- Inline panel rendering
+- Drawer surface rendering
+- Unlocked-only lists
+- Custom empty states
+
+### LevelProgress
+
+The LevelProgress component renders theme-aware level progress with labels, values, and percentage output.
+
+Stories showcase:
+- Default, minimal, and gamified themes
+- Custom style overrides
+- Hidden values and percent output
+- Interactive progress updates with XP controls
+
+### Built-in UI
+
+Built-in UI stories cover notifications, modals, confetti, widgets, and combined provider behavior.
+
+Stories showcase:
+- Notification themes and positions
+- Stacked notifications for simultaneous unlocks
+- Modal and confetti themes
+- Widget placement and provider-driven unlock flows
+
+### Compatibility Components
+
+`BadgesButton`, `BadgesModal`, `BadgesButtonWithModal`, and `ConfettiWrapper` are retained as v3 compatibility wrappers and live under the `Compatibility` Storybook group. New integration stories should use `AchievementsWidget`, `AchievementsModal`, and `AchievementsList`.
+
+Stories showcase:
+- Legacy fixed and inline button behavior
+- Legacy modal behavior
+- Legacy combined button-with-modal behavior
+- Legacy confetti wrapper behavior
 
 ## Provider Stories
 
@@ -43,6 +69,16 @@ Stories showcase:
 - Local storage implementation
 - Integration with all UI components
 - Achievement unlocking workflow
+- Inline drawer widgets and inline achievement lists
+
+### HeadlessAchievementProvider
+
+The HeadlessAchievementProvider stories import from `react-achievements/headless` and render custom UI from hooks without built-in web components.
+
+Stories showcase:
+- DOM-free provider and hook imports
+- Custom controls, achievement rows, and unlock activity
+- Memory and local storage surfaces for custom web or native-style UI
 
 ## Default Icons
 
@@ -59,7 +95,7 @@ The icons are categorized as:
 - Placeholders (default, loading, error, etc.)
 - Miscellaneous (trophy, star, gem, etc.)
 
-You can view these icons in the ConfettiWrapper and BadgesModal stories.
+You can view these icons in the compatibility component stories and the inline list/widget stories.
 
 ## How to Use
 

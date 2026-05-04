@@ -4,85 +4,87 @@ sidebar_position: 1
 
 # Installation
 
-Get React Achievements up and running in your project.
-
-## Requirements
-
-- **React** 17.0.0 or higher
-- **Node.js** 16.0.0 or higher
-- **TypeScript** 4.5.0 or higher (optional, but recommended)
-
-## Package Installation
-
-Install React Achievements using your preferred package manager:
+Install React Achievements with your package manager:
 
 ```bash npm2yarn
 npm install react-achievements
 ```
 
-That's it! React is automatically installed as a peer dependency by npm 7+.
+## Requirements
 
-## Optional External Dependencies (Legacy UI)
+- React 16.8 or higher
+- Node.js 16 or higher
 
-:::info Built-in UI Available
-As of v3.6.0, React Achievements includes built-in UI components with no external dependencies. The legacy external dependencies below are optional and will be deprecated in v4.0.0.
-:::
+## Peer Dependencies
 
-If you're using existing code that relies on legacy external UI libraries, install them separately:
+React Achievements 4.0 only requires `react` and `achievements-engine`. The previous optional UI peer dependencies are no longer needed because built-in UI is the default.
 
-```bash npm2yarn
-npm install react-toastify react-modal react-confetti react-use
-```
+## Verify Installation
 
-## Verifying Installation
+```tsx title="App.tsx"
+import { AchievementProvider, AchievementsWidget } from 'react-achievements';
 
-Create a test file to verify the installation:
+const achievements = {};
 
-```tsx title="test-installation.tsx"
-import { AchievementProvider } from 'react-achievements';
-
-function App() {
+export default function App() {
   return (
-    <AchievementProvider achievements={{}}>
-      <div>React Achievements installed successfully!</div>
+    <AchievementProvider achievements={achievements}>
+      <div>React Achievements installed successfully.</div>
+      <AchievementsWidget />
     </AchievementProvider>
   );
 }
-
-export default App;
 ```
 
-If this compiles without errors, you're ready to go!
+## Headless Entry Point
+
+For custom UI, non-DOM environments, or React Native preparation:
+
+```tsx title="CustomAchievementsPanel.tsx"
+import {
+  AchievementProvider,
+  useAchievementState,
+  useSimpleAchievements,
+} from 'react-achievements/headless';
+
+const achievements = {
+  score: {
+    100: { title: 'Century!', description: 'Score 100 points' },
+  },
+};
+
+function CustomAchievementsPanel() {
+  const { track } = useSimpleAchievements();
+  const { allAchievements, unlockedCount, totalCount } = useAchievementState();
+
+  return (
+    <section>
+      <button onClick={() => track('score', 100)}>Score 100</button>
+      <p>{unlockedCount} / {totalCount} unlocked</p>
+
+      {allAchievements.map((achievement) => (
+        <div key={achievement.achievementId}>
+          {achievement.isUnlocked ? 'Unlocked' : 'Locked'}: {achievement.achievementTitle}
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function App() {
+  return (
+    <AchievementProvider achievements={achievements}>
+      <CustomAchievementsPanel />
+    </AchievementProvider>
+  );
+}
+```
+
+React Native UI components are not included in 4.0. Use the headless APIs or `achievements-engine` with native components.
 
 ## Next Steps
 
-- **[Quick Start](/docs/getting-started/quick-start)** - Build your first achievement system
-- **[Event-Based Tracking](/docs/guides/event-based-tracking)** - Learn the event-driven pattern
-
-## Troubleshooting
-
-### Module not found
-
-If you get a "Module not found" error:
-
-1. Ensure React Achievements is listed in your `package.json` dependencies
-2. Delete `node_modules` and run `npm install` again
-3. Clear your bundler cache (e.g., `rm -rf .next/cache` for Next.js)
-
-### TypeScript errors
-
-If you encounter TypeScript errors:
-
-1. Ensure your TypeScript version is 4.5.0 or higher
-2. Add `"moduleResolution": "node"` to your `tsconfig.json`
-3. Ensure you have `@types/react` installed: `npm install --save-dev @types/react`
-
-### React version conflicts
-
-If you have React version conflicts:
-
-```bash
-npm install react-achievements --legacy-peer-deps
-```
-
-This installs the package while ignoring peer dependency conflicts.
+- [Quick Start](/docs/getting-started/quick-start)
+- [v4 Feature Setup](/docs/getting-started/v4-feature-setup)
+- [Event-Based Tracking](/docs/guides/event-based-tracking)
+- [Styling](/docs/guides/styling)

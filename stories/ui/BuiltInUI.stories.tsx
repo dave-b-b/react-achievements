@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { BuiltInNotification } from '../../src/core/ui/BuiltInNotification';
-import { BuiltInModal } from '../../src/core/ui/BuiltInModal';
-import { BuiltInConfetti } from '../../src/core/ui/BuiltInConfetti';
-import { BadgesButton } from '../../src/core/components/BadgesButton';
+import {
+  AchievementProvider,
+  AchievementsModal,
+  AchievementsWidget,
+  BuiltInConfetti,
+  BuiltInModal,
+  BuiltInNotification,
+  StorageType,
+  useSimpleAchievements,
+} from '../../src';
 // Theme system - built-in themes only (modern, minimal, gamified)
-import type { AchievementWithStatus } from '../../src/core/types';
+import type { AchievementWithStatus, SimpleAchievementConfig } from '../../src';
 
 const meta: Meta = {
-  title: 'New UI System/Built-in Components',
+  title: 'UI/Built-in Components',
   parameters: {
     layout: 'fullscreen',
   },
@@ -47,6 +53,57 @@ const sampleAchievements: AchievementWithStatus[] = [
     isUnlocked: false,
   },
 ];
+
+const widgetAchievements: SimpleAchievementConfig = {
+  lessonsCompleted: {
+    1: { title: 'First Steps', description: 'Complete your first lesson', icon: '🏆' },
+    5: { title: 'Quick Learner', description: 'Complete five lessons', icon: '⭐' },
+  },
+  quizScore: {
+    100: { title: 'Perfectionist', description: 'Score 100% on a quiz', icon: '✅' },
+  },
+  sessions: {
+    10: { title: 'Marathon Runner', description: 'Complete ten sessions', icon: '🏅' },
+  },
+};
+
+const WidgetControls = () => {
+  const { increment, track, reset, unlockedCount, totalCount } = useSimpleAchievements();
+
+  return (
+    <div style={{ background: 'white', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
+      <h3 style={{ marginTop: 0 }}>
+        Progress: {unlockedCount} / {totalCount} Achievements
+      </h3>
+      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+        <button
+          onClick={() => increment('lessonsCompleted')}
+          style={{ padding: '10px 14px', background: '#2563eb', color: 'white', border: 0, borderRadius: '6px', cursor: 'pointer' }}
+        >
+          Complete Lesson
+        </button>
+        <button
+          onClick={() => track('quizScore', 100)}
+          style={{ padding: '10px 14px', background: '#7c3aed', color: 'white', border: 0, borderRadius: '6px', cursor: 'pointer' }}
+        >
+          Perfect Quiz
+        </button>
+        <button
+          onClick={() => increment('sessions', 10)}
+          style={{ padding: '10px 14px', background: '#0891b2', color: 'white', border: 0, borderRadius: '6px', cursor: 'pointer' }}
+        >
+          Complete Sessions
+        </button>
+        <button
+          onClick={reset}
+          style={{ padding: '10px 14px', background: '#ffffff', color: '#172033', border: '1px solid #cbd5e1', borderRadius: '6px', cursor: 'pointer' }}
+        >
+          Reset
+        </button>
+      </div>
+    </div>
+  );
+};
 
 // Story 1: Notification - All Themes
 const NotificationThemesComponent = () => {
@@ -169,6 +226,56 @@ export const NotificationPositions: StoryObj = {
   render: () => <NotificationPositionsComponent />,
 };
 
+const SimultaneousUnlockControls = () => {
+  const { trackMultiple, reset, unlockedCount, totalCount } = useSimpleAchievements();
+
+  return (
+    <div style={{ background: 'white', padding: '20px', borderRadius: '8px', maxWidth: '520px' }}>
+      <h1 style={{ marginTop: 0 }}>Stacked Notifications</h1>
+      <p>
+        Progress: {unlockedCount} / {totalCount} Achievements
+      </p>
+      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+        <button
+          type="button"
+          onClick={() =>
+            trackMultiple({
+              lessonsCompleted: 5,
+              quizScore: 100,
+              sessions: 10,
+            })
+          }
+          style={{ padding: '10px 14px', background: '#2563eb', color: 'white', border: 0, borderRadius: '6px', cursor: 'pointer' }}
+        >
+          Unlock multiple
+        </button>
+        <button
+          type="button"
+          onClick={reset}
+          style={{ padding: '10px 14px', background: '#ffffff', color: '#172033', border: '1px solid #cbd5e1', borderRadius: '6px', cursor: 'pointer' }}
+        >
+          Reset
+        </button>
+      </div>
+      <AchievementsWidget position="bottom-right" />
+    </div>
+  );
+};
+
+export const SimultaneousUnlockNotifications: StoryObj = {
+  render: () => (
+    <AchievementProvider
+      achievements={widgetAchievements}
+      storage={StorageType.Memory}
+      ui={{ theme: 'gamified', notificationPosition: 'top-right' }}
+    >
+      <div style={{ padding: '20px', minHeight: '100vh', background: '#f5f5f5' }}>
+        <SimultaneousUnlockControls />
+      </div>
+    </AchievementProvider>
+  ),
+};
+
 // Story 3: Modal - All Themes
 const ModalThemesComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -280,101 +387,113 @@ export const ConfettiDemo: StoryObj = {
   render: () => <ConfettiDemoComponent />,
 };
 
-// Story 5: BadgesButton - Fixed vs Inline
-const BadgesButtonPlacementsComponent = () => {
+// Story 5: AchievementsWidget - Fixed vs Inline
+const AchievementsWidgetPlacementsComponent = () => {
   const [modalOpen, setModalOpen] = useState(false);
 
   return (
-    <div style={{ padding: '20px', minHeight: '100vh', background: '#f5f5f5' }}>
-      <h1>BadgesButton Placement Modes</h1>
+    <AchievementProvider
+      achievements={widgetAchievements}
+      storage={StorageType.Memory}
+      ui={{ enableNotifications: false, enableConfetti: false }}
+    >
+      <div style={{ padding: '20px', minHeight: '100vh', background: '#f5f5f5' }}>
+        <h1>AchievementsWidget Placement Modes</h1>
+        <WidgetControls />
 
-      {/* Fixed Placement Examples */}
-      <section style={{ marginBottom: '40px' }}>
-        <h2>Fixed Placement (Traditional)</h2>
-        <p>Floating buttons at screen corners</p>
+        <section style={{ marginBottom: '40px' }}>
+          <h2>Fixed Placement</h2>
+          <p>Floating buttons at screen corners.</p>
 
-        <BadgesButton
-          placement="fixed"
-          position="top-left"
-          onClick={() => setModalOpen(true)}
-          unlockedAchievements={sampleAchievements.filter(a => a.isUnlocked)}
-          theme="modern"
-        />
+          <AchievementsWidget placement="fixed" position="top-left" label="Modern" />
+          <AchievementsWidget placement="fixed" position="bottom-right" label="Gamified" theme="gamified" />
+        </section>
 
-        <BadgesButton
-          placement="fixed"
-          position="bottom-right"
-          onClick={() => setModalOpen(true)}
-          unlockedAchievements={sampleAchievements.filter(a => a.isUnlocked)}
-          theme="gamified"
-        />
-      </section>
+        <section>
+          <h2>Inline Placement</h2>
+          <p>Inline triggers can match nav bars, drawers, cards, and custom controls.</p>
 
-      {/* Inline Placement Examples */}
-      <section>
-        <h2>Inline Placement (NEW!)</h2>
-        <p>Can be placed anywhere in your layout</p>
-
-        <div style={{ background: 'white', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
-          <h3>In a Navigation Bar</h3>
-          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', background: '#333', padding: '10px', borderRadius: '8px' }}>
-            <span style={{ color: 'white', marginRight: 'auto' }}>MyApp</span>
-            <span style={{ color: 'white', cursor: 'pointer' }}>Home</span>
-            <span style={{ color: 'white', cursor: 'pointer' }}>Profile</span>
-            <BadgesButton
-              placement="inline"
-              onClick={() => setModalOpen(true)}
-              unlockedAchievements={sampleAchievements.filter(a => a.isUnlocked)}
-              theme="modern"
-            />
+          <div style={{ background: 'white', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
+            <h3>In a Navigation Bar</h3>
+            <div style={{ display: 'flex', gap: '10px', alignItems: 'center', background: '#333', padding: '10px', borderRadius: '8px' }}>
+              <span style={{ color: 'white', marginRight: 'auto' }}>MyApp</span>
+              <span style={{ color: 'white', cursor: 'pointer' }}>Home</span>
+              <span style={{ color: 'white', cursor: 'pointer' }}>Profile</span>
+              <div style={{ width: '180px' }}>
+                <AchievementsWidget
+                  placement="inline"
+                  label="Badges"
+                  buttonStyles={{
+                    color: '#ffffff',
+                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                    border: '1px solid rgba(255, 255, 255, 0.18)',
+                    justifyContent: 'center',
+                  }}
+                />
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div style={{ background: 'white', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
-          <h3>In a Sidebar/Drawer</h3>
-          <div style={{ background: '#2c3e50', padding: '20px', borderRadius: '8px', width: '250px', color: 'white' }}>
-            <div style={{ marginBottom: '15px', cursor: 'pointer' }}>📊 Dashboard</div>
-            <div style={{ marginBottom: '15px', cursor: 'pointer' }}>⚙️ Settings</div>
-            <div style={{ marginBottom: '15px', cursor: 'pointer' }}>👤 Profile</div>
-            <hr style={{ margin: '15px 0', opacity: 0.3 }} />
-            <BadgesButton
-              placement="inline"
-              onClick={() => setModalOpen(true)}
-              unlockedAchievements={sampleAchievements.filter(a => a.isUnlocked)}
-              theme="minimal"
-              styles={{ width: '100%', justifyContent: 'center' }}
-            />
+          <div style={{ background: 'white', padding: '20px', borderRadius: '8px', marginBottom: '20px' }}>
+            <h3>In a Sidebar/Drawer</h3>
+            <div style={{ background: '#2c3e50', padding: '20px', borderRadius: '8px', width: '250px', color: 'white' }}>
+              <div style={{ marginBottom: '15px', cursor: 'pointer' }}>Dashboard</div>
+              <div style={{ marginBottom: '15px', cursor: 'pointer' }}>Settings</div>
+              <div style={{ marginBottom: '15px', cursor: 'pointer' }}>Profile</div>
+              <hr style={{ margin: '15px 0', opacity: 0.3 }} />
+              <AchievementsWidget
+                placement="inline"
+                label="Achievements"
+                buttonStyles={{
+                  width: '100%',
+                  color: '#ffffff',
+                  backgroundColor: 'transparent',
+                  padding: '12px 0',
+                }}
+              />
+              <button
+                onClick={() => setModalOpen(true)}
+                style={{
+                  width: '100%',
+                  marginTop: '10px',
+                  padding: '12px 0',
+                  color: '#ffffff',
+                  background: 'transparent',
+                  border: 0,
+                  borderTop: '1px solid rgba(255,255,255,0.18)',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  font: 'inherit',
+                }}
+              >
+                Custom drawer row opens modal
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div style={{ background: 'white', padding: '20px', borderRadius: '8px' }}>
-          <h3>In a Card/Widget</h3>
-          <div style={{ background: '#f9f9f9', padding: '15px', borderRadius: '8px', border: '1px solid #ddd' }}>
-            <h4 style={{ margin: '0 0 10px 0' }}>Your Progress</h4>
-            <p style={{ margin: '0 0 15px 0', color: '#666' }}>You've unlocked 2 out of 4 achievements!</p>
-            <BadgesButton
-              placement="inline"
-              onClick={() => setModalOpen(true)}
-              unlockedAchievements={sampleAchievements.filter(a => a.isUnlocked)}
-              theme="gamified"
-              styles={{ width: '100%', justifyContent: 'center' }}
-            />
+          <div style={{ background: 'white', padding: '20px', borderRadius: '8px' }}>
+            <h3>In a Card/Widget</h3>
+            <div style={{ background: '#f9f9f9', padding: '15px', borderRadius: '8px', border: '1px solid #ddd' }}>
+              <h4 style={{ margin: '0 0 10px 0' }}>Your Progress</h4>
+              <p style={{ margin: '0 0 15px 0', color: '#666' }}>Inline widget inside a compact card surface.</p>
+              <AchievementsWidget
+                placement="inline"
+                label="View Achievements"
+                theme="gamified"
+                buttonStyles={{ width: '100%', justifyContent: 'center', color: '#172033', border: '1px solid #ddd' }}
+              />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <BuiltInModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        achievements={sampleAchievements}
-        theme="modern"
-      />
-    </div>
+        <AchievementsModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      </div>
+    </AchievementProvider>
   );
 };
 
-export const BadgesButtonPlacements: StoryObj = {
-  render: () => <BadgesButtonPlacementsComponent />,
+export const AchievementsWidgetPlacements: StoryObj = {
+  render: () => <AchievementsWidgetPlacementsComponent />,
 };
 
 // Story 6: Built-in Themes Demo
@@ -541,14 +660,23 @@ const CompleteDemoComponent = () => {
         </button>
       </div>
 
-      {/* Fixed BadgesButton */}
-      <BadgesButton
-        placement="fixed"
-        position="bottom-right"
+      <button
         onClick={() => setModalOpen(true)}
-        unlockedAchievements={currentAchievements.filter(a => a.isUnlocked)}
-        theme={theme}
-      />
+        style={{
+          position: 'fixed',
+          right: 20,
+          bottom: 20,
+          padding: '10px 20px',
+          background: theme === 'gamified' ? '#00d4ff' : '#2196F3',
+          color: theme === 'gamified' ? '#06121f' : '#ffffff',
+          border: 0,
+          borderRadius: '20px',
+          cursor: 'pointer',
+          boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+        }}
+      >
+        Achievements ({currentAchievements.filter(a => a.isUnlocked).length})
+      </button>
 
       {/* Notification */}
       {showNotification && (

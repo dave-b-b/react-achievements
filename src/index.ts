@@ -18,12 +18,11 @@ export type {
     AnyAchievementStorage,
     AchievementContextValue, // @deprecated - use AchievementContextType instead
     StylesProps,
-    AchievementProviderProps,
 } from './core/types';
 
 // Context Types
 export type {
-    AchievementContextType,  // NEW - current context interface
+    AchievementContextType,
 } from './providers/AchievementProvider';
 
 // Type Guards
@@ -43,6 +42,21 @@ export {
 export type { RestApiStorageConfig } from 'achievements-engine';
 
 // Core UI Components
+export { AchievementsWidget } from './core/components/AchievementsWidget';
+export type {
+    AchievementsWidgetPlacement,
+    AchievementsWidgetPosition,
+    AchievementsWidgetProps,
+    AchievementsWidgetTriggerButtonProps,
+    AchievementsWidgetTriggerProps,
+} from './core/components/AchievementsWidget';
+export { AchievementsList } from './core/components/AchievementsList';
+export type {
+    AchievementsListProps,
+    AchievementsListRenderItemProps,
+} from './core/components/AchievementsList';
+export { AchievementsModal } from './core/components/AchievementsModal';
+export type { AchievementsModalProps } from './core/components/AchievementsModal';
 export { BadgesButton } from './core/components/BadgesButton';
 export { BadgesModal } from './core/components/BadgesModal';
 export { BadgesButtonWithModal } from './core/components/BadgesButtonWithModal';
@@ -50,10 +64,16 @@ export { ConfettiWrapper } from './core/components/ConfettiWrapper';
 export { LevelProgress } from './core/components/LevelProgress';
 
 // Core Provider and Hooks
-export { AchievementProvider, AchievementContext } from './providers/AchievementProvider';
+export { AchievementProvider } from './providers/WebAchievementProvider';
+export type { WebAchievementProviderProps as AchievementProviderProps } from './providers/WebAchievementProvider';
+export {
+    AchievementProvider as HeadlessAchievementProvider,
+    AchievementContext,
+} from './providers/AchievementProvider';
 export { useAchievements } from './hooks/useAchievements';
 export { useSimpleAchievements } from './hooks/useSimpleAchievements';
-export { useAchievementEngine } from './hooks/useAchievementEngine'; // NEW in v3.8.0
+export { useAchievementState } from './hooks/useAchievementState';
+export { useAchievementEngine } from './hooks/useAchievementEngine';
 
 // Core Styles
 export { defaultStyles } from './core/styles/defaultStyles';
@@ -101,12 +121,12 @@ export {
     isRecoverableError
 } from 'achievements-engine';
 
-// Built-in UI Components (NEW in v3.6.0)
+// Built-in UI components
 export { BuiltInNotification } from './core/ui/BuiltInNotification';
 export { BuiltInModal } from './core/ui/BuiltInModal';
 export { BuiltInConfetti } from './core/ui/BuiltInConfetti';
 
-// UI Types and Interfaces (NEW in v3.6.0)
+// UI types and interfaces
 export type {
     NotificationComponent,
     NotificationProps,
@@ -119,12 +139,12 @@ export type {
     UIConfig,
 } from './core/types';
 
-// Theme System (NEW in v3.6.0)
+// Theme system
 
-// Custom Hooks (NEW in v3.6.0)
+// Custom hooks
 export { useWindowSize } from './core/hooks/useWindowSize';
 
-// Achievement Engine (NEW in v3.8.0) - Framework-agnostic core
+// Framework-agnostic achievement engine
 export {AchievementEngine} from 'achievements-engine';
 export type { AchievementEngineApi } from 'achievements-engine';
 

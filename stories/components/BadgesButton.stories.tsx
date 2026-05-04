@@ -1,13 +1,19 @@
-import _React from 'react';
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { BadgesButton } from '../../src/core/components/BadgesButton';
-import { AchievementDetails } from '../../src/core/types';
+import { BadgesButton } from '../../src';
+import type { AchievementDetails } from '../../src';
 
 const meta: Meta<typeof BadgesButton> = {
-  title: 'Components/BadgesButton',
+  title: 'Compatibility/BadgesButton',
   component: BadgesButton,
   parameters: {
     layout: 'fullscreen',
+    docs: {
+      description: {
+        component:
+          '`BadgesButton` is a deprecated v3 compatibility wrapper. Use `AchievementsWidget` for new app integrations.',
+      },
+    },
   },
   tags: ['autodocs'],
   argTypes: {
@@ -86,4 +92,40 @@ export const NoAchievements: Story = {
     unlockedAchievements: [],
     onClick: () => alert('Button clicked!'),
   },
-}; 
+};
+
+export const InlineDrawerItem: Story = {
+  args: {
+    placement: 'inline',
+    unlockedAchievements: sampleAchievements,
+    onClick: () => alert('Button clicked!'),
+    styles: {
+      color: '#e5e7eb',
+      backgroundColor: 'transparent',
+      border: 'none',
+      borderRadius: '6px',
+      font: 'inherit',
+    },
+  },
+  decorators: [
+    (Story) => (
+      <div
+        style={{
+          width: '260px',
+          minHeight: '360px',
+          background: '#111827',
+          color: '#ffffff',
+          padding: '18px',
+          display: 'grid',
+          alignContent: 'start',
+          gap: '8px',
+        }}
+      >
+        <strong style={{ padding: '10px 12px' }}>Legacy Drawer</strong>
+        <span style={{ padding: '10px 12px', color: '#d1d5db' }}>Dashboard</span>
+        <span style={{ padding: '10px 12px', color: '#d1d5db' }}>Settings</span>
+        <Story />
+      </div>
+    ),
+  ],
+};

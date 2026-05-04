@@ -24,42 +24,8 @@ export interface BadgesButtonWithModalProps {
 }
 
 /**
- * BadgesButtonWithModal - A convenience component that combines BadgesButton and BadgesModal
- *
- * This component manages the modal state internally, providing a simplified API
- * for the common use case of displaying achievements.
- *
- * For advanced use cases requiring custom state management or multiple triggers,
- * use BadgesButton and BadgesModal separately.
- *
- * @example
- * ```tsx
- * // Simple usage
- * <BadgesButtonWithModal
- *   unlockedAchievements={achievements.unlocked}
- * />
- *
- * // Show all achievements (locked + unlocked)
- * <BadgesButtonWithModal
- *   unlockedAchievements={achievements.unlocked}
- *   showAllAchievements={true}
- *   allAchievements={getAllAchievements()}
- *   showUnlockConditions={true}
- * />
- *
- * // Customize position and theme
- * <BadgesButtonWithModal
- *   unlockedAchievements={achievements.unlocked}
- *   position="top-right"
- *   theme="gamified"
- * />
- *
- * // Inline mode for navigation
- * <BadgesButtonWithModal
- *   unlockedAchievements={achievements.unlocked}
- *   placement="inline"
- * />
- * ```
+ * @deprecated Use `AchievementsWidget` for new integrations. This v3
+ * compatibility wrapper will be removed in 4.2.
  */
 export const BadgesButtonWithModal: React.FC<BadgesButtonWithModalProps> = ({
     unlockedAchievements,
