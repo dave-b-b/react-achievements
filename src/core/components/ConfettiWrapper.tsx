@@ -8,12 +8,12 @@ export interface ConfettiWrapperProps {
 
 /**
  * @deprecated Use the provider `ui.ConfettiComponent` option or the built-in
- * confetti default. This v3 compatibility wrapper will be removed in 4.2.
+ * confetti default. This v3 compatibility wrapper will be removed in a future major release.
  */
 export const ConfettiWrapper: React.FC<ConfettiWrapperProps> = ({ show }) => {
   useEffect(() => {
     warnDeprecation(
-      '`ConfettiWrapper` is deprecated. Use the provider `ui.ConfettiComponent` option or built-in confetti defaults instead. `ConfettiWrapper` will be removed in 4.2.'
+      '`ConfettiWrapper` is deprecated. Use the provider `ui.ConfettiComponent` option or built-in confetti defaults instead. `ConfettiWrapper` will be removed in a future major release.'
     );
   }, []);
 

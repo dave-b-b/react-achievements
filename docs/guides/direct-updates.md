@@ -119,7 +119,7 @@ const {
 } = useSimpleAchievements();
 ```
 
-`unlocked` and `all` are deprecated v3 aliases and will be removed in 4.2.
+`unlocked` and `all` are deprecated v3 aliases and will be removed in a future major release.
 
 ## Custom Placement
 

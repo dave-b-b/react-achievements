@@ -17,7 +17,7 @@ export interface BadgesModalProps {
 /**
  * @deprecated Use `AchievementsModal`, `AchievementsWidget`, or
  * `AchievementsList` for new integrations. This v3 compatibility wrapper will
- * be removed in 4.2.
+ * be removed in a future major release.
  */
 export const BadgesModal: React.FC<BadgesModalProps> = ({
   isOpen,
@@ -31,7 +31,7 @@ export const BadgesModal: React.FC<BadgesModalProps> = ({
 }) => {
   useEffect(() => {
     warnDeprecation(
-      '`BadgesModal` is deprecated. Use `AchievementsWidget` or `AchievementsList` instead. `BadgesModal` will be removed in 4.2.'
+      '`BadgesModal` is deprecated. Use `AchievementsWidget` or `AchievementsList` instead. `BadgesModal` will be removed in a future major release.'
     );
   }, []);
 

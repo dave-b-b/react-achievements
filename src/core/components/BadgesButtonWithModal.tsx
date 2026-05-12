@@ -25,7 +25,7 @@ export interface BadgesButtonWithModalProps {
 
 /**
  * @deprecated Use `AchievementsWidget` for new integrations. This v3
- * compatibility wrapper will be removed in 4.2.
+ * compatibility wrapper will be removed in a future major release.
  */
 export const BadgesButtonWithModal: React.FC<BadgesButtonWithModalProps> = ({
     unlockedAchievements,

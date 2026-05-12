@@ -33,11 +33,11 @@ export const useSimpleAchievements = () => {
     importData,
     getAllAchievements: () => achievementState.allAchievements,
     /**
-     * @deprecated Use `unlockedIds` instead. This alias will be removed in 4.2.
+     * @deprecated Use `unlockedIds` instead. This alias will be removed in a future major release.
      */
     unlocked: achievementState.unlockedIds,
     /**
-     * @deprecated Use `allAchievements` instead. This alias will be removed in 4.2.
+     * @deprecated Use `allAchievements` instead. This alias will be removed in a future major release.
      */
     all: achievementState.allAchievements,
   };

@@ -174,7 +174,7 @@ const {
 } = useSimpleAchievements();
 ```
 
-`unlocked` remains as a deprecated v3 alias for `unlockedIds` until 4.2.
+`unlocked` remains as a deprecated v3 alias for `unlockedIds` until a future major release.
 
 ## Event-Based Alternative
 

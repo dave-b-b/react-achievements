@@ -49,7 +49,7 @@ const getPositionStyles = (
 
 /**
  * @deprecated Use `AchievementsWidget` for new integrations. This v3
- * compatibility wrapper will be removed in 4.2.
+ * compatibility wrapper will be removed in a future major release.
  */
 export const BadgesButton: React.FC<BadgesButtonProps> = ({
     onClick,
@@ -61,7 +61,7 @@ export const BadgesButton: React.FC<BadgesButtonProps> = ({
 }) => {
     React.useEffect(() => {
         warnDeprecation(
-            '`BadgesButton` is deprecated. Use `AchievementsWidget` instead. `BadgesButton` will be removed in 4.2.'
+            '`BadgesButton` is deprecated. Use `AchievementsWidget` instead. `BadgesButton` will be removed in a future major release.'
         );
     }, []);
 
