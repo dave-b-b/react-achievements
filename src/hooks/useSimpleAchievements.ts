@@ -6,19 +6,13 @@ import { useAchievementState } from './useAchievementState';
  * Provides the v4 happy path for direct metric updates plus explicit state names.
  */
 export const useSimpleAchievements = () => {
-  const { update, reset, getState, exportData, importData } = useAchievements();
+  const { update, reset, getState, exportData, importData, engine } = useAchievements();
   const achievementState = useAchievementState();
 
   const track = (metric: string, value: any) => update({ [metric]: value });
 
   const increment = (metric: string, amount: number = 1) => {
-    const currentState = getState();
-    const currentMetricArray = currentState.metrics[metric] || [0];
-    const currentValue = Array.isArray(currentMetricArray)
-      ? currentMetricArray[0]
-      : currentMetricArray;
-    const newValue = (typeof currentValue === 'number' ? currentValue : 0) + amount;
-    update({ [metric]: newValue });
+    return engine.increment(metric, amount);
   };
 
   const trackMultiple = (metrics: Record<string, any>) => update(metrics);

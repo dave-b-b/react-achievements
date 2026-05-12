@@ -1,20 +1,13 @@
 import { useAchievements } from './useAchievements';
 
 export const useAchievementState = () => {
-  const { achievements, getAllAchievements, getState } = useAchievements();
-  const allAchievements = getAllAchievements();
-  const unlockedIds = achievements.unlocked;
-  const unlockedAchievementSet = new Set(unlockedIds);
-  const unlockedAchievements = allAchievements.filter((achievement) =>
-    unlockedAchievementSet.has(achievement.achievementId)
-  );
-
+  const { snapshot } = useAchievements();
   return {
-    unlockedIds,
-    unlockedAchievements,
-    allAchievements,
-    unlockedCount: unlockedIds.length,
-    totalCount: allAchievements.length,
-    metrics: getState().metrics,
+    unlockedIds: snapshot.unlockedIds,
+    unlockedAchievements: snapshot.unlockedAchievements,
+    allAchievements: snapshot.allAchievements,
+    unlockedCount: snapshot.unlockedCount,
+    totalCount: snapshot.totalCount,
+    metrics: snapshot.metrics,
   };
 };

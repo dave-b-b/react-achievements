@@ -5,10 +5,12 @@ import type {
   AchievementStorage,
   AsyncAchievementStorage,
   StorageType,
+  AchievementSnapshot,
   AchievementWithStatus,
   EventMapping,
   ImportOptions,
   ImportResult,
+  StateChangedEvent,
   RestApiStorageConfig,
 } from 'achievements-engine';
 import { warnDeprecation } from '../core/utils/deprecation';
@@ -19,6 +21,7 @@ export interface AchievementContextType {
     unlocked: string[];
     all: Record<string, AchievementWithStatus>;
   };
+  snapshot: AchievementSnapshot;
   reset: () => void;
   getState: () => {
     metrics: Record<string, any>;
@@ -55,13 +58,10 @@ export interface AchievementProviderProps {
 }
 
 const getAllAchievementRecord = (
-  engine: AchievementEngine
+  achievements: AchievementWithStatus[]
 ): Record<string, AchievementWithStatus> => {
   return Object.fromEntries(
-    engine.getAllAchievements().map((achievement) => [
-      achievement.achievementId,
-      achievement,
-    ])
+    achievements.map((achievement) => [achievement.achievementId, achievement])
   );
 };
 
@@ -115,19 +115,12 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     });
   });
 
-  const [achievementState, setAchievementState] = useState<{
-    unlocked: string[];
-    all: Record<string, AchievementWithStatus>;
-  }>(() => ({
-    unlocked: [...engine.getUnlocked()],
-    all: getAllAchievementRecord(engine),
-  }));
+  const [achievementSnapshot, setAchievementSnapshot] = useState<AchievementSnapshot>(() =>
+    engine.getSnapshot()
+  );
 
-  const syncAchievementState = useCallback(() => {
-    setAchievementState({
-      unlocked: [...engine.getUnlocked()],
-      all: getAllAchievementRecord(engine),
-    });
+  const syncAchievementState = useCallback((snapshot?: AchievementSnapshot) => {
+    setAchievementSnapshot(snapshot || engine.getSnapshot());
   }, [engine]);
 
   useEffect(() => {
@@ -139,11 +132,19 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   }, [engine, externalEngine]);
 
   useEffect(() => {
-    const unsubscribeUnlocked = engine.on('achievement:unlocked', syncAchievementState);
-    const unsubscribeStateChanged = engine.on('state:changed', syncAchievementState);
+    let isMounted = true;
+    const unsubscribeStateChanged = engine.on('state:changed', (event: StateChangedEvent) => {
+      syncAchievementState(event);
+    });
+
+    engine.ready().then(() => {
+      if (isMounted) {
+        syncAchievementState();
+      }
+    });
 
     return () => {
-      unsubscribeUnlocked();
+      isMounted = false;
       unsubscribeStateChanged();
     };
   }, [engine, syncAchievementState]);
@@ -154,21 +155,14 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 
   const reset = () => {
     engine.reset();
-    syncAchievementState();
   };
 
   const getState = () => {
-    const metrics = engine.getMetrics();
-    const unlocked = engine.getUnlocked();
-    const metricsInArrayFormat: Record<string, any> = {};
-
-    Object.entries(metrics).forEach(([key, value]) => {
-      metricsInArrayFormat[key] = Array.isArray(value) ? value : [value];
-    });
+    const snapshot = engine.getSnapshot();
 
     return {
-      metrics: metricsInArrayFormat,
-      unlocked: [...unlocked],
+      metrics: snapshot.metrics,
+      unlocked: snapshot.unlockedIds,
     };
   };
 
@@ -183,14 +177,20 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   };
 
   const getAllAchievements = (): AchievementWithStatus[] => {
-    return engine.getAllAchievements();
+    return engine.getSnapshot().allAchievements;
+  };
+
+  const achievements = {
+    unlocked: achievementSnapshot.unlockedIds,
+    all: getAllAchievementRecord(achievementSnapshot.allAchievements),
   };
 
   return (
     <AchievementContext.Provider
       value={{
         update,
-        achievements: achievementState,
+        achievements,
+        snapshot: achievementSnapshot,
         reset,
         getState,
         exportData,
