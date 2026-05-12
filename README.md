@@ -9,8 +9,8 @@
 <p align="center">
   <a href="https://github.com/dave-b-b/react-achievements/raw/main/assets/Demo.mov">
     <img
-      src="https://raw.githubusercontent.com/dave-b-b/react-achievements/main/assets/compact.png"
-      alt="React Achievements demo showing a LearnQuest achievements modal"
+      src="https://raw.githubusercontent.com/dave-b-b/react-achievements/main/assets/demo.gif"
+      alt="React Achievements demo showing achievement progress and a LearnQuest achievements modal"
       width="900"
     />
   </a>
