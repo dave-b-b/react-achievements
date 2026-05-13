@@ -23,6 +23,8 @@ Remove the old optional UI peer dependencies unless your app uses them directly:
 - `react-confetti`
 - `react-use`
 
+The v4 built-in widget and modal are implemented inside `react-achievements`; they do not import `react-modal`.
+
 ### Use AchievementsWidget
 
 ```tsx
@@ -38,14 +40,18 @@ You no longer need to pass `unlockedAchievements` into the default badge UI. The
 
 ```tsx
 // v3-style manual composition
-const { unlocked } = useSimpleAchievements();
-const unlockedBadges = unlocked.map((id) => badgeMap[id]);
+const { getAllAchievements } = useSimpleAchievements();
+const unlockedBadges = getAllAchievements().filter(
+  (achievement) => achievement.isUnlocked
+);
 
 <BadgesButtonWithModal unlockedAchievements={unlockedBadges} />;
 
 // v4
 <AchievementsWidget />;
 ```
+
+The deprecated `unlocked` alias returns achievement IDs, not achievement detail objects. Legacy modal props such as `unlockedAchievements` expect detail objects, so prefer the v4 widget or pass `unlockedAchievements` / filtered `allAchievements` instead.
 
 ### Use Explicit Hook Names
 
