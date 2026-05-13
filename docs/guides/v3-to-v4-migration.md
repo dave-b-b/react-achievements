@@ -59,7 +59,7 @@ const {
 } = useSimpleAchievements();
 ```
 
-The v3 `unlocked` alias still returns IDs, but it is deprecated and will be removed in a future major release.
+The v3 `unlocked` alias still returns IDs, but it is deprecated and will be removed in 5.0.
 
 ### Remove useBuiltInUI
 
@@ -73,7 +73,7 @@ Built-in UI is now the default.
 <AchievementProvider achievements={achievements}>
 ```
 
-`useBuiltInUI` is accepted as a no-op until a future major release.
+`useBuiltInUI` is accepted as a no-op until 5.0.
 
 ### Update Custom Icons
 

@@ -48,7 +48,7 @@ export default function App() {
 ## Common Pitfalls
 
 - Hooks must be inside the `AchievementProvider` tree.
-- Use `unlockedIds`, `unlockedAchievements`, and `allAchievements`; `unlocked` is a deprecated v3 alias.
+- Use `unlockedIds`, `unlockedAchievements`, and `allAchievements`; `unlocked` is a deprecated v3 alias planned for removal in 5.0.
 - Do not manually map unlocked IDs into badge objects for the default UI; `AchievementsWidget` reads context.
 - For Next.js App Router or SSR, ensure components using hooks are client components (`"use client"`).
 - For React Native, use `achievements-engine` or `react-achievements/headless` with custom native UI.

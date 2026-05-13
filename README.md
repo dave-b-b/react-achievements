@@ -150,7 +150,7 @@ const {
 } = useSimpleAchievements();
 ```
 
-Deprecated aliases from v3, including `unlocked`, remain available until a future major release.
+Deprecated aliases from v3, including `unlocked` and `all`, remain available until 5.0.
 
 ## Event-Based Tracking
 
@@ -239,7 +239,7 @@ React Native UI components are not included in the web package; use `achievement
 - `AchievementsWidget` replaces the legacy manual `BadgesButtonWithModal` setup.
 - `useSimpleAchievements()` now returns `unlockedIds`, `unlockedAchievements`, and `allAchievements`.
 - External UI peer dependencies are no longer required.
-- Deprecated v3 component names remain as compatibility wrappers until a future major release.
+- Deprecated v3 component names remain as compatibility wrappers until 5.0.
 
 ## License
 

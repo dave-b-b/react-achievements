@@ -89,7 +89,7 @@ export function isAsyncStorage(storage: AnyAchievementStorage): storage is Async
 }
 
 /**
- * @deprecated This type is outdated and will be removed in a future major release.
+ * @deprecated This type is outdated and will be removed in 5.0.
  * Use AchievementContextType from 'react-achievements' instead.
  *
  * This legacy interface does not include the 'engine' property.

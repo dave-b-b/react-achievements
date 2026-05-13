@@ -116,4 +116,4 @@ Use compact density and modal controls when a themed modal should be denser or l
 
 ## Migration Note
 
-`useBuiltInUI` is no longer needed. It remains accepted as a deprecated no-op until a future major release.
+`useBuiltInUI` is no longer needed. It remains accepted as a deprecated no-op until 5.0.

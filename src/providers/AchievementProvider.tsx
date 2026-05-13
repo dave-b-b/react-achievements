@@ -34,7 +34,7 @@ export interface AchievementContextType {
   icons: Record<string, string>;
   /**
    * @deprecated Use provider props or the presence of an injected engine directly.
-   * This compatibility flag will be removed in a future major release.
+   * This compatibility flag will be removed in 5.0.
    */
   _isLegacyPattern: boolean;
 }
@@ -52,7 +52,7 @@ export interface AchievementProviderProps {
   onError?: (error: AchievementError) => void;
   /**
    * @deprecated Built-in UI is the default in the web provider. This prop is a
-   * no-op and will be removed in a future major release.
+   * no-op and will be removed in 5.0.
    */
   useBuiltInUI?: boolean;
 }
@@ -78,7 +78,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 }) => {
   if (useBuiltInUI !== undefined) {
     warnDeprecation(
-      '`useBuiltInUI` is deprecated and is now a no-op because built-in UI is the default. It will be removed in a future major release.'
+      '`useBuiltInUI` is deprecated and is now a no-op because built-in UI is the default. It will be removed in 5.0.'
     );
   }
 
