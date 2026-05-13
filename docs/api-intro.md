@@ -29,6 +29,7 @@ The API reference is generated from the TypeScript source. For v4 application se
 - `AchievementsWidget.hideModalScrollbar` - hide visible modal scrollbar chrome while preserving scroll
 - `AchievementsModal.density`, `AchievementsModal.backdropBlur`, and `AchievementsModal.hideScrollbar` - the same controls when opening the modal yourself
 - `AchievementsList.density` - render inline achievement content as the same compact square badge grid
+- `AchievementProvider.ui.notificationDuration` - set built-in unlock notification auto-dismiss timing in milliseconds
 
 ## Browse API Documentation
 

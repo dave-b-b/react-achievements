@@ -13,7 +13,7 @@ import type { AchievementDetails, AchievementWithStatus } from '../../src';
  * @example
  * ```tsx
  * <BadgesButtonWithModal
- *   unlockedAchievements={achievements.unlocked}
+ *   unlockedAchievements={unlockedAchievements}
  * />
  * ```
  */

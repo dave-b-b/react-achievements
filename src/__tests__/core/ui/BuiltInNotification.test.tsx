@@ -71,6 +71,37 @@ describe('BuiltInNotification', () => {
     expect(handleClose).toHaveBeenCalledTimes(1);
   });
 
+  it('does not restart auto-dismiss when onClose identity changes', async () => {
+    const firstClose = jest.fn();
+    const latestClose = jest.fn();
+    const { rerender } = render(
+      <BuiltInNotification
+        achievement={mockAchievement}
+        onClose={firstClose}
+        duration={3000}
+      />,
+    );
+
+    await act(async () => {
+      jest.advanceTimersByTime(2000);
+    });
+
+    rerender(
+      <BuiltInNotification
+        achievement={mockAchievement}
+        onClose={latestClose}
+        duration={3000}
+      />,
+    );
+
+    await act(async () => {
+      jest.advanceTimersByTime(1300);
+    });
+
+    expect(firstClose).not.toHaveBeenCalled();
+    expect(latestClose).toHaveBeenCalledTimes(1);
+  });
+
   describe('Icon Resolution', () => {
     it('uses icon from icons mapping if key is found', async () => {
       const icons = { 'test-icon': '🚀' };

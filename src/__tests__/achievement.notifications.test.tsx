@@ -192,6 +192,36 @@ describe('Achievement Notifications', () => {
       expect(notifications[1]).toHaveTextContent('1:Double Century');
     });
   });
+
+  it('should pass configured notification duration to notifications', async () => {
+    const CustomNotification = ({ achievement, duration }: any) => (
+      <div data-testid="custom-notification">
+        {achievement.achievementTitle}:{duration}
+      </div>
+    );
+
+    render(
+      <AchievementProvider
+        achievements={achievementConfig}
+        storage={StorageType.Memory}
+        ui={{
+          NotificationComponent: CustomNotification,
+          notificationDuration: 8000,
+          enableConfetti: false,
+        }}
+      >
+        <TestComponent />
+      </AchievementProvider>
+    );
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('score-button'));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('custom-notification')).toHaveTextContent('High Score!:8000');
+    });
+  });
   
   it('should properly reset achievements', async () => {
     render(

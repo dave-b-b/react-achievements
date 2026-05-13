@@ -10,7 +10,8 @@ import { BuiltInConfetti } from '../core/ui/BuiltInConfetti';
 import type { ConfettiComponent, NotificationComponent, UIConfig } from '../core/types';
 import { warnDeprecation } from '../core/utils/deprecation';
 
-const NOTIFICATION_DURATION_MS = 5000;
+const DEFAULT_NOTIFICATION_DURATION_MS = 5000;
+const CONFETTI_DURATION_MS = 5000;
 
 export interface WebAchievementProviderProps extends HeadlessAchievementProviderProps {
   icons?: Record<string, string>;
@@ -41,6 +42,7 @@ const AchievementEffects: React.FC<{
   const confettiTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
   const [notifications, setNotifications] = useState<AchievementWithStatus[]>([]);
+  const notificationDuration = ui.notificationDuration ?? DEFAULT_NOTIFICATION_DURATION_MS;
 
   useEffect(() => {
     const unsubscribeUnlocked = engine.on(
@@ -84,7 +86,7 @@ const AchievementEffects: React.FC<{
           confettiTimerRef.current = setTimeout(() => {
             setShowConfetti(false);
             confettiTimerRef.current = null;
-          }, NOTIFICATION_DURATION_MS);
+          }, CONFETTI_DURATION_MS);
         }
       }
     );
@@ -128,7 +130,7 @@ const AchievementEffects: React.FC<{
                 )
               )
             }
-            duration={NOTIFICATION_DURATION_MS}
+            duration={notificationDuration}
             position={ui.notificationPosition || 'top-center'}
             theme={ui.theme || 'modern'}
             icons={icons}
@@ -137,7 +139,7 @@ const AchievementEffects: React.FC<{
         ))}
 
       {ui.enableConfetti !== false && (
-        <ConfettiComponentResolved show={showConfetti} duration={NOTIFICATION_DURATION_MS} />
+        <ConfettiComponentResolved show={showConfetti} duration={CONFETTI_DURATION_MS} />
       )}
     </>
   );

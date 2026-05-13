@@ -34,7 +34,16 @@ Disable built-in effects when you only want state and UI components:
 </AchievementProvider>
 ```
 
-When one update unlocks multiple achievements, the built-in notification UI stacks the notifications instead of replacing earlier unlocks.
+Built-in unlock notifications auto-dismiss after 5 seconds by default. Set `ui.notificationDuration` to customize the timing in milliseconds. When one update unlocks multiple achievements, the notifications stack instead of replacing earlier unlocks.
+
+```tsx
+<AchievementProvider
+  achievements={achievements}
+  ui={{ notificationDuration: 8000 }}
+>
+  <YourApp />
+</AchievementProvider>
+```
 
 ## 2. Direct Tracking
 
@@ -164,7 +173,7 @@ Replace built-in notification, modal, or confetti components through `ui`.
 </AchievementProvider>
 ```
 
-Custom `NotificationComponent` implementations receive `stackIndex` so they can preserve the same stacking behavior for simultaneous unlocks.
+Custom `NotificationComponent` implementations receive `duration` and `stackIndex` so they can preserve the same auto-dismiss and stacking behavior as the built-in notifications.
 
 Custom `ModalComponent` implementations receive `hideScrollbar`, `density`, and `backdropBlur` in addition to the base modal props. Honor those props when you want `AchievementsWidget` and `AchievementsModal` controls to work with a provider-level custom modal.
 

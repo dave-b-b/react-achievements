@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.3.0] - 2026-05-13
+
+### Added
+- **Notification Duration**: Added `ui.notificationDuration` to configure how long built-in unlock notifications stay visible before auto-dismiss.
+
+### Changed
+- **LearnQuest Storybook**: Made the LearnQuest achievement modal use the compact badge layout by default.
+
+### Fixed
+- **Unlock Toast Dismissal**: Prevented built-in achievement notification timers from restarting when provider rerenders change callback identity.
+
+### Documentation
+- **Demo Media**: Updated README and documentation preview media to use the v4.3 LearnQuest demo video and generated GIF.
+- **Migration Guide**: Clarified that v4 built-in achievement UI does not import `react-modal`.
+- **Legacy Badge Examples**: Updated deprecated badge modal examples to pass achievement detail objects instead of the deprecated `unlocked` ID alias.
+
+---
+
 ## [4.2.0] - 2026-05-12
 
 ### Added

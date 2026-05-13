@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { NotificationProps } from './interfaces';
 import { getTheme, builtInThemes } from './themes';
 import { defaultAchievementIcons } from '../icons/defaultIcons';
@@ -18,6 +18,8 @@ export const BuiltInNotification: React.FC<NotificationProps> = ({
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
+  const onCloseRef = useRef(onClose);
+  const exitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Merge custom icons with defaults
   const mergedIcons: Record<string, string> = { ...defaultAchievementIcons, ...icons };
@@ -27,20 +29,35 @@ export const BuiltInNotification: React.FC<NotificationProps> = ({
   const { notification: themeStyles } = themeConfig;
 
   useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  const closeAfterExit = useCallback(() => {
+    setIsExiting(true);
+
+    if (exitTimerRef.current) {
+      clearTimeout(exitTimerRef.current);
+    }
+
+    exitTimerRef.current = setTimeout(() => onCloseRef.current?.(), 300);
+  }, []);
+
+  useEffect(() => {
     // Slide in animation
     const showTimer = setTimeout(() => setIsVisible(true), 10);
 
     // Auto-dismiss
-    const dismissTimer = setTimeout(() => {
-      setIsExiting(true);
-      setTimeout(() => onClose?.(), 300);
-    }, duration);
+    const dismissTimer = setTimeout(closeAfterExit, duration);
 
     return () => {
       clearTimeout(showTimer);
       clearTimeout(dismissTimer);
+
+      if (exitTimerRef.current) {
+        clearTimeout(exitTimerRef.current);
+      }
     };
-  }, [duration, onClose]);
+  }, [duration, closeAfterExit]);
 
   const getPositionStyles = (): React.CSSProperties => {
     const stackedOffset = 20 + stackIndex * 104;
@@ -180,10 +197,7 @@ export const BuiltInNotification: React.FC<NotificationProps> = ({
         )}
       </div>
       <button
-        onClick={() => {
-          setIsExiting(true);
-          setTimeout(() => onClose?.(), 300);
-        }}
+        onClick={closeAfterExit}
         style={closeButtonStyles}
         onMouseEnter={(e) => (e.currentTarget.style.opacity = '1')}
         onMouseLeave={(e) => (e.currentTarget.style.opacity = '0.6')}

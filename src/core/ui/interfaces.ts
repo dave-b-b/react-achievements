@@ -138,6 +138,13 @@ export interface UIConfig {
   notificationPosition?: NotificationPosition;
 
   /**
+   * Duration in milliseconds before built-in unlock notifications dismiss.
+   * Custom notification components receive this value through `duration`.
+   * @default 5000
+   */
+  notificationDuration?: number;
+
+  /**
    * Enable/disable notifications
    * @default true
    */
