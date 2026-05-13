@@ -426,7 +426,7 @@ interface LearnQuestAppProps {
 // Main App Component (same structure as game/src/App.jsx)
 const LearnQuestApp = ({
   achievementBackdropBlur = 2,
-  achievementDensity = 'comfortable',
+  achievementDensity = 'compact',
 }: LearnQuestAppProps) => {
   // Get engine from context using hook
   const engine = useAchievementEngine();
@@ -744,10 +744,10 @@ export const LearnQuestGame: Story = {
   )
 };
 
-export const LearnQuestGameCompactAchievements: Story = {
+export const LearnQuestGameComfortableAchievements: Story = {
   render: () => (
     <LearnQuestStoryProvider>
-      <LearnQuestApp achievementDensity="compact" achievementBackdropBlur={2} />
+      <LearnQuestApp achievementDensity="comfortable" achievementBackdropBlur={2} />
     </LearnQuestStoryProvider>
   )
 };

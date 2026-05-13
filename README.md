@@ -126,6 +126,7 @@ Provider-level icons and UI options are shared across notifications, widgets, mo
   icons={{ login: '🔑', streak: '🔥' }}
   ui={{
     theme: 'minimal',
+    notificationDuration: 8000,
     NotificationComponent: MyNotification,
     ModalComponent: MyAchievementsModal,
     ConfettiComponent: MyConfetti,
