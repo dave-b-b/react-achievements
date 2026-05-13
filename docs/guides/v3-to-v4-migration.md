@@ -59,7 +59,7 @@ const {
 } = useSimpleAchievements();
 ```
 
-The v3 `unlocked` alias still returns IDs, but it is deprecated and will be removed in 4.2.
+The v3 `unlocked` alias still returns IDs, but it is deprecated and will be removed in 5.0.
 
 ### Remove useBuiltInUI
 
@@ -73,7 +73,7 @@ Built-in UI is now the default.
 <AchievementProvider achievements={achievements}>
 ```
 
-`useBuiltInUI` is accepted as a no-op until 4.2.
+`useBuiltInUI` is accepted as a no-op until 5.0.
 
 ### Update Custom Icons
 
@@ -97,7 +97,7 @@ import { AchievementProvider, useAchievementState } from 'react-achievements/hea
 
 The headless entry point does not import DOM UI components and is the recommended base for custom web UI or React Native-specific UI.
 
-## Deprecated Until 4.2
+## Deprecated Compatibility APIs
 
 - `BadgesButton`
 - `BadgesModal`

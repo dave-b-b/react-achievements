@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.2.0] - 2026-05-12
+
+### Added
+- **Engine Snapshot Types**: Re-exported `AchievementSnapshot` and `AchievementUpdateResult` from the root and headless entry points.
+
+### Changed
+- **Engine Dependency**: Updated `achievements-engine` peer and dev dependency to `^1.2.0`.
+- **Snapshot-Backed State**: `AchievementProvider` and `useAchievementState` now read canonical achievement state from the engine snapshot API.
+- **Simple Increment**: `useSimpleAchievements().increment()` now delegates to the engine's numeric increment helper.
+- **Compatibility Notices**: Deprecated v3 wrapper and alias guidance now identifies 5.0 as the planned removal release.
+
+### Fixed
+- **Async Storage Hydration**: Provider state now waits for engine readiness so IndexedDB, REST, and custom async storage hydrate before the UI settles.
+
+---
+
 ## [4.1.1] - 2026-05-11
 
 ### Documentation
@@ -61,9 +77,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Compatibility Storybook Group**: Deprecated v3 UI wrappers now live under `Compatibility/*` stories so new examples point to the v4 widget/list/modal API
 
 ### Deprecated
-- `useBuiltInUI` is now a no-op and will be removed in 4.2
-- `BadgesButton`, `BadgesModal`, `BadgesButtonWithModal`, and `ConfettiWrapper` remain as compatibility wrappers and will be removed in 4.2
-- `useSimpleAchievements().unlocked` and `useSimpleAchievements().all` remain as v3 aliases and will be removed in 4.2
+- `useBuiltInUI` is now a no-op and will be removed in 5.0
+- `BadgesButton`, `BadgesModal`, `BadgesButtonWithModal`, and `ConfettiWrapper` remain as compatibility wrappers and will be removed in 5.0
+- `useSimpleAchievements().unlocked` and `useSimpleAchievements().all` remain as v3 aliases and will be removed in 5.0
 
 ### Removed
 - Legacy dynamic detection for `react-toastify`, `react-modal`, `react-confetti`, and `react-use`

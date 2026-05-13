@@ -1,8 +1,9 @@
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import { 
   AchievementProvider, 
   useAchievements,
+  useAchievementState,
   AchievementConfiguration 
 } from '../index';
 import '@testing-library/jest-dom';
@@ -30,6 +31,34 @@ class MockStorage {
   }
   
   clear() {
+    this.metrics = {};
+    this.unlocked = [];
+  }
+}
+
+class MockAsyncStorage {
+  constructor(
+    private metrics: Record<string, any> = {},
+    private unlocked: string[] = []
+  ) {}
+
+  async getMetrics() {
+    return this.metrics;
+  }
+
+  async setMetrics(metrics: Record<string, any>) {
+    this.metrics = { ...metrics };
+  }
+
+  async getUnlockedAchievements() {
+    return [...this.unlocked];
+  }
+
+  async setUnlockedAchievements(achievements: string[]) {
+    this.unlocked = [...achievements];
+  }
+
+  async clear() {
     this.metrics = {};
     this.unlocked = [];
   }
@@ -81,6 +110,18 @@ describe('Achievement State Management', () => {
         <button onClick={() => update({ score: 100, kills: 5 })}>Update State</button>
         <button onClick={reset}>Reset State</button>
         <div data-testid="state-display"></div>
+      </div>
+    );
+  };
+
+  const SnapshotDisplay = () => {
+    const { metrics, unlockedIds, unlockedCount } = useAchievementState();
+
+    return (
+      <div>
+        <div data-testid="snapshot-metrics">{JSON.stringify(metrics)}</div>
+        <div data-testid="snapshot-unlocked">{unlockedIds.join(',')}</div>
+        <div data-testid="snapshot-count">{unlockedCount}</div>
       </div>
     );
   };
@@ -195,4 +236,24 @@ describe('Achievement State Management', () => {
     expect(checkUnlockedContains('score_100')).toBe(true);
     expect(checkUnlockedContains('kills_5')).toBe(true);
   });
-}); 
+
+  it('should hydrate provider state from async storage readiness', async () => {
+    const asyncStorage = new MockAsyncStorage({ score: [100] }, ['score_100']);
+
+    render(
+      <AchievementProvider
+        achievements={achievementConfig}
+        storage={asyncStorage}
+      >
+        <SnapshotDisplay />
+      </AchievementProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('snapshot-count')).toHaveTextContent('1');
+    });
+
+    expect(screen.getByTestId('snapshot-metrics')).toHaveTextContent('{"score":[100]}');
+    expect(screen.getByTestId('snapshot-unlocked')).toHaveTextContent('score_100');
+  });
+});

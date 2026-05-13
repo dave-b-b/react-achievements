@@ -63,6 +63,8 @@ export type {
   ExportedData,
   AwardDetails,
   AchievementEngineApi,
+  AchievementSnapshot,
+  AchievementUpdateResult,
   EngineConfig,
   EngineEvent,
   AchievementUnlockedEvent,

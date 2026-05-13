@@ -1,6 +1,6 @@
 {
   "name": "react-achievements",
-  "version": "4.1.1",
+  "version": "4.2.0",
   "description": "Drop-in achievement and gamification system for React applications",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
@@ -38,11 +38,10 @@
     "ship": "gh workflow run release.yml"
   },
   "peerDependencies": {
-    "react": ">=16.8.0",
-    "achievements-engine": "^1.1.2"
+    "achievements-engine": "^1.2.0",
+    "react": ">=16.8.0"
   },
   "devDependencies": {
-    "achievements-engine": "^1.1.2",
     "@babel/core": "^7.22.5",
     "@babel/preset-env": "^7.22.5",
     "@babel/preset-react": "^7.22.5",
@@ -67,6 +66,7 @@
     "@types/react": "^18.2.12",
     "@typescript-eslint/eslint-plugin": "^8.50.0",
     "@typescript-eslint/parser": "^8.50.0",
+    "achievements-engine": "^1.2.0",
     "eslint": "^9.39.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
