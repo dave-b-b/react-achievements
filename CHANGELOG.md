@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Unlock Toast Dismissal**: Prevented built-in achievement notification timers from restarting when provider rerenders change callback identity.
 
 ### Documentation
+- **Demo Media**: Updated README and documentation preview media to use the v4.3 LearnQuest demo video and generated GIF.
 - **Migration Guide**: Clarified that v4 built-in achievement UI does not import `react-modal`.
 - **Legacy Badge Examples**: Updated deprecated badge modal examples to pass achievement detail objects instead of the deprecated `unlocked` ID alias.
 
