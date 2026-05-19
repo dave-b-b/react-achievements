@@ -15,6 +15,7 @@ export type {
   AchievementStorage,
   AsyncAchievementStorage,
   AnyAchievementStorage,
+  AchievementConfetti,
   AchievementContextValue,
 } from './core/types';
 

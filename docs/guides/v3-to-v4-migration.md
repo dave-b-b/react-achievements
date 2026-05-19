@@ -25,6 +25,8 @@ Remove the old optional UI peer dependencies unless your app uses them directly:
 
 The v4 built-in widget and modal are implemented inside `react-achievements`; they do not import `react-modal`.
 
+Built-in confetti is also handled by `react-achievements` through `canvas-confetti`. You can disable it with `ui.enableConfetti: false`, tune the global defaults with `ui.confetti`, or add optional per-reward `confetti` settings. Existing v4 achievement configs that omit `confetti` do not require migration.
+
 ### Use AchievementsWidget
 
 ```tsx

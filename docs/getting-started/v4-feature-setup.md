@@ -45,6 +45,55 @@ Built-in unlock notifications auto-dismiss after 5 seconds by default. Set `ui.n
 </AchievementProvider>
 ```
 
+Tune the built-in `canvas-confetti` celebration through `ui.confetti`:
+
+```tsx
+<AchievementProvider
+  achievements={achievements}
+  ui={{
+    confetti: {
+      colors: ['#22d3ee', '#f97316', '#facc15'],
+      particleCount: 120,
+      spread: 80,
+    },
+  }}
+>
+  <YourApp />
+</AchievementProvider>
+```
+
+Add optional per-reward confetti when one achievement should feel bigger or quieter than the global default. Rewards without `confetti` keep using `ui.confetti` and the selected theme.
+
+```tsx
+const achievements = {
+  score: {
+    100: {
+      title: 'Century!',
+      description: 'Score 100 points',
+    },
+    1000: {
+      title: 'Boss Finale!',
+      description: 'Score 1,000 points',
+      confetti: {
+        colors: ['#facc15', '#f97316', '#ef4444'],
+        particleCount: 240,
+        spread: 100,
+        startVelocity: 60,
+        scalar: 1.4,
+      },
+    },
+  },
+  tutorial: {
+    true: {
+      title: 'Tutorial Complete',
+      confetti: false,
+    },
+  },
+};
+```
+
+`confetti: false` disables confetti only for that reward. `ui.enableConfetti: false` still disables confetti for every reward.
+
 ## 2. Direct Tracking
 
 Use `useSimpleAchievements` for most React apps.
@@ -176,6 +225,8 @@ Replace built-in notification, modal, or confetti components through `ui`.
 Custom `NotificationComponent` implementations receive `duration` and `stackIndex` so they can preserve the same auto-dismiss and stacking behavior as the built-in notifications.
 
 Custom `ModalComponent` implementations receive `hideScrollbar`, `density`, and `backdropBlur` in addition to the base modal props. Honor those props when you want `AchievementsWidget` and `AchievementsModal` controls to work with a provider-level custom modal.
+
+Custom `ConfettiComponent` implementations receive `show` plus the resolved confetti settings for the unlocked reward.
 
 For custom inline rows, use `AchievementsList.renderAchievement`.
 

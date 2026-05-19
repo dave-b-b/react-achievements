@@ -89,7 +89,7 @@ describe('Theme System', () => {
       expect(theme.notification.textColor).toBe('#22d3ee');
       expect(theme.notification.accentColor).toBe('#f97316');
       expect(theme.modal.achievementLayout).toBe('badge');
-      expect(theme.confetti.particleCount).toBe(100);
+      expect(theme.confetti.particleCount).toBe(120);
     });
 
     it('should have valid color arrays for confetti', () => {

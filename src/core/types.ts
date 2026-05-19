@@ -14,11 +14,14 @@ export interface AchievementDetails {
     achievementTitle: string;
     achievementDescription: string;
     achievementIconKey?: string;
+    confetti?: AchievementConfetti;
 }
 
 export interface AchievementWithStatus extends AchievementDetails {
     isUnlocked: boolean;
 }
+
+export type AchievementConfetti = false | import('./ui/interfaces').ConfettiOptions;
 
 export type AchievementUIDensity = 'comfortable' | 'compact';
 export type AchievementUIBackdropBlur = number | string;
@@ -37,6 +40,7 @@ export interface SimpleAchievementDetails {
     title: string;
     description?: string;
     icon?: string;
+    confetti?: AchievementConfetti;
 }
 
 export interface CustomAchievementDetails extends SimpleAchievementDetails {
@@ -162,6 +166,8 @@ export type {
     ModalComponent,
     ConfettiProps,
     ConfettiComponent,
+    ConfettiOptions,
+    ConfettiShape,
     NotificationPosition,
     ThemeConfig,
     UIConfig,

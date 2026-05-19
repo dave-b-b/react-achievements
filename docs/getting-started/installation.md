@@ -19,6 +19,8 @@ npm install react-achievements
 
 React Achievements v4 only requires `react` and `achievements-engine`. The previous optional UI peer dependencies are no longer needed because built-in UI is the default.
 
+Built-in confetti is powered by `canvas-confetti`, which is installed as a package dependency of `react-achievements`; you do not need to install `react-confetti` or `react-canvas-confetti`.
+
 ## Verify Installation
 
 ```tsx title="App.tsx"

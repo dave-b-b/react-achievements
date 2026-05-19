@@ -1,6 +1,6 @@
 {
   "name": "react-achievements",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "description": "Drop-in achievement and gamification system for React applications",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
@@ -62,6 +62,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
+    "@types/canvas-confetti": "^1.9.0",
     "@types/jest": "^29.5.2",
     "@types/react": "^18.2.12",
     "@typescript-eslint/eslint-plugin": "^8.50.0",
@@ -109,5 +110,8 @@
   "bugs": {
     "url": "https://github.com/dave-b-b/react-achievements/issues"
   },
-  "homepage": "https://dave-b-b.github.io/react-achievements/"
+  "homepage": "https://dave-b-b.github.io/react-achievements/",
+  "dependencies": {
+    "canvas-confetti": "^1.9.4"
+  }
 }

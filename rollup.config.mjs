@@ -10,7 +10,7 @@ const entries = [
   { name: 'headless', input: 'src/headless.ts' },
 ];
 
-const external = ['react', 'achievements-engine'];
+const external = ['react', 'achievements-engine', 'canvas-confetti'];
 
 const jsBuilds = entries.map(({ name, input }) => ({
   input,
