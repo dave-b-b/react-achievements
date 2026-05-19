@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+---
+
+## [4.4.0] - 2026-05-19
+
+### Added
+- **Confetti Customization**: Added `ui.confetti` options for tuning built-in confetti colors, particle count, shapes, spread, velocity, gravity, scale, duration, and z-index.
+- **Per-Reward Confetti**: Added optional reward-level `confetti` settings, including `confetti: false`, so individual achievements can override or skip the global celebration.
+
+### Changed
+- **Built-In Confetti**: Replaced the CSS particle animation with `canvas-confetti` while preserving `enableConfetti`, `ConfettiComponent`, and `BuiltInConfetti` APIs.
+- **Compatibility**: Existing 4.3.0 achievement configs continue to work without adding confetti settings.
+
+---
+
 ## [4.3.0] - 2026-05-13
 
 ### Added

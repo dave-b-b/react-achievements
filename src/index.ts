@@ -18,6 +18,7 @@ export type {
     AchievementStorage,
     AsyncAchievementStorage,
     AnyAchievementStorage,
+    AchievementConfetti,
     AchievementContextValue, // @deprecated - use AchievementContextType instead
     StylesProps,
 } from './core/types';
@@ -136,6 +137,8 @@ export type {
     ModalProps,
     ConfettiComponent,
     ConfettiProps,
+    ConfettiOptions,
+    ConfettiShape,
     NotificationPosition,
     ThemeConfig,
     UIConfig,

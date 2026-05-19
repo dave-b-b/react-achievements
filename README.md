@@ -127,6 +127,12 @@ Provider-level icons and UI options are shared across notifications, widgets, mo
   ui={{
     theme: 'minimal',
     notificationDuration: 8000,
+    enableConfetti: true,
+    confetti: {
+      colors: ['#22d3ee', '#f97316', '#facc15'],
+      particleCount: 120,
+      spread: 80,
+    },
     NotificationComponent: MyNotification,
     ModalComponent: MyAchievementsModal,
     ConfettiComponent: MyConfetti,
@@ -134,6 +140,33 @@ Provider-level icons and UI options are shared across notifications, widgets, mo
 >
   <App />
 </AchievementProvider>
+```
+
+Set `ui.enableConfetti` to `false` to disable the built-in celebration. Omit `ConfettiComponent` when you only want to tune the default `canvas-confetti` animation through `ui.confetti`.
+
+Rewards can optionally override the global confetti settings. Omit `confetti` to use the provider defaults, or set `confetti: false` for quieter rewards:
+
+```tsx
+const achievements = {
+  score: {
+    100: {
+      title: 'Century!',
+      description: 'Score 100 points',
+      icon: '🏆',
+    },
+    1000: {
+      title: 'Boss Finale!',
+      description: 'Score 1,000 points',
+      icon: '👑',
+      confetti: {
+        particleCount: 240,
+        spread: 100,
+        startVelocity: 60,
+        scalar: 1.4,
+      },
+    },
+  },
+};
 ```
 
 ## Hooks

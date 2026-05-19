@@ -4,6 +4,16 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
 
+jest.mock('canvas-confetti', () => {
+  const mockConfetti = jest.fn(() => Promise.resolve(undefined));
+  return {
+    __esModule: true,
+    default: Object.assign(mockConfetti, {
+      reset: jest.fn(),
+    }),
+  };
+});
+
 /**
  * Suppress known React act() warnings from component-internal async operations.
  * 
@@ -84,4 +94,4 @@ const localStorageMock = {
   length: 0,
   key: jest.fn(),
 };
-Object.defineProperty(window, 'localStorage', { value: localStorageMock }); 
+Object.defineProperty(window, 'localStorage', { value: localStorageMock });

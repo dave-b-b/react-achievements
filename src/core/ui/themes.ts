@@ -32,7 +32,7 @@ export const builtInThemes: Record<string, ThemeConfig> = {
     },
     confetti: {
       colors: ['#FFD700', '#4CAF50', '#2196F3', '#FF6B6B'],
-      particleCount: 50,
+      particleCount: 80,
       shapes: ['circle', 'square'],
     },
   },
@@ -65,7 +65,7 @@ export const builtInThemes: Record<string, ThemeConfig> = {
     },
     confetti: {
       colors: ['#4CAF50', '#2196F3'],
-      particleCount: 30,
+      particleCount: 40,
       shapes: ['circle'],
     },
   },
@@ -101,7 +101,7 @@ export const builtInThemes: Record<string, ThemeConfig> = {
     },
     confetti: {
       colors: ['#22d3ee', '#f97316', '#a855f7', '#eab308'], // Cyan, orange, purple, yellow
-      particleCount: 100,
+      particleCount: 120,
       shapes: ['circle', 'square'],
     },
   },

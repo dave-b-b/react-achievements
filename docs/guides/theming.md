@@ -44,6 +44,63 @@ Built-in themes:
 </AchievementProvider>
 ```
 
+## Customize Built-In Confetti
+
+Built-in confetti uses `canvas-confetti`, respects reduced-motion preferences, and can be tuned without replacing the component.
+
+```tsx
+<AchievementProvider
+  achievements={achievements}
+  ui={{
+    confetti: {
+      colors: ['#22d3ee', '#f97316', '#facc15'],
+      particleCount: 120,
+      shapes: ['square', 'circle', 'star'],
+      spread: 80,
+      startVelocity: 45,
+      gravity: 0.9,
+      scalar: 1.1,
+    },
+  }}
+>
+  <App />
+</AchievementProvider>
+```
+
+## Per-Reward Confetti
+
+Rewards inherit the provider confetti settings by default. Add `confetti` only when a reward should celebrate differently, or set `confetti: false` to disable confetti for that reward.
+
+```tsx
+const achievements = {
+  score: {
+    100: {
+      title: 'Century!',
+      description: 'Score 100 points',
+      icon: '🏆',
+    },
+    1000: {
+      title: 'Boss Finale!',
+      description: 'Score 1,000 points',
+      icon: '👑',
+      confetti: {
+        colors: ['#facc15', '#f97316', '#ef4444'],
+        particleCount: 240,
+        spread: 100,
+        startVelocity: 60,
+        scalar: 1.4,
+      },
+    },
+    25: {
+      title: 'Quiet Milestone',
+      confetti: false,
+    },
+  },
+};
+```
+
+Reward settings override matching `ui.confetti` values and inherit anything they omit. Existing configs that do not include `confetti` continue to use the global/theme defaults.
+
 ## Notification Stacking
 
 Built-in unlock notifications auto-dismiss after 5 seconds by default. Use `ui.notificationDuration` to set a different duration in milliseconds. If one update unlocks several achievements, notifications stack in the configured `notificationPosition`.
@@ -72,6 +129,7 @@ Custom `NotificationComponent` implementations receive `duration` and `stackInde
 ```
 
 `ModalComponent` is used by `AchievementsWidget` and `AchievementsModal`. It receives `isOpen`, `onClose`, `achievements`, `icons`, `theme`, `hideScrollbar`, `density`, and `backdropBlur`.
+`ConfettiComponent` receives `show` plus the resolved confetti settings for the unlocked reward.
 
 ## Provider Icons
 

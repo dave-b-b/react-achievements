@@ -43,15 +43,30 @@ export interface ModalProps {
 
 export type ModalComponent = React.FC<ModalProps>;
 
+export type ConfettiShape = 'square' | 'circle' | 'star';
+
+export interface ConfettiOptions {
+  /**
+   * Duration in milliseconds before the built-in confetti marker is removed.
+   * Custom confetti components receive this value through `duration`.
+   */
+  duration?: number;
+  particleCount?: number;
+  colors?: string[];
+  shapes?: ConfettiShape[];
+  spread?: number;
+  startVelocity?: number;
+  gravity?: number;
+  scalar?: number;
+  zIndex?: number;
+}
+
 /**
  * Confetti component interface
  * Displays celebration animation
  */
-export interface ConfettiProps {
+export interface ConfettiProps extends ConfettiOptions {
   show: boolean;
-  duration?: number;
-  particleCount?: number;
-  colors?: string[];
 }
 
 export type ConfettiComponent = React.FC<ConfettiProps>;
@@ -95,10 +110,9 @@ export interface ThemeConfig {
     achievementCardBorderRadius?: string; // Optional: for square/badge-like achievement cards
     achievementLayout?: 'horizontal' | 'badge'; // Optional: layout style for achievement cards
   };
-  confetti: {
+  confetti: ConfettiOptions & {
     colors: string[];
     particleCount: number;
-    shapes?: ('circle' | 'square')[];
   };
 }
 
@@ -155,4 +169,10 @@ export interface UIConfig {
    * @default true
    */
   enableConfetti?: boolean;
+
+  /**
+   * Built-in confetti configuration. Ignored when `enableConfetti` is false.
+   * Custom confetti components receive these values as props.
+   */
+  confetti?: ConfettiOptions;
 }

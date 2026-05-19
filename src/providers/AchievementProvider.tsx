@@ -1,18 +1,18 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 import { AchievementEngine, AchievementError } from 'achievements-engine';
 import type {
-  AchievementConfigurationType,
   AchievementStorage,
   AsyncAchievementStorage,
   StorageType,
   AchievementSnapshot,
-  AchievementWithStatus,
   EventMapping,
   ImportOptions,
   ImportResult,
   StateChangedEvent,
   RestApiStorageConfig,
+  AchievementConfigurationType as EngineAchievementConfigurationType,
 } from 'achievements-engine';
+import type { AchievementConfigurationType, AchievementWithStatus } from '../core/types';
 import { warnDeprecation } from '../core/utils/deprecation';
 
 export interface AchievementContextType {
@@ -107,7 +107,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     }
 
     return new AchievementEngine({
-      achievements: achievementsConfig,
+      achievements: achievementsConfig as EngineAchievementConfigurationType,
       storage: storage as any,
       restApiConfig,
       onError: onError as ((error: Error) => void) | undefined,

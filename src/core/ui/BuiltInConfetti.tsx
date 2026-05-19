@@ -1,87 +1,111 @@
 import React, { useEffect, useState } from 'react';
+import confetti from 'canvas-confetti';
 import { ConfettiProps } from './interfaces';
-import { useWindowSize } from '../hooks/useWindowSize';
+
+const DEFAULT_COLORS = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'];
+const DEFAULT_DURATION_MS = 5000;
+const DEFAULT_PARTICLE_COUNT = 80;
+const DEFAULT_SHAPES: NonNullable<ConfettiProps['shapes']> = ['square', 'circle'];
+const DEFAULT_SPREAD = 70;
+const DEFAULT_START_VELOCITY = 45;
+const DEFAULT_GRAVITY = 1;
+const DEFAULT_SCALAR = 1;
+const DEFAULT_Z_INDEX = 10001;
+
+const getSafeParticleCount = (count: number): number => Math.max(0, Math.floor(count));
 
 /**
  * Built-in confetti component
- * Lightweight CSS-based confetti animation
+ * Canvas-based confetti animation powered by canvas-confetti.
  */
 export const BuiltInConfetti: React.FC<ConfettiProps> = ({
   show,
-  duration = 5000,
-  particleCount = 50,
-  colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7'],
+  duration = DEFAULT_DURATION_MS,
+  particleCount = DEFAULT_PARTICLE_COUNT,
+  colors = DEFAULT_COLORS,
+  shapes = DEFAULT_SHAPES,
+  spread = DEFAULT_SPREAD,
+  startVelocity = DEFAULT_START_VELOCITY,
+  gravity = DEFAULT_GRAVITY,
+  scalar = DEFAULT_SCALAR,
+  zIndex = DEFAULT_Z_INDEX,
 }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const { width, height } = useWindowSize();
 
   useEffect(() => {
-    if (show) {
-      setIsVisible(true);
-      const timer = setTimeout(() => setIsVisible(false), duration);
-      return () => clearTimeout(timer);
-    } else {
+    if (!show) {
       setIsVisible(false);
+      confetti.reset();
+      return;
     }
-  }, [show, duration]);
+
+    setIsVisible(true);
+
+    const totalParticles = getSafeParticleCount(particleCount);
+    const resolvedColors = colors.length > 0 ? colors : DEFAULT_COLORS;
+    const resolvedShapes = shapes.length > 0 ? shapes : DEFAULT_SHAPES;
+    const baseOptions = {
+      colors: resolvedColors,
+      shapes: resolvedShapes,
+      spread,
+      startVelocity,
+      gravity,
+      scalar,
+      zIndex,
+      disableForReducedMotion: true,
+    };
+
+    if (totalParticles > 0) {
+      const centerParticles = Math.ceil(totalParticles * 0.5);
+      const leftParticles = Math.floor((totalParticles - centerParticles) / 2);
+      const rightParticles = totalParticles - centerParticles - leftParticles;
+
+      confetti({
+        ...baseOptions,
+        particleCount: centerParticles,
+        origin: { x: 0.5, y: 0.58 },
+      });
+
+      confetti({
+        ...baseOptions,
+        particleCount: leftParticles,
+        angle: 60,
+        spread: Math.max(45, spread * 0.8),
+        origin: { x: 0, y: 0.72 },
+      });
+
+      confetti({
+        ...baseOptions,
+        particleCount: rightParticles,
+        angle: 120,
+        spread: Math.max(45, spread * 0.8),
+        origin: { x: 1, y: 0.72 },
+      });
+    }
+
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+      confetti.reset();
+    }, duration);
+
+    return () => {
+      clearTimeout(timer);
+      confetti.reset();
+    };
+  }, [
+    show,
+    duration,
+    particleCount,
+    colors,
+    shapes,
+    spread,
+    startVelocity,
+    gravity,
+    scalar,
+    zIndex,
+  ]);
 
   if (!isVisible) return null;
 
-  const containerStyles: React.CSSProperties = {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    pointerEvents: 'none',
-    zIndex: 10001,
-    overflow: 'hidden',
-  };
-
-  // Generate particles
-  const particles = Array.from({ length: particleCount }, (_, i) => {
-    const color = colors[Math.floor(Math.random() * colors.length)];
-    const startX = Math.random() * width;
-    const rotation = Math.random() * 360;
-    const fallDuration = 3 + Math.random() * 2; // 3-5 seconds
-    const delay = Math.random() * 0.5; // 0-0.5s delay
-    const shape = Math.random() > 0.5 ? 'circle' : 'square';
-
-    const particleStyles: React.CSSProperties = {
-      position: 'absolute',
-      top: '-20px',
-      left: `${startX}px`,
-      width: '10px',
-      height: '10px',
-      backgroundColor: color,
-      borderRadius: shape === 'circle' ? '50%' : '0',
-      transform: `rotate(${rotation}deg)`,
-      animation: `confettiFall ${fallDuration}s linear ${delay}s forwards`,
-      opacity: 0.9,
-    };
-
-    return <div key={i} style={particleStyles} data-testid="confetti-particle" />;
-  });
-
-  return (
-    <>
-      <style>
-        {`
-          @keyframes confettiFall {
-            0% {
-              transform: translateY(0) rotate(0deg);
-              opacity: 1;
-            }
-            100% {
-              transform: translateY(${height + 50}px) rotate(720deg);
-              opacity: 0;
-            }
-          }
-        `}
-      </style>
-      <div style={containerStyles} data-testid="built-in-confetti">
-        {particles}
-      </div>
-    </>
-  );
+  return <div data-testid="built-in-confetti" style={{ display: 'none' }} />;
 };
