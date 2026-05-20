@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [4.4.1] - 2026-05-19
+
+### Fixed
+- **GitHub Demo Preview**: Replaced the README demo media link with a generated GIF so the demo renders directly on GitHub.
+
+### Documentation
+- **Demo Media**: Updated README and Docusaurus homepage demo media to use the v4.4 LearnQuest GIF.
+- **LearnQuest Storybook**: Updated the story to use the 4.3+ provider configuration path and show an over-the-top quiz finale confetti override.
+
+---
+
 ## [4.4.0] - 2026-05-19
 
 ### Added

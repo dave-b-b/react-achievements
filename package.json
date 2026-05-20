@@ -1,6 +1,6 @@
 {
   "name": "react-achievements",
-  "version": "4.4.0",
+  "version": "4.4.1",
   "description": "Drop-in achievement and gamification system for React applications",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",

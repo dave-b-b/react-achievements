@@ -9,7 +9,7 @@ import Heading from '@theme/Heading';
 import styles from './index.module.css';
 
 function HomepageHeader() {
-  const heroImage = useBaseUrl('/img/demo-v4-3.gif');
+  const heroImage = useBaseUrl('/img/demo-v4-4.gif');
 
   return (
     <header className={styles.heroBanner}>
@@ -54,7 +54,7 @@ function HomepageHeader() {
           <img
             className={styles.heroImage}
             src={heroImage}
-            alt="React Achievements 4.3 compact badge modal in a LearnQuest demo app"
+            alt="React Achievements 4.4 compact badge modal and configurable confetti in a LearnQuest demo app"
           />
         </figure>
       </div>

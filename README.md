@@ -7,13 +7,11 @@
 [![npm version](https://img.shields.io/npm/v/react-achievements.svg)](https://www.npmjs.com/package/react-achievements) [![License](https://img.shields.io/badge/license-Dual%20(MIT%20%2B%20Commercial)-blue.svg)](./LICENSE) [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 
 <p align="center">
-  <a href="https://github.com/dave-b-b/react-achievements/raw/main/assets/Demo-v4-3.mov">
-    <img
-      src="https://raw.githubusercontent.com/dave-b-b/react-achievements/main/assets/demo-v4-3.gif"
-      alt="React Achievements 4.3 demo showing achievement progress, unlock notifications, and a compact LearnQuest achievements modal"
-      width="900"
-    />
-  </a>
+  <img
+    src="https://raw.githubusercontent.com/dave-b-b/react-achievements/main/assets/demo-v4-4.gif"
+    alt="React Achievements 4.4 demo showing achievement progress, unlock notifications, configurable confetti, and a compact LearnQuest achievements modal"
+    width="900"
+  />
 </p>
 
 ## Installation

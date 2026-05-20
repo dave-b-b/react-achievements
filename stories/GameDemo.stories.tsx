@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { AchievementProvider, AchievementEngine, StorageType, AchievementsModal, useAchievementEngine } from '../src/index';
+import { AchievementProvider, StorageType, AchievementsModal, useAchievementEngine } from '../src/index';
 import type {
   AchievementsListRenderItemProps,
   AchievementUIBackdropBlur,
@@ -99,7 +99,21 @@ const achievementConfig: SimpleAchievementConfig = {
   },
   // Perfect quiz achievement
   perfectQuizzes: {
-    1: { title: "Perfectionist", description: "100% on a quiz", icon: "💯" }
+    1: {
+      title: "Perfectionist",
+      description: "100% on a quiz",
+      icon: "💯",
+      confetti: {
+        colors: ['#facc15', '#f97316', '#ef4444', '#22d3ee', '#a855f7', '#ffffff'],
+        duration: 8000,
+        particleCount: 520,
+        shapes: ['star', 'circle', 'square'],
+        spread: 140,
+        startVelocity: 78,
+        gravity: 0.72,
+        scalar: 1.85,
+      },
+    }
   },
   // Notes achievement
   notes: {
@@ -164,12 +178,6 @@ const eventMapping: EventMapping = {
     profileDone: true
   })
 };
-
-const createLearnQuestEngine = () => new AchievementEngine({
-  achievements: achievementConfig,
-  eventMapping,
-  storage: StorageType.Memory, // Use Memory for storybook demo
-});
 
 const learnQuestModalStyles: StylesProps['badgesModal'] = {
   overlay: {
@@ -731,9 +739,23 @@ const LearnQuestApp = ({
 type Story = StoryObj<typeof meta>;
 
 const LearnQuestStoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [engine] = useState(() => createLearnQuestEngine());
-
-  return <AchievementProvider engine={engine}>{children}</AchievementProvider>;
+  return (
+    <AchievementProvider
+      achievements={achievementConfig}
+      eventMapping={eventMapping}
+      storage={StorageType.Memory}
+      ui={{
+        theme: 'gamified',
+        confetti: {
+          colors: ['#22d3ee', '#f97316', '#a855f7', '#eab308'],
+          particleCount: 100,
+          spread: 80,
+        },
+      }}
+    >
+      {children}
+    </AchievementProvider>
+  );
 };
 
 export const LearnQuestGame: Story = {
