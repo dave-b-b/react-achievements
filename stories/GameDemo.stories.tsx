@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { AchievementProvider, StorageType, AchievementsModal, useAchievementEngine } from '../src/index';
+import {
+  AchievementProvider,
+  AchievementsModal,
+  useAchievementState,
+  useSimpleAchievements,
+} from '../src/index';
 import type {
   AchievementsListRenderItemProps,
   AchievementUIBackdropBlur,
   AchievementUIDensity,
-  EventMapping,
   SimpleAchievementConfig,
   StylesProps,
 } from '../src/index';
+import { createMockAchievementClient } from './mocks/achievementClient';
 
 /**
  * LearnQuest Game Demo
@@ -142,37 +147,48 @@ const achievementConfig: SimpleAchievementConfig = {
   }
 };
 
-// Event mapping (same structure as game/src/achievementConfig.js)
-const eventMapping: EventMapping = {
-  'lessonCompleted': (data, currentMetrics) => {
-    const completedLessons = currentMetrics.completedLessons || [];
-    const updatedLessons = [...completedLessons, data.lessonId];
+type GameMetrics = Record<string, unknown>;
+type GameEventPayload = Record<string, string>;
+
+const readStringArrayMetric = (metrics: GameMetrics, key: string): string[] => (
+  Array.isArray(metrics[key]) ? metrics[key] as string[] : []
+);
+
+const readNumberMetric = (metrics: GameMetrics, key: string): number => (
+  typeof metrics[key] === 'number' ? metrics[key] as number : 0
+);
+
+// Event mapping mirrors what a server powered by achievements-engine would do.
+const eventMapping = {
+  'lessonCompleted': (data: unknown, currentMetrics: GameMetrics) => {
+    const completedLessons = readStringArrayMetric(currentMetrics, 'completedLessons');
+    const updatedLessons = [...completedLessons, (data as GameEventPayload).lessonId];
     return {
       completedLessons: updatedLessons,
       lessons: updatedLessons.length
     };
   },
-  'courseCompleted': (data, currentMetrics) => {
-    const completedCourses = currentMetrics.completedCourses || [];
-    const updatedCourses = [...completedCourses, data.courseId];
+  'courseCompleted': (data: unknown, currentMetrics: GameMetrics) => {
+    const completedCourses = readStringArrayMetric(currentMetrics, 'completedCourses');
+    const updatedCourses = [...completedCourses, (data as GameEventPayload).courseId];
     return {
       completedCourses: updatedCourses,
       courses: updatedCourses.length
     };
   },
-  'topicStudied': (data, currentMetrics) => {
-    const studiedTopics = currentMetrics.studiedTopics || [];
-    const updatedTopics = [...studiedTopics, data.topic];
+  'topicStudied': (data: unknown, currentMetrics: GameMetrics) => {
+    const studiedTopics = readStringArrayMetric(currentMetrics, 'studiedTopics');
+    const updatedTopics = [...studiedTopics, (data as GameEventPayload).topic];
     return {
       studiedTopics: updatedTopics,
       topics: updatedTopics.length
     };
   },
-  'perfectQuiz': (data, currentMetrics) => ({
-    perfectQuizzes: (currentMetrics.perfectQuizzes || 0) + 1
+  'perfectQuiz': (_data: unknown, currentMetrics: GameMetrics) => ({
+    perfectQuizzes: readNumberMetric(currentMetrics, 'perfectQuizzes') + 1
   }),
-  'noteAdded': (data, currentMetrics) => ({
-    notes: (currentMetrics.notes || 0) + 1
+  'noteAdded': (_data: unknown, currentMetrics: GameMetrics) => ({
+    notes: readNumberMetric(currentMetrics, 'notes') + 1
   }),
   'profileCompleted': () => ({
     profileDone: true
@@ -436,8 +452,8 @@ const LearnQuestApp = ({
   achievementBackdropBlur = 2,
   achievementDensity = 'compact',
 }: LearnQuestAppProps) => {
-  // Get engine from context using hook
-  const engine = useAchievementEngine();
+  const { event } = useSimpleAchievements();
+  const { unlockedIds, allAchievements, unlockedCount, metrics } = useAchievementState();
 
   // UI state
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -448,16 +464,10 @@ const LearnQuestApp = ({
   const [quiz, setQuiz] = useState<{ i: number; ans: number | null; score: number | null }>({ i: 0, ans: null, score: null });
   const [profile, setProfile] = useState({ name: '', goal: '' });
 
-  // Achievement data
-  const unlocked = engine.getUnlocked();
-  const allAchievements = engine.getAllAchievements();
-  const unlockedCount = unlocked.length;
-  const metrics = engine.getMetrics();
-
-  // Get completion data from engine metrics
-  const completedLessons = (metrics.completedLessons as string[]) || [];
-  const completedCourses = (metrics.completedCourses as string[]) || [];
-  const studiedTopics = (metrics.studiedTopics as string[]) || [];
+  // Get completion data from server snapshot metrics.
+  const completedLessons = readStringArrayMetric(metrics, 'completedLessons');
+  const completedCourses = readStringArrayMetric(metrics, 'completedCourses');
+  const studiedTopics = readStringArrayMetric(metrics, 'studiedTopics');
 
   const finishLesson = () => {
     if (!lesson) return;
@@ -467,12 +477,11 @@ const LearnQuestApp = ({
       return;
     }
 
-    // Emit lesson completed event with lesson ID
-    engine.emit('lessonCompleted', { lessonId: lesson.id });
+    event('lessonCompleted', { lessonId: lesson.id });
 
     // Check if this is a new topic
     if (course && !studiedTopics.includes(course.topic)) {
-      engine.emit('topicStudied', { topic: course.topic });
+      event('topicStudied', { topic: course.topic });
     }
 
     // Check if all lessons in course are done
@@ -481,7 +490,7 @@ const LearnQuestApp = ({
         completedLessons.includes(l.id) || l.id === lesson.id
       );
       if (allLessonsCompleted && !completedCourses.includes(course.id)) {
-        engine.emit('courseCompleted', { courseId: course.id });
+        event('courseCompleted', { courseId: course.id });
       }
     }
 
@@ -493,20 +502,20 @@ const LearnQuestApp = ({
     const correct = quiz.ans === course.quiz[0].c;
     setQuiz(q => ({ ...q, score: correct ? 100 : 0 }));
     if (correct) {
-      engine.emit('perfectQuiz');
+      event('perfectQuiz');
     }
   };
 
   const addNote = () => {
     const n = prompt('Enter note:');
     if (n?.trim()) {
-      engine.emit('noteAdded');
+      event('noteAdded');
     }
   };
 
   const saveProfile = () => {
     if (profile.name && profile.goal) {
-      engine.emit('profileCompleted');
+      event('profileCompleted');
       setPage('home');
     }
   };
@@ -717,7 +726,7 @@ const LearnQuestApp = ({
       <AchievementsDrawer
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
-        unlockedCount={unlockedCount}
+        unlockedCount={unlockedIds.length || unlockedCount}
         onViewAchievements={() => setModalOpen(true)}
       />
 
@@ -741,9 +750,10 @@ type Story = StoryObj<typeof meta>;
 const LearnQuestStoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <AchievementProvider
-      achievements={achievementConfig}
-      eventMapping={eventMapping}
-      storage={StorageType.Memory}
+      client={createMockAchievementClient({
+        achievements: achievementConfig,
+        eventMapping,
+      })}
       ui={{
         theme: 'gamified',
         confetti: {

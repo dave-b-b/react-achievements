@@ -1,34 +1,26 @@
 import React from 'react';
-import { Provider, useSelector, useDispatch } from 'react-redux';
-import { AchievementProvider, AchievementDetails, AchievementConfiguration, AchievementState, AchievementMetricArrayValue, AchievementStorage } from '../../../src';
-import { store, RootState, unlockAchievement, updateProgress, resetAchievements } from './store';
+import { Provider } from 'react-redux';
+import { AchievementProvider } from '../../../src';
+import type { SimpleAchievementConfig } from '../../../src';
+import { store } from './store';
+import { createMockAchievementClient } from '../../mocks/achievementClient';
 
 // Example achievement configuration
-const achievementConfig: AchievementConfiguration = {
-  score: [{
-    isConditionMet: (value: AchievementMetricArrayValue, _state: AchievementState): boolean => {
-      const numValue = Array.isArray(value) ? value[0] : value;
-      return typeof numValue === 'number' && numValue >= 100;
-    },
-    achievementDetails: {
-      achievementId: 'score_100',
-      achievementTitle: 'Century!',
-      achievementDescription: 'Score 100 points',
-      achievementIconKey: 'trophy'
+const achievementConfig: SimpleAchievementConfig = {
+  score: {
+    100: {
+      title: 'Century!',
+      description: 'Score 100 points',
+      icon: 'trophy'
     }
-  }],
-  login: [{
-    isConditionMet: (value: AchievementMetricArrayValue, _state: AchievementState): boolean => {
-      const boolValue = Array.isArray(value) ? value[0] : value;
-      return typeof boolValue === 'boolean' && boolValue === true;
-    },
-    achievementDetails: {
-      achievementId: 'first_login',
-      achievementTitle: 'First Login',
-      achievementDescription: 'You logged in for the first time',
-      achievementIconKey: 'login'
+  },
+  login: {
+    true: {
+      title: 'First Login',
+      description: 'You logged in for the first time',
+      icon: 'login'
     }
-  }]
+  }
 };
 
 // Custom icons
@@ -38,57 +30,8 @@ const icons = {
   default: '🎖️'
 };
 
-// Custom storage implementation that syncs with Redux
-class ReduxStorage implements AchievementStorage {
-  constructor(
-    private dispatch: ReturnType<typeof useDispatch>,
-    private getState: () => RootState
-  ) {}
-
-  getUnlockedAchievements(): string[] {
-    return this.getState().achievements.unlockedAchievements.map(a => a.achievementId);
-  }
-
-  getUnlockedAchievementDetails(): AchievementDetails[] {
-    return this.getState().achievements.unlockedAchievements;
-  }
-
-  setUnlockedAchievements(achievements: string[]): void {
-    achievements.forEach(id => {
-      // Find the full achievement details from the configuration
-      Object.entries(achievementConfig).forEach(([, categoryAchievements]) => {
-        categoryAchievements.forEach(a => {
-          if (a.achievementDetails.achievementId === id) {
-            this.dispatch(unlockAchievement(a.achievementDetails));
-          }
-        });
-      });
-    });
-  }
-
-  getMetrics(): Record<string, any> {
-    return this.getState().achievements.progress;
-  }
-
-  setMetrics(metrics: Record<string, any>): void {
-    Object.entries(metrics).forEach(([id, value]) => {
-      const numValue = Array.isArray(value) ? value[0] : value;
-      if (typeof numValue === 'number' || typeof numValue === 'boolean') {
-        this.dispatch(updateProgress({ 
-          id, 
-          progress: typeof numValue === 'boolean' ? (numValue ? 1 : 0) : numValue 
-        }));
-      }
-    });
-  }
-
-  clear(): void {
-    this.dispatch(resetAchievements());
-  }
-}
-
 /**
- * Example implementation of AchievementsProvider using Redux as the state management solution.
+ * Example implementation of AchievementsProvider in a Redux app.
  * This component wraps your application and provides the achievements context.
  */
 export const ReduxAchievementsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -103,22 +46,14 @@ export const ReduxAchievementsProvider: React.FC<{ children: React.ReactNode }> 
  * Internal wrapper component that connects Redux state to the AchievementsProvider
  */
 const ReduxAchievementsWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const dispatch = useDispatch();
-  // Subscribe to Redux state changes to force storage updates
-  useSelector((state: RootState) => ({
-    achievements: state.achievements.unlockedAchievements,
-    progress: state.achievements.progress
-  }));
-  
-  const storage = React.useMemo(() => new ReduxStorage(
-    dispatch,
-    store.getState
-  ), [dispatch]);
+  const client = React.useMemo(
+    () => createMockAchievementClient({ achievements: achievementConfig }),
+    []
+  );
 
   return (
     <AchievementProvider
-      achievements={achievementConfig}
-      storage={storage}
+      client={client}
       icons={icons}
     >
       {children}

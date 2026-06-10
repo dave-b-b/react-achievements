@@ -1,7 +1,7 @@
 {
   "name": "react-achievements",
-  "version": "4.4.1",
-  "description": "Drop-in achievement and gamification system for React applications",
+  "version": "5.0.0",
+  "description": "React UI and client hooks for server-backed achievements",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",

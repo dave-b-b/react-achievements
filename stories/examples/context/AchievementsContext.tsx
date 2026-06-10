@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
-import { AchievementDetails, AchievementProvider, AchievementConfiguration, AchievementMetricArrayValue, AchievementState, StorageType } from '../../../src/index';
+import { AchievementDetails, AchievementProvider } from '../../../src/index';
+import type { SimpleAchievementConfig } from '../../../src/index';
+import { createMockAchievementClient } from '../../mocks/achievementClient';
 
 /**
  * Example implementation using React Context API for managing achievements state
@@ -44,31 +46,21 @@ function achievementsReducer(state: AchievementsState, action: AchievementsActio
 }
 
 // Example achievement configuration
-const achievementConfig: AchievementConfiguration = {
-  score: [{
-    isConditionMet: (value: AchievementMetricArrayValue, _state: AchievementState) => {
-      const numValue = Array.isArray(value) ? value[0] : value;
-      return typeof numValue === 'number' && numValue >= 100;
-    },
-    achievementDetails: {
-      achievementId: 'score_100',
-      achievementTitle: 'Century!',
-      achievementDescription: 'Score 100 points',
-      achievementIconKey: 'trophy'
+const achievementConfig: SimpleAchievementConfig = {
+  score: {
+    100: {
+      title: 'Century!',
+      description: 'Score 100 points',
+      icon: 'trophy'
     }
-  }],
-  login: [{
-    isConditionMet: (value: AchievementMetricArrayValue, _state: AchievementState) => {
-      const boolValue = Array.isArray(value) ? value[0] : value;
-      return typeof boolValue === 'boolean' && boolValue === true;
-    },
-    achievementDetails: {
-      achievementId: 'first_login',
-      achievementTitle: 'First Login',
-      achievementDescription: 'You logged in for the first time',
-      achievementIconKey: 'login'
+  },
+  login: {
+    true: {
+      title: 'First Login',
+      description: 'You logged in for the first time',
+      icon: 'login'
     }
-  }]
+  }
 };
 
 // Custom icons
@@ -97,8 +89,7 @@ export const ContextAchievementsProvider: React.FC<{ children: ReactNode }> = ({
     <AchievementsStateContext.Provider value={state}>
       <AchievementsDispatchContext.Provider value={dispatch}>
         <AchievementProvider
-          achievements={achievementConfig}
-          storage={StorageType.Memory}
+          client={createMockAchievementClient({ achievements: achievementConfig })}
           icons={icons}
         >
           {children}

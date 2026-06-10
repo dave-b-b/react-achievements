@@ -7,11 +7,11 @@ import {
   BuiltInConfetti,
   BuiltInModal,
   BuiltInNotification,
-  StorageType,
   useSimpleAchievements,
 } from '../../src';
 // Theme system - built-in themes only (modern, minimal, gamified)
 import type { AchievementWithStatus, SimpleAchievementConfig } from '../../src';
+import { createMockAchievementClient } from '../mocks/achievementClient';
 
 const meta: Meta = {
   title: 'UI/Built-in Components',
@@ -265,8 +265,7 @@ const SimultaneousUnlockControls = () => {
 export const SimultaneousUnlockNotifications: StoryObj = {
   render: () => (
     <AchievementProvider
-      achievements={widgetAchievements}
-      storage={StorageType.Memory}
+      client={createMockAchievementClient({ achievements: widgetAchievements })}
       ui={{ theme: 'gamified', notificationPosition: 'top-right' }}
     >
       <div style={{ padding: '20px', minHeight: '100vh', background: '#f5f5f5' }}>
@@ -393,8 +392,7 @@ const AchievementsWidgetPlacementsComponent = () => {
 
   return (
     <AchievementProvider
-      achievements={widgetAchievements}
-      storage={StorageType.Memory}
+      client={createMockAchievementClient({ achievements: widgetAchievements })}
       ui={{ enableNotifications: false, enableConfetti: false }}
     >
       <div style={{ padding: '20px', minHeight: '100vh', background: '#f5f5f5' }}>

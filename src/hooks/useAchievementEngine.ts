@@ -21,5 +21,12 @@ export const useAchievementEngine = (): AchievementEngine => {
     );
   }
 
+  if (!context.engine) {
+    throw new Error(
+      'useAchievementEngine is only available when AchievementProvider is using the legacy in-browser engine. ' +
+        'For server-backed achievements, use useSimpleAchievements().event(), track(), or increment().'
+    );
+  }
+
   return context.engine;
 };

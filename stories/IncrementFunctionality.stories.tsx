@@ -4,10 +4,10 @@ import {
   AchievementProvider,
   AchievementsList,
   AchievementsWidget,
-  StorageType,
   useSimpleAchievements,
 } from '../src';
 import type { SimpleAchievementConfig } from '../src';
+import { createMockAchievementClient } from './mocks/achievementClient';
 
 /**
  * The increment functionality allows you to incrementally increase numeric metrics,
@@ -53,6 +53,22 @@ const incrementAchievements: SimpleAchievementConfig = {
   }
 };
 
+const basicIncrementAchievements: SimpleAchievementConfig = {
+  clicks: {
+    1: { title: 'First Click', icon: '👆' },
+    3: { title: 'Trilogy', icon: '🖱️' },
+    5: { title: 'High Five', icon: '✋' }
+  }
+};
+
+const getNumericMetric = (value: unknown): number => {
+  if (Array.isArray(value)) {
+    return typeof value[0] === 'number' ? value[0] : 0;
+  }
+
+  return typeof value === 'number' ? value : 0;
+};
+
 // Demo component showcasing increment functionality
 const IncrementDemo = () => {
   const { increment, unlockedIds, unlockedCount, reset, getState } = useSimpleAchievements();
@@ -62,9 +78,9 @@ const IncrementDemo = () => {
   React.useEffect(() => {
     const state = getState();
     setMetrics({
-      buttonClicks: Array.isArray(state.metrics.buttonClicks) ? (state.metrics.buttonClicks[0] as number) || 0 : 0,
-      score: Array.isArray(state.metrics.score) ? (state.metrics.score[0] as number) || 0 : 0,
-      coins: Array.isArray(state.metrics.coins) ? (state.metrics.coins[0] as number) || 0 : 0
+      buttonClicks: getNumericMetric(state.metrics.buttonClicks),
+      score: getNumericMetric(state.metrics.score),
+      coins: getNumericMetric(state.metrics.coins)
     });
   }, [getState, unlockedIds.length]); // Re-run when achievements unlock
 
@@ -362,12 +378,8 @@ const IncrementDemo = () => {
  * Perfect for testing cumulative achievements like clicks, scores, or collected items.
  */
 export const InteractiveIncrementDemo: StoryObj<typeof AchievementProvider> = {
-  args: {
-    achievements: incrementAchievements,
-    storage: StorageType.Memory
-  },
-  render: (args) => (
-    <AchievementProvider {...args}>
+  render: () => (
+    <AchievementProvider client={createMockAchievementClient({ achievements: incrementAchievements })}>
       <IncrementDemo />
     </AchievementProvider>
   ),
@@ -384,18 +396,8 @@ export const InteractiveIncrementDemo: StoryObj<typeof AchievementProvider> = {
  * Simple example showing basic increment usage patterns.
  */
 export const BasicIncrementExampleStory: StoryObj<typeof AchievementProvider> = {
-  args: {
-    achievements: {
-      clicks: {
-        1: { title: 'First Click', icon: '👆' },
-        3: { title: 'Trilogy', icon: '🖱️' },
-        5: { title: 'High Five', icon: '✋' }
-      }
-    } as SimpleAchievementConfig,
-    storage: StorageType.Memory
-  },
-  render: (args) => (
-    <AchievementProvider {...args}>
+  render: () => (
+    <AchievementProvider client={createMockAchievementClient({ achievements: basicIncrementAchievements })}>
       <BasicIncrementExampleComponent />
     </AchievementProvider>
   ),
@@ -411,7 +413,7 @@ export const BasicIncrementExampleStory: StoryObj<typeof AchievementProvider> = 
 // Basic example component
 const BasicIncrementExampleComponent = () => {
   const { increment, unlockedIds, unlockedCount, getState } = useSimpleAchievements();
-  const clicks = Array.isArray(getState().metrics.clicks) ? (getState().metrics.clicks[0] as number) || 0 : 0;
+  const clicks = getNumericMetric(getState().metrics.clicks);
 
   return (
     <div style={{ padding: '40px', textAlign: 'center', maxWidth: '400px', margin: '0 auto' }}>
@@ -459,12 +461,8 @@ const BasicIncrementExampleComponent = () => {
 };
 
 export const InlineAchievementList: StoryObj<typeof AchievementProvider> = {
-  args: {
-    achievements: incrementAchievements,
-    storage: StorageType.Memory
-  },
-  render: (args) => (
-    <AchievementProvider {...args}>
+  render: () => (
+    <AchievementProvider client={createMockAchievementClient({ achievements: incrementAchievements })}>
       <div style={{ padding: '32px', maxWidth: '720px', margin: '0 auto' }}>
         <IncrementDemo />
         <div style={{ marginTop: '24px', padding: '20px', background: '#fff', border: '1px solid #d8e0ea', borderRadius: '8px' }}>

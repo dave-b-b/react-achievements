@@ -4,15 +4,14 @@ import {
   AchievementProvider,
   AchievementsList,
   AchievementsWidget,
-  StorageType,
   useSimpleAchievements,
 } from '../src';
 import type { SimpleAchievementConfig } from '../src';
+import { createMockAchievementClient } from './mocks/achievementClient';
 
 /**
- * The Simple API provides an easier way to define achievements using threshold-based 
- * conditions and custom functions. This approach reduces boilerplate while maintaining
- * full compatibility with the existing complex API.
+ * The Simple API provides an easier way for a compatible backend to define
+ * achievements using threshold-based conditions and custom functions.
  * 
  * ## Key Benefits
  * - **90% less configuration code** for common use cases
@@ -64,6 +63,28 @@ const simpleAchievements: SimpleAchievementConfig = {
     wizard: { title: 'Arcane Scholar', description: 'Choose the wizard class', icon: '🧙‍♂️' },
     warrior: { title: 'Battle Hardened', description: 'Choose the warrior class', icon: '⚔️' },
     rogue: { title: 'Shadow Walker', description: 'Choose the rogue class', icon: '🗡️' }
+  }
+};
+
+const customConditionAchievements: SimpleAchievementConfig = {
+  score: {
+    100: { title: 'Getting Started', icon: '🌱' }
+  },
+  combo: {
+    custom: {
+      title: 'Perfect Combo',
+      description: 'Score 1000+ with 100% accuracy',
+      icon: '💎',
+      condition: (_metrics) => _metrics.score >= 1000 && _metrics.accuracy === 100
+    }
+  },
+  gameplay: {
+    custom: {
+      title: 'Speed Runner',
+      description: 'Complete level 10 in under 5 minutes',
+      icon: '⚡',
+      condition: (_metrics) => _metrics.level >= 10 && _metrics.completionTime < 300
+    }
   }
 };
 
@@ -184,12 +205,8 @@ const SimpleAPIDemo = () => {
  * No need for complex condition functions for common use cases.
  */
 export const ThresholdBasedAchievements: StoryObj<typeof AchievementProvider> = {
-  args: {
-    achievements: simpleAchievements,
-    storage: StorageType.Memory
-  },
-  render: (args) => (
-    <AchievementProvider {...args}>
+  render: () => (
+    <AchievementProvider client={createMockAchievementClient({ achievements: simpleAchievements })}>
       <SimpleAPIDemo />
     </AchievementProvider>
   ),
@@ -206,33 +223,8 @@ export const ThresholdBasedAchievements: StoryObj<typeof AchievementProvider> = 
  * Custom condition achievements for complex logic that can't be expressed as simple thresholds.
  */
 export const CustomConditionAchievements: StoryObj<typeof AchievementProvider> = {
-  args: {
-    achievements: {
-      // Mix simple and custom achievements
-      score: {
-        100: { title: 'Getting Started', icon: '🌱' }
-      },
-      combo: {
-        custom: {
-          title: 'Perfect Combo',
-          description: 'Score 1000+ with 100% accuracy',
-          icon: '💎',
-          condition: (_metrics) => _metrics.score >= 1000 && _metrics.accuracy === 100
-        }
-      },
-      gameplay: {
-        custom: {
-          title: 'Speed Runner',
-          description: 'Complete level 10 in under 5 minutes',
-          icon: '⚡',
-          condition: (_metrics) => _metrics.level >= 10 && _metrics.completionTime < 300
-        }
-      }
-    } as SimpleAchievementConfig,
-    storage: StorageType.Memory
-  },
-  render: (args) => (
-    <AchievementProvider {...args}>
+  render: () => (
+    <AchievementProvider client={createMockAchievementClient({ achievements: customConditionAchievements })}>
       <CustomConditionDemo />
     </AchievementProvider>
   ),
