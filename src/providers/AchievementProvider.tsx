@@ -146,6 +146,10 @@ const normalizeClientSnapshot = (snapshot: AchievementClientSnapshot): Achieveme
   };
 };
 
+const toError = (unknownError: unknown, fallbackMessage: string): Error => (
+  unknownError instanceof Error ? unknownError : new Error(fallbackMessage)
+);
+
 export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   client,
   achievements: achievementsConfig,
@@ -250,15 +254,19 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
       setAchievementSnapshot(snapshot);
       return snapshot;
     } catch (unknownError) {
-      const nextError = unknownError instanceof Error
-        ? unknownError
-        : new Error('Failed to load achievements');
+      const nextError = toError(unknownError, 'Failed to load achievements');
       setError(nextError);
       throw nextError;
     } finally {
       setIsLoading(false);
     }
   }, [client, engine]);
+
+  const handleClientMutationFailure = useCallback((unknownError: unknown): never => {
+    const nextError = toError(unknownError, 'Failed to update achievements');
+    setError(nextError);
+    throw nextError;
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -310,6 +318,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 
   const update = (newMetrics: Record<string, any>) => {
     if (client) {
+      setError(null);
       const mutation = client.trackMany
         ? client.trackMany(newMetrics)
         : Promise.all(
@@ -321,7 +330,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
           applyClientMutationResult(result);
         }
         return result;
-      });
+      }).catch(handleClientMutationFailure);
     }
 
     return engine?.update(newMetrics);
@@ -329,7 +338,10 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 
   const increment = (metric: string, amount: number = 1) => {
     if (client) {
-      return client.increment(metric, amount).then(applyClientMutationResult);
+      setError(null);
+      return client.increment(metric, amount)
+        .then(applyClientMutationResult)
+        .catch(handleClientMutationFailure);
     }
 
     return engine?.increment(metric, amount);
@@ -337,7 +349,10 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 
   const event = (name: string, payload?: unknown) => {
     if (client) {
-      return client.event(name, payload).then(applyClientMutationResult);
+      setError(null);
+      return client.event(name, payload)
+        .then(applyClientMutationResult)
+        .catch(handleClientMutationFailure);
     }
 
     engine?.emit(name, payload);
@@ -345,10 +360,11 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 
   const reset = () => {
     if (client?.reset) {
+      setError(null);
       return client.reset().then((snapshot) => {
         setRecentlyUnlocked([]);
         setAchievementSnapshot(normalizeClientSnapshot(snapshot));
-      });
+      }).catch(handleClientMutationFailure);
     }
 
     if (client) {

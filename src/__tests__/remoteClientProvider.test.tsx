@@ -60,14 +60,19 @@ const mutationResult: AchievementClientMutationResult = {
 };
 
 const RemoteControls = () => {
-  const { track, unlockedCount, totalCount, isLoading } = useSimpleAchievements();
+  const { track, unlockedCount, totalCount, isLoading, error } = useSimpleAchievements();
 
   return (
     <>
-      <button onClick={() => track('score', 100)}>Score 100</button>
+      <button onClick={() => {
+        Promise.resolve(track('score', 100)).catch(() => undefined);
+      }}>
+        Score 100
+      </button>
       <span data-testid="remote-count">
         {isLoading ? 'loading' : `${unlockedCount}/${totalCount}`}
       </span>
+      {error && <span data-testid="remote-error">{error.message}</span>}
     </>
   );
 };
@@ -101,6 +106,35 @@ describe('remote AchievementProvider client mode', () => {
       expect(client.track).toHaveBeenCalledWith('score', 100);
       expect(screen.getByTestId('remote-count')).toHaveTextContent('1/1');
       expect(screen.getByText('Century')).toBeInTheDocument();
+    });
+  });
+
+  it('surfaces remote mutation failures through hook error state', async () => {
+    const client: AchievementClient = {
+      getSnapshot: jest.fn().mockResolvedValue(lockedSnapshot),
+      track: jest.fn().mockRejectedValue(new Error('Server unavailable')),
+      increment: jest.fn().mockResolvedValue(mutationResult),
+      event: jest.fn().mockResolvedValue(mutationResult),
+      reset: jest.fn().mockResolvedValue(lockedSnapshot),
+    };
+
+    render(
+      <AchievementProvider client={client} ui={{ enableConfetti: false }}>
+        <RemoteControls />
+      </AchievementProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId('remote-count')).toHaveTextContent('0/1');
+    });
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('Score 100'));
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('remote-error')).toHaveTextContent('Server unavailable');
+      expect(screen.getByTestId('remote-count')).toHaveTextContent('0/1');
     });
   });
 });
