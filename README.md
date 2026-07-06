@@ -1,6 +1,6 @@
 # React Achievements
 
-**Add gamification to your React app in minutes** - Track progress, unlock achievements, show badges, and celebrate milestones.
+**Display server-backed achievements in React** - fetch achievement state from your app server, track progress through REST calls, show badges, and celebrate unlocks.
 
 [📚 Documentation](https://dave-b-b.github.io/react-achievements/) | [📦 npm Package](https://www.npmjs.com/package/react-achievements)
 
@@ -22,34 +22,38 @@ npm install react-achievements
 
 **Requirements:** React 16.8+, Node.js 16+
 
+If you want the official JavaScript backend engine, install `achievements-engine` in your server package. React Achievements can also display achievement data from Rails Merit or any backend that implements the same REST contract.
+
 ## Start Here
 
 ```tsx
 import {
   AchievementProvider,
   AchievementsWidget,
+  createRestAchievementClient,
   useSimpleAchievements,
 } from 'react-achievements';
 
-const achievements = {
-  score: {
-    100: { title: 'Century!', description: 'Score 100 points', icon: '🏆' },
-  },
-};
+const achievementsClient = createRestAchievementClient({
+  baseUrl: '/api/achievements',
+});
 
 function Game() {
-  const { track } = useSimpleAchievements();
+  const { track, event } = useSimpleAchievements();
 
   return (
-    <button onClick={() => track('score', 100)}>
-      Score 100
-    </button>
+    <>
+      <button onClick={() => track('score', 100)}>Score 100</button>
+      <button onClick={() => event('lesson.completed', { lessonId: 'intro' })}>
+        Complete lesson
+      </button>
+    </>
   );
 }
 
 export default function App() {
   return (
-    <AchievementProvider achievements={achievements}>
+    <AchievementProvider client={achievementsClient}>
       <Game />
       <AchievementsWidget />
     </AchievementProvider>
@@ -58,6 +62,18 @@ export default function App() {
 ```
 
 `AchievementsWidget` reads from context, shows the unlocked count, and opens a modal with locked and unlocked achievements. Use `placement="inline"` to put it in a drawer, sidebar, or navigation area. For an exact visual match, pass `renderTrigger` and use your app's own drawer row, nav item, or profile menu button while the widget still controls the modal.
+
+Your server should expose this contract:
+
+```http
+GET  /api/achievements
+POST /api/achievements/track
+POST /api/achievements/increment
+POST /api/achievements/event
+POST /api/achievements/reset
+```
+
+The official `achievements-engine` package can run those routes on your server, but any backend can return the same snapshot shape.
 
 ```tsx
 <AchievementsWidget
@@ -120,7 +136,7 @@ Provider-level icons and UI options are shared across notifications, widgets, mo
 
 ```tsx
 <AchievementProvider
-  achievements={achievements}
+  client={achievementsClient}
   icons={{ login: '🔑', streak: '🔥' }}
   ui={{
     theme: 'minimal',
@@ -142,7 +158,7 @@ Provider-level icons and UI options are shared across notifications, widgets, mo
 
 Set `ui.enableConfetti` to `false` to disable the built-in celebration. Omit `ConfettiComponent` when you only want to tune the default `canvas-confetti` animation through `ui.confetti`.
 
-Rewards can optionally override the global confetti settings. Omit `confetti` to use the provider defaults, or set `confetti: false` for quieter rewards:
+Rewards returned by your server can optionally include `confetti` to override the global confetti settings. Omit `confetti` to use the provider defaults, or set `confetti: false` for quieter rewards:
 
 ```tsx
 const achievements = {
@@ -173,6 +189,7 @@ const achievements = {
 const {
   track,
   increment,
+  event,
   trackMultiple,
   unlockedIds,
   unlockedAchievements,
@@ -184,40 +201,33 @@ const {
 
 Deprecated aliases from v3, including `unlocked` and `all`, remain available until 5.0.
 
-## Event-Based Tracking
+## Server Engine Example
 
-For larger apps, create an engine and emit semantic events:
+Use `achievements-engine` on your server when you want JavaScript rule evaluation and persistence adapters:
 
-```tsx
+```ts
 import {
-  AchievementEngine,
-  AchievementProvider,
-  AchievementsWidget,
-  useAchievementEngine,
-} from 'react-achievements';
+  AchievementService,
+  MemoryAchievementRepository,
+  createAchievementFetchHandler,
+} from 'achievements-engine/server';
 
-const engine = new AchievementEngine({
+const service = new AchievementService({
   achievements,
+  repository: new MemoryAchievementRepository(),
   eventMapping: {
-    userScored: (data) => ({ score: data.points }),
+    'lesson.completed': () => ({ completedLesson: true }),
   },
-  storage: 'local',
 });
 
-function Game() {
-  const engine = useAchievementEngine();
-  return <button onClick={() => engine.emit('userScored', { points: 100 })}>Score</button>;
-}
-
-export default function App() {
-  return (
-    <AchievementProvider engine={engine}>
-      <Game />
-      <AchievementsWidget />
-    </AchievementProvider>
-  );
-}
+export const handleAchievementsRequest = createAchievementFetchHandler({
+  service,
+  basePath: '/api/achievements',
+  getSubjectId: (request) => getUserIdFromSession(request),
+});
 ```
+
+For Rails Merit or a custom backend, expose the same REST endpoints and return the same achievement snapshot fields.
 
 ## Headless Usage
 
@@ -250,7 +260,7 @@ function CustomAchievementsPanel() {
 
 export function App() {
   return (
-    <AchievementProvider achievements={achievements}>
+    <AchievementProvider client={achievementsClient}>
       <CustomAchievementsPanel />
     </AchievementProvider>
   );

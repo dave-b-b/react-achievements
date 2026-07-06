@@ -19,6 +19,13 @@ export interface AchievementDetails {
 
 export interface AchievementWithStatus extends AchievementDetails {
     isUnlocked: boolean;
+    unlockedAt?: string | null;
+    progress?: {
+        current: number;
+        target: number;
+        percent: number;
+    };
+    metadata?: Record<string, unknown>;
 }
 
 export type AchievementConfetti = false | import('./ui/interfaces').ConfettiOptions;

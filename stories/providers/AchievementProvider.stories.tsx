@@ -4,16 +4,15 @@ import {
   AchievementProvider,
   AchievementsList,
   AchievementsWidget,
-  StorageType,
   useAchievements,
   useSimpleAchievements,
 } from '../../src';
 import type { SimpleAchievementConfig } from '../../src';
+import { createMockAchievementClient } from '../mocks/achievementClient';
 
 /**
- * `AchievementProvider` is the v4 web provider. It creates or accepts an
- * achievement engine, provides hooks, and renders built-in notifications and
- * confetti by default.
+ * `AchievementProvider` is the web provider. It accepts an achievement client,
+ * provides hooks, and renders built-in notifications and confetti by default.
  */
 const meta: Meta<typeof AchievementProvider> = {
   title: 'Providers/AchievementProvider',
@@ -29,17 +28,9 @@ const meta: Meta<typeof AchievementProvider> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    achievements: {
-      description: 'Configuration object defining achievements and their unlock conditions',
+    client: {
+      description: 'AchievementClient used to load snapshots and track progress',
       control: 'object',
-    },
-    storage: {
-      description: 'Storage type for persisting achievement state',
-      control: 'select',
-      options: [StorageType.Memory, StorageType.Local],
-      table: {
-        defaultValue: { summary: StorageType.Memory },
-      },
     },
     children: {
       description: 'Child components that can use achievement hooks and UI',
@@ -139,49 +130,41 @@ const InlineWidgetDemo = () => (
   </div>
 );
 
-export const WithMemoryStorage: Story = {
-  args: {
-    achievements: achievementConfig,
-    storage: StorageType.Memory,
-  },
-  render: (args) => (
-    <AchievementProvider {...args}>
+const createProviderClient = () => createMockAchievementClient({ achievements: achievementConfig });
+
+export const RemoteClient: Story = {
+  render: () => (
+    <AchievementProvider client={createProviderClient()}>
       <ProviderDemo />
     </AchievementProvider>
   ),
 };
 
-export const WithLocalStorage: Story = {
-  args: {
-    achievements: achievementConfig,
-    storage: StorageType.Local,
-  },
-  render: (args) => (
-    <AchievementProvider {...args}>
+export const PreloadedRemoteClient: Story = {
+  render: () => (
+    <AchievementProvider
+      client={createMockAchievementClient({
+        achievements: achievementConfig,
+        initialMetrics: { score: 100 },
+        initiallyUnlockedIds: ['score_100'],
+      })}
+    >
       <ProviderDemo />
     </AchievementProvider>
   ),
 };
 
 export const InlineDrawerWidget: Story = {
-  args: {
-    achievements: achievementConfig,
-    storage: StorageType.Memory,
-  },
-  render: (args) => (
-    <AchievementProvider {...args}>
+  render: () => (
+    <AchievementProvider client={createProviderClient()}>
       <InlineWidgetDemo />
     </AchievementProvider>
   ),
 };
 
 export const InlineAchievementsList: Story = {
-  args: {
-    achievements: achievementConfig,
-    storage: StorageType.Memory,
-  },
-  render: (args) => (
-    <AchievementProvider {...args}>
+  render: () => (
+    <AchievementProvider client={createProviderClient()}>
       <div style={{ padding: '32px', maxWidth: '760px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
         <ProviderDemo />
         <section style={{ ...panelStyle, marginTop: '20px' }}>

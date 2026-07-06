@@ -1,25 +1,23 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import {
-  AchievementEngine,
   AchievementProvider,
   AchievementsModal,
   AchievementsWidget,
-  StorageType,
-  useAchievementEngine,
   useAchievementState,
+  useSimpleAchievements,
 } from '../src';
-import type { EventMapping, SimpleAchievementConfig } from '../src';
+import type { SimpleAchievementConfig } from '../src';
+import { createMockAchievementClient } from './mocks/achievementClient';
 
 /**
- * The Event-Based API provides a framework-agnostic way to track achievements
- * using semantic events rather than direct metric updates. This pattern is more flexible and
- * allows for better separation of concerns.
+ * Event-based tracking sends semantic events to a compatible achievement
+ * backend rather than updating metrics directly in React.
  *
  * ## Key Benefits
  * - **Semantic Events**: Emit events like 'userScored' or 'levelUp' instead of updating metrics
- * - **Event Mapping**: Map events to metrics automatically
- * - **Framework Agnostic**: Use the same engine in React, Vue, Angular, or vanilla JS
+ * - **Event Mapping**: Map events to metrics on the server
+ * - **Framework Agnostic**: Use the same REST contract from React, Vue, Angular, or native apps
  * - **Better Testing**: Events are easier to mock and test
  * - **Separation of Concerns**: Business logic separated from achievement tracking
  *
@@ -34,7 +32,7 @@ const meta: Meta<typeof AchievementProvider> = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: 'Demonstrates event-based achievement tracking with AchievementEngine and the v4 UI components.'
+        component: 'Demonstrates event-based achievement tracking through an AchievementClient and the UI components.'
       }
     }
   },
@@ -59,28 +57,23 @@ const achievements: SimpleAchievementConfig = {
   }
 };
 
-// Event mapping - maps event names to metric names
-const eventMapping: EventMapping = {
-  'userScored': (data: any) => ({ score: data.points }),
-  'userLeveledUp': (data: any) => ({ level: data.level }),
+// Event mapping - Storybook mock server maps event names to metric updates.
+const eventMapping = {
+  'userScored': (data: unknown) => ({ score: (data as { points: number }).points }),
+  'userLeveledUp': (data: unknown) => ({ level: (data as { level: number }).level }),
   'tutorialCompleted': () => ({ completedTutorial: true }),
-  'bossDefeated': (data: any) => ({
-    score: data.scoreGained,
-    level: data.newLevel
+  'bossDefeated': (data: unknown) => ({
+    score: (data as { scoreGained: number; newLevel: number }).scoreGained,
+    level: (data as { scoreGained: number; newLevel: number }).newLevel
   })
 };
 
-// Create the engine outside React (framework-agnostic)
-const achievementEngine = new AchievementEngine({
-  achievements,
-  eventMapping,
-  storage: StorageType.Local, // or StorageType.Memory, StorageType.IndexedDB, custom storage, etc.
-});
+const createEventClient = () => createMockAchievementClient({ achievements, eventMapping });
 
 // Demo component using the event-based API
 const EventBasedDemo = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const engine = useAchievementEngine();
+  const { event, reset } = useSimpleAchievements();
   const { unlockedCount, metrics } = useAchievementState();
   const [currentScore, setCurrentScore] = React.useState(0);
   const [currentLevel, setCurrentLevel] = React.useState(1);
@@ -93,21 +86,19 @@ const EventBasedDemo = () => {
     const newScore = currentScore + points;
     setCurrentScore(newScore);
 
-    // Emit semantic event instead of updating metrics directly
-    engine.emit('userScored', { points: newScore });
+    // Send semantic event instead of updating metrics directly.
+    event('userScored', { points: newScore });
   };
 
   const handleLevelUp = () => {
     const newLevel = currentLevel + 1;
     setCurrentLevel(newLevel);
 
-    // Emit level up event
-    engine.emit('userLeveledUp', { level: newLevel });
+    event('userLeveledUp', { level: newLevel });
   };
 
   const handleCompleteTutorial = () => {
-    // Emit tutorial completion event
-    engine.emit('tutorialCompleted');
+    event('tutorialCompleted');
   };
 
   const handleBossDefeat = () => {
@@ -118,15 +109,15 @@ const EventBasedDemo = () => {
     setCurrentScore(newScore);
     setCurrentLevel(newLevel);
 
-    // Single event can update multiple metrics
-    engine.emit('bossDefeated', {
+    // Single event can update multiple metrics on the server.
+    event('bossDefeated', {
       scoreGained: newScore,
       newLevel: newLevel
     });
   };
 
   const handleReset = () => {
-    engine.reset();
+    reset();
     setCurrentScore(0);
     setCurrentLevel(1);
   };
@@ -135,8 +126,8 @@ const EventBasedDemo = () => {
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '1000px', margin: '0 auto' }}>
       <h1>Event-Based API Demo</h1>
       <p>
-        This demo shows event-based tracking using <code>AchievementEngine</code> and semantic events.
-        Instead of updating metrics directly, you emit events that represent business actions.
+        This demo shows event-based tracking using an <code>AchievementClient</code> and semantic events.
+        Instead of updating metrics directly, you send events that represent business actions.
       </p>
 
       <div style={{
@@ -148,9 +139,9 @@ const EventBasedDemo = () => {
       }}>
         <h3 style={{ marginTop: 0 }}>Why Use the Event-Based Pattern?</h3>
         <ul style={{ marginBottom: 0 }}>
-          <li><strong>Better Semantics:</strong> <code>engine.emit('userScored', data)</code> is clearer than <code>update(&#123; score: 100 &#125;)</code></li>
-          <li><strong>Event Mapping:</strong> One event can update multiple metrics automatically</li>
-          <li><strong>Framework Agnostic:</strong> Same engine works in React, Vue, Angular, or vanilla JS</li>
+          <li><strong>Better Semantics:</strong> <code>event('userScored', data)</code> is clearer than <code>track('score', 100)</code></li>
+          <li><strong>Event Mapping:</strong> One event can update multiple metrics on the backend</li>
+          <li><strong>Framework Agnostic:</strong> Same REST contract works in React, Vue, Angular, or native apps</li>
           <li><strong>Testing:</strong> Events are easier to mock and test than metric updates</li>
         </ul>
       </div>
@@ -249,28 +240,23 @@ const EventBasedDemo = () => {
       <div style={{ marginTop: '30px', padding: '15px', backgroundColor: '#fff3cd', border: '1px solid #ffc107', borderRadius: '8px' }}>
         <h3 style={{ marginTop: 0 }}>Code Example</h3>
         <pre style={{ backgroundColor: '#f5f5f5', padding: '15px', borderRadius: '4px', overflow: 'auto' }}>
-{`// 1. Create engine outside React (framework-agnostic)
-const engine = new AchievementEngine({
-  achievements,
-  eventMapping: {
-    'userScored': (data) => ({ score: data.points }),
-    'userLeveledUp': (data) => ({ level: data.level })
-  },
-  storage: StorageType.Local
+{`// 1. Create a REST client for your achievement backend
+const client = createRestAchievementClient({
+  baseUrl: '/api/achievements'
 });
 
-// 2. Pass engine to provider
-<AchievementProvider engine={engine}>
+// 2. Pass client to provider
+<AchievementProvider client={client}>
   <YourApp />
 </AchievementProvider>
 
 // 3. Use in components
 const MyComponent = () => {
-  const engine = useAchievementEngine();
+  const { event } = useSimpleAchievements();
 
   const handleAction = () => {
-    // Emit semantic events
-    engine.emit('userScored', { points: 100 });
+    // Send semantic events
+    event('userScored', { points: 100 });
   };
 };`}
         </pre>
@@ -300,7 +286,7 @@ type Story = StoryObj<typeof meta>;
 
 export const EventBasedPattern: Story = {
   render: () => (
-    <AchievementProvider engine={achievementEngine}>
+    <AchievementProvider client={createEventClient()}>
       <EventBasedDemo />
     </AchievementProvider>
   )
@@ -317,12 +303,12 @@ export const ComparisonWithOldPattern: Story = {
           <p><strong>Best for:</strong> Simple React apps and quick integrations</p>
           <h3>Setup:</h3>
           <pre style={{ backgroundColor: '#f5f5f5', padding: '10px', borderRadius: '4px', fontSize: '12px', overflow: 'auto' }}>
-{`<AchievementProvider achievements={config}>
+{`<AchievementProvider client={client}>
   <App />
 </AchievementProvider>
 
-const { update } = useAchievements();
-update({ score: 100 });`}
+const { track } = useSimpleAchievements();
+track('score', 100);`}
           </pre>
           <h3>Pros:</h3>
           <ul>
@@ -332,7 +318,7 @@ update({ score: 100 });`}
           </ul>
           <h3>Cons:</h3>
           <ul>
-            <li>Tightly coupled to React</li>
+            <li>Metric names can leak into component code</li>
             <li>Less semantic (what does "score: 100" mean?)</li>
             <li>Harder to test</li>
           </ul>
@@ -343,21 +329,20 @@ update({ score: 100 });`}
           <p><strong>Recommended for:</strong> Larger apps, multi-framework projects, event-driven flows</p>
           <h3>Setup:</h3>
           <pre style={{ backgroundColor: '#f5f5f5', padding: '10px', borderRadius: '4px', fontSize: '12px', overflow: 'auto' }}>
-{`const engine = new AchievementEngine({
-  achievements,
-  eventMapping
+{`const client = createRestAchievementClient({
+  baseUrl: '/api/achievements'
 });
 
-<AchievementProvider engine={engine}>
+<AchievementProvider client={client}>
   <App />
 </AchievementProvider>
 
-const engine = useAchievementEngine();
-engine.emit('userScored', { points: 100 });`}
+const { event } = useSimpleAchievements();
+event('userScored', { points: 100 });`}
           </pre>
           <h3>Pros:</h3>
           <ul>
-            <li>Framework agnostic (use anywhere)</li>
+            <li>Framework agnostic backend contract</li>
             <li>Semantic events (better DX)</li>
             <li>Event mapping (one event → multiple metrics)</li>
             <li>Easier to test and mock</li>
@@ -372,10 +357,9 @@ engine.emit('userScored', { points: 100 });`}
 
       <div style={{ marginTop: '30px', padding: '20px', backgroundColor: '#e8f5e9', borderRadius: '8px' }}>
         <h2 style={{ marginTop: 0 }}>Migration Guide</h2>
-        <p><strong>Can I use both patterns?</strong> Yes! They can coexist in the same app.</p>
-        <p><strong>Should I migrate?</strong> Not required. Direct metric tracking is still the recommended path for simple React apps.</p>
-        <p><strong>When to use event-based tracking?</strong> Larger apps, framework-agnostic needs, analytics-style event streams, and cleaner isolated tests.</p>
-        <p><strong>When to use direct metric tracking?</strong> Simple apps, quick prototypes, and React-only projects.</p>
+        <p><strong>Can I use both patterns?</strong> Yes. A compatible backend can expose both direct metric endpoints and semantic event endpoints.</p>
+        <p><strong>When to use event-based tracking?</strong> Larger apps, analytics-style event streams, and workflows where UI should not know metric names.</p>
+        <p><strong>When to use direct metric tracking?</strong> Simple interactions where the UI already owns the exact metric value.</p>
       </div>
     </div>
   )

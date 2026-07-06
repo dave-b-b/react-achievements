@@ -1,4 +1,4 @@
-import React, { createContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { isSimpleConfig, normalizeAchievements } from 'achievements-engine';
 import type {
   AchievementConfigurationType as EngineAchievementConfigurationType,
@@ -8,7 +8,7 @@ import {
   AchievementProvider as HeadlessAchievementProvider,
   AchievementProviderProps as HeadlessAchievementProviderProps,
 } from './AchievementProvider';
-import { useAchievementEngine } from '../hooks/useAchievementEngine';
+import { useAchievements } from '../hooks/useAchievements';
 import { BuiltInNotification } from '../core/ui/BuiltInNotification';
 import { BuiltInConfetti } from '../core/ui/BuiltInConfetti';
 import { builtInThemes, getTheme } from '../core/ui/themes';
@@ -130,8 +130,11 @@ const AchievementEffects: React.FC<{
   ui: UIConfig;
   achievementConfetti: AchievementConfettiMap;
 }> = ({ icons, ui, achievementConfetti }) => {
-  const engine = useAchievementEngine();
-  const seenAchievementsRef = useRef<Set<string>>(new Set(engine.getUnlocked()));
+  const achievementContext = useAchievements();
+  const engine = achievementContext.engine;
+  const seenAchievementsRef = useRef<Set<string>>(
+    new Set(achievementContext.snapshot.unlockedIds)
+  );
   const confettiTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const achievementConfettiRef = useRef(achievementConfetti);
   const [showConfetti, setShowConfetti] = useState(false);
@@ -172,60 +175,68 @@ const AchievementEffects: React.FC<{
     }
   }, [ui.enableConfetti]);
 
+  const showUnlockedAchievement = useCallback((unlockedAchievement: AchievementWithStatus) => {
+    if (seenAchievementsRef.current.has(unlockedAchievement.achievementId)) {
+      return;
+    }
+
+    seenAchievementsRef.current.add(unlockedAchievement.achievementId);
+
+    if (ui.enableNotifications !== false) {
+      setNotifications((currentNotifications) => {
+        if (
+          currentNotifications.some(
+            (notification) =>
+              notification.achievementId === unlockedAchievement.achievementId
+          )
+        ) {
+          return currentNotifications;
+        }
+
+        return [...currentNotifications, unlockedAchievement];
+      });
+    }
+
+    const rewardConfetti =
+      unlockedAchievement.confetti ??
+      achievementConfettiRef.current.get(unlockedAchievement.achievementId);
+
+    if (ui.enableConfetti !== false && rewardConfetti !== false) {
+      if (confettiTimerRef.current) {
+        clearTimeout(confettiTimerRef.current);
+      }
+
+      const resolvedConfettiConfig: ConfettiOptions = {
+        ...globalConfettiConfigRef.current,
+        ...(rewardConfetti || {}),
+      };
+      const resolvedConfettiDuration =
+        resolvedConfettiConfig.duration ?? CONFETTI_DURATION_MS;
+
+      setActiveConfettiConfig(resolvedConfettiConfig);
+      setShowConfetti(true);
+      confettiTimerRef.current = setTimeout(() => {
+        setShowConfetti(false);
+        confettiTimerRef.current = null;
+      }, resolvedConfettiDuration);
+    }
+  }, [ui.enableConfetti, ui.enableNotifications]);
+
   useEffect(() => {
+    if (!engine) {
+      return;
+    }
+
     const unsubscribeUnlocked = engine.on(
       'achievement:unlocked',
       (event: AchievementUnlockedEvent) => {
-        if (seenAchievementsRef.current.has(event.achievementId)) {
-          return;
-        }
-
-        seenAchievementsRef.current.add(event.achievementId);
-
-        const unlockedAchievement: AchievementWithStatus = {
+        showUnlockedAchievement({
           achievementId: event.achievementId,
           achievementTitle: event.achievementTitle,
           achievementDescription: event.achievementDescription,
           achievementIconKey: event.achievementIconKey,
           isUnlocked: true,
-        };
-
-        if (ui.enableNotifications !== false) {
-          setNotifications((currentNotifications) => {
-            if (
-              currentNotifications.some(
-                (notification) =>
-                  notification.achievementId === unlockedAchievement.achievementId
-              )
-            ) {
-              return currentNotifications;
-            }
-
-            return [...currentNotifications, unlockedAchievement];
-          });
-        }
-
-        const rewardConfetti = achievementConfettiRef.current.get(event.achievementId);
-
-        if (ui.enableConfetti !== false && rewardConfetti !== false) {
-          if (confettiTimerRef.current) {
-            clearTimeout(confettiTimerRef.current);
-          }
-
-          const resolvedConfettiConfig: ConfettiOptions = {
-            ...globalConfettiConfigRef.current,
-            ...(rewardConfetti || {}),
-          };
-          const resolvedConfettiDuration =
-            resolvedConfettiConfig.duration ?? CONFETTI_DURATION_MS;
-
-          setActiveConfettiConfig(resolvedConfettiConfig);
-          setShowConfetti(true);
-          confettiTimerRef.current = setTimeout(() => {
-            setShowConfetti(false);
-            confettiTimerRef.current = null;
-          }, resolvedConfettiDuration);
-        }
+        });
       }
     );
 
@@ -246,7 +257,20 @@ const AchievementEffects: React.FC<{
         clearTimeout(confettiTimerRef.current);
       }
     };
-  }, [engine, ui.enableConfetti, ui.enableNotifications]);
+  }, [engine, showUnlockedAchievement]);
+
+  useEffect(() => {
+    achievementContext.recentlyUnlocked.forEach(showUnlockedAchievement);
+  }, [achievementContext.recentlyUnlocked, showUnlockedAchievement]);
+
+  useEffect(() => {
+    const unlocked = new Set(achievementContext.snapshot.unlockedIds);
+    seenAchievementsRef.current.forEach((achievementId) => {
+      if (!unlocked.has(achievementId)) {
+        seenAchievementsRef.current.delete(achievementId);
+      }
+    });
+  }, [achievementContext.snapshot.unlockedIds]);
 
   const NotificationComponent: NotificationComponent =
     ui.NotificationComponent || BuiltInNotification;

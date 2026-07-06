@@ -4,10 +4,10 @@ import {
   AchievementProvider,
   AchievementsList,
   AchievementsWidget,
-  StorageType,
   useSimpleAchievements,
 } from '../../src';
 import type { SimpleAchievementConfig } from '../../src';
+import { createMockAchievementClient } from '../mocks/achievementClient';
 
 const meta: Meta<typeof AchievementsList> = {
   title: 'Components/AchievementsList',
@@ -52,8 +52,7 @@ const Actions = () => {
 
 const ListProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <AchievementProvider
-    achievements={achievements}
-    storage={StorageType.Memory}
+    client={createMockAchievementClient({ achievements })}
     ui={{ enableNotifications: false, enableConfetti: false }}
   >
     {children}

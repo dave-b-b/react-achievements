@@ -31,6 +31,15 @@ export { useAchievements } from './hooks/useAchievements';
 export { useSimpleAchievements } from './hooks/useSimpleAchievements';
 export { useAchievementState } from './hooks/useAchievementState';
 export { useAchievementEngine } from './hooks/useAchievementEngine';
+export { RestAchievementClient, createRestAchievementClient } from './client/RestAchievementClient';
+export type { RestAchievementClientConfig } from './client/RestAchievementClient';
+export type {
+  AchievementClient,
+  AchievementClientMutationResult,
+  AchievementClientSnapshot,
+  AchievementDto,
+  AchievementProgress,
+} from './client/types';
 
 export {
   LocalStorage,

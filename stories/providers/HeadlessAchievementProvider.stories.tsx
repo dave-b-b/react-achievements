@@ -2,14 +2,14 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import {
   AchievementProvider as HeadlessAchievementProvider,
-  StorageType,
   useAchievementState,
   useSimpleAchievements,
 } from '../../src/headless';
 import type { AchievementWithStatus, SimpleAchievementConfig } from '../../src/headless';
+import { createMockAchievementClient } from '../mocks/achievementClient';
 
 /**
- * `react-achievements/headless` exposes the provider, hooks, engine, storage,
+ * `react-achievements/headless` exposes the provider, hooks, client contract,
  * and types without importing the built-in web UI components.
  */
 const meta: Meta<typeof HeadlessAchievementProvider> = {
@@ -26,17 +26,9 @@ const meta: Meta<typeof HeadlessAchievementProvider> = {
   },
   tags: ['autodocs'],
   argTypes: {
-    achievements: {
-      description: 'Configuration object defining achievements and unlock conditions',
+    client: {
+      description: 'AchievementClient used to load snapshots and track progress',
       control: 'object',
-    },
-    storage: {
-      description: 'Storage type for persisting achievement state',
-      control: 'select',
-      options: [StorageType.Memory, StorageType.Local],
-      table: {
-        defaultValue: { summary: StorageType.Memory },
-      },
     },
     children: {
       description: 'Custom UI rendered inside the headless provider',
@@ -170,24 +162,22 @@ const HeadlessDashboard = () => {
 };
 
 export const CustomSurface: Story = {
-  args: {
-    achievements: headlessAchievements,
-    storage: StorageType.Memory,
-  },
-  render: (args) => (
-    <HeadlessAchievementProvider {...args}>
+  render: () => (
+    <HeadlessAchievementProvider client={createMockAchievementClient({ achievements: headlessAchievements })}>
       <HeadlessDashboard />
     </HeadlessAchievementProvider>
   ),
 };
 
-export const LocalStorageSurface: Story = {
-  args: {
-    achievements: headlessAchievements,
-    storage: StorageType.Local,
-  },
-  render: (args) => (
-    <HeadlessAchievementProvider {...args}>
+export const PreloadedSurface: Story = {
+  render: () => (
+    <HeadlessAchievementProvider
+      client={createMockAchievementClient({
+        achievements: headlessAchievements,
+        initialMetrics: { score: 100 },
+        initiallyUnlockedIds: ['score_100'],
+      })}
+    >
       <HeadlessDashboard />
     </HeadlessAchievementProvider>
   ),

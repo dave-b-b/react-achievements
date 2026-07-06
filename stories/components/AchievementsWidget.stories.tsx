@@ -5,10 +5,10 @@ import {
   AchievementsList,
   AchievementsModal,
   AchievementsWidget,
-  StorageType,
   useSimpleAchievements,
 } from '../../src';
 import type { SimpleAchievementConfig } from '../../src';
+import { createMockAchievementClient } from '../mocks/achievementClient';
 
 const meta: Meta<typeof AchievementsWidget> = {
   title: 'Components/AchievementsWidget',
@@ -173,8 +173,7 @@ const MissionActions: React.FC = () => {
 
 const WidgetProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <AchievementProvider
-    achievements={demoAchievements}
-    storage={StorageType.Memory}
+    client={createMockAchievementClient({ achievements: demoAchievements })}
     ui={{ enableNotifications: false, enableConfetti: false }}
   >
     <div style={providerStyles}>{children}</div>
@@ -381,8 +380,7 @@ export const ExistingDrawerControlOpensModal: Story = {
 export const HiddenModalScrollbar: Story = {
   render: () => (
     <AchievementProvider
-      achievements={scrollbarDemoAchievements}
-      storage={StorageType.Memory}
+      client={createMockAchievementClient({ achievements: scrollbarDemoAchievements })}
       ui={{ enableNotifications: false, enableConfetti: false }}
     >
       <div style={providerStyles}>
@@ -409,8 +407,7 @@ export const HiddenModalScrollbar: Story = {
 export const CompactAchievementsModal: Story = {
   render: () => (
     <AchievementProvider
-      achievements={scrollbarDemoAchievements}
-      storage={StorageType.Memory}
+      client={createMockAchievementClient({ achievements: scrollbarDemoAchievements })}
       ui={{ enableNotifications: false, enableConfetti: false }}
     >
       <div style={providerStyles}>

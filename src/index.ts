@@ -78,6 +78,17 @@ export { useSimpleAchievements } from './hooks/useSimpleAchievements';
 export { useAchievementState } from './hooks/useAchievementState';
 export { useAchievementEngine } from './hooks/useAchievementEngine';
 
+// Server-backed client
+export { RestAchievementClient, createRestAchievementClient } from './client/RestAchievementClient';
+export type { RestAchievementClientConfig } from './client/RestAchievementClient';
+export type {
+    AchievementClient,
+    AchievementClientMutationResult,
+    AchievementClientSnapshot,
+    AchievementDto,
+    AchievementProgress,
+} from './client/types';
+
 // Core Styles
 export { defaultStyles } from './core/styles/defaultStyles';
 
