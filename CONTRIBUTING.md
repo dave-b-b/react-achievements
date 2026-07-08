@@ -253,12 +253,9 @@ We welcome contributions in these areas:
 
 ## Licensing
 
-By contributing to React Achievements, you agree that your contributions will be licensed under the project's dual license:
+By contributing to React Achievements, you agree that your contributions will be licensed under the MIT License.
 
-- **MIT License** for non-commercial use
-- **Commercial License** for commercial use
-
-See the [LICENSE](./LICENSE) and [COMMERCIAL-LICENSE.md](./COMMERCIAL-LICENSE.md) files for details.
+See the [LICENSE](./LICENSE) file for details.
 
 ## Questions or Need Help?
 
