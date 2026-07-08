@@ -4,7 +4,7 @@
 
 [📚 Documentation](https://dave-b-b.github.io/react-achievements/) | [📦 npm Package](https://www.npmjs.com/package/react-achievements)
 
-[![npm version](https://img.shields.io/npm/v/react-achievements.svg)](https://www.npmjs.com/package/react-achievements) [![License](https://img.shields.io/badge/license-Dual%20(MIT%20%2B%20Commercial)-blue.svg)](./LICENSE) [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
+[![npm version](https://img.shields.io/npm/v/react-achievements.svg)](https://www.npmjs.com/package/react-achievements) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE) [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 
 <p align="center">
   <img
@@ -285,12 +285,9 @@ React Native UI components are not included in the web package; use `achievement
 
 ## License
 
-React Achievements is dual-licensed:
+React Achievements is licensed under the MIT License. It is free to use, modify, distribute, and include in personal, open-source, and commercial projects.
 
-- **Free for Non-Commercial Use** (MIT License)
-- **Commercial License Required** for businesses, SaaS, commercial apps, and enterprise use
-
-[Get Commercial License](https://github.com/sponsors/dave-b-b) | [License Details](./LICENSE) | [Commercial Terms](./COMMERCIAL-LICENSE.md)
+See [LICENSE](./LICENSE) for details.
 
 ## AI Agents
 

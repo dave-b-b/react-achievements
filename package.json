@@ -1,6 +1,6 @@
 {
   "name": "react-achievements",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "React UI and client hooks for server-backed achievements",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
@@ -102,7 +102,7 @@
     "core"
   ],
   "author": "Dave B",
-  "license": "SEE LICENSE IN LICENSE",
+  "license": "MIT",
   "funding": {
     "type": "github",
     "url": "https://github.com/sponsors/dave-b-b"

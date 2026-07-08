@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [5.0.1] - 2026-07-08
+
+### Changed
+- **License**: Switched React Achievements to the MIT License for free personal, open-source, and commercial use.
+
+### Removed
+- **Paid Licensing Terms**: Removed the separate paid licensing terms and related documentation links.
+
+---
+
 ## [4.4.1] - 2026-05-19
 
 ### Fixed
