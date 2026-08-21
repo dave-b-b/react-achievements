@@ -83,6 +83,43 @@ describe('AchievementsWidget', () => {
     });
   });
 
+  it('shows accessible progress for locked numeric achievements', async () => {
+    const ProgressTracker = () => {
+      const { track, nextAchievement, completionPercent } = useSimpleAchievements();
+
+      return (
+        <>
+          <button type="button" onClick={() => track('score', 40)}>Progress</button>
+          <span data-testid="next-achievement">{nextAchievement?.achievementTitle}</span>
+          <span data-testid="completion-percent">{completionPercent}</span>
+          <AchievementsList />
+        </>
+      );
+    };
+
+    render(
+      <AchievementProvider
+        achievements={achievements}
+        storage={StorageType.Memory}
+        ui={{ enableNotifications: false, enableConfetti: false }}
+      >
+        <ProgressTracker />
+      </AchievementProvider>
+    );
+
+    fireEvent.click(screen.getByText('Progress'));
+
+    await waitFor(() => {
+      expect(screen.getByRole('progressbar', { name: 'Century! progress' })).toHaveAttribute(
+        'aria-valuenow',
+        '40'
+      );
+      expect(screen.getByText('40 / 100')).toBeInTheDocument();
+      expect(screen.getByTestId('next-achievement')).toHaveTextContent('Century!');
+      expect(screen.getByTestId('completion-percent')).toHaveTextContent('0');
+    });
+  });
+
   it('supports inline placement for drawers and navigation areas', () => {
     render(
       <AchievementProvider

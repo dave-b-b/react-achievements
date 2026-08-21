@@ -1,6 +1,6 @@
 # React Achievements
 
-**Display server-backed achievements in React** - fetch achievement state from your app server, track progress through REST calls, show badges, and celebrate unlocks.
+**Add achievements to React in minutes** — define goals, track progress, show badges, and celebrate unlocks. Start entirely in the browser, then move persistence to your server without replacing the UI.
 
 [📚 Documentation](https://dave-b-b.github.io/react-achievements/) | [📦 npm Package](https://www.npmjs.com/package/react-achievements)
 
@@ -22,7 +22,7 @@ npm install react-achievements
 
 **Requirements:** React 16.8+, Node.js 16+
 
-If you want the official JavaScript backend engine, install `achievements-engine` in your server package. React Achievements can also display achievement data from Rails Merit or any backend that implements the same REST contract.
+The default setup needs no backend. Install `achievements-engine` in your server package later if you need account-level persistence, authoritative rewards, or cross-device progress.
 
 ## Start Here
 
@@ -30,30 +30,31 @@ If you want the official JavaScript backend engine, install `achievements-engine
 import {
   AchievementProvider,
   AchievementsWidget,
-  createRestAchievementClient,
   useSimpleAchievements,
 } from 'react-achievements';
 
-const achievementsClient = createRestAchievementClient({
-  baseUrl: '/api/achievements',
-});
+const achievements = {
+  score: {
+    100: { title: 'Century!', description: 'Score 100 points', icon: '🏆' },
+  },
+};
 
 function Game() {
-  const { track, event } = useSimpleAchievements();
+  const { increment, nextAchievement } = useSimpleAchievements();
 
   return (
     <>
-      <button onClick={() => track('score', 100)}>Score 100</button>
-      <button onClick={() => event('lesson.completed', { lessonId: 'intro' })}>
-        Complete lesson
-      </button>
+      <button onClick={() => increment('score', 10)}>Add 10 points</button>
+      {nextAchievement?.progress && (
+        <p>Next: {nextAchievement.achievementTitle} ({nextAchievement.progress.percent}% complete)</p>
+      )}
     </>
   );
 }
 
 export default function App() {
   return (
-    <AchievementProvider client={achievementsClient}>
+    <AchievementProvider achievements={achievements}>
       <Game />
       <AchievementsWidget />
     </AchievementProvider>
@@ -62,6 +63,18 @@ export default function App() {
 ```
 
 `AchievementsWidget` reads from context, shows the unlocked count, and opens a modal with locked and unlocked achievements. Use `placement="inline"` to put it in a drawer, sidebar, or navigation area. For an exact visual match, pass `renderTrigger` and use your app's own drawer row, nav item, or profile menu button while the widget still controls the modal.
+
+Numeric achievements automatically include progress, and locked items display an accessible progress bar. When you are ready for server-backed state, create a REST client:
+
+```tsx
+import { createRestAchievementClient } from 'react-achievements';
+
+const achievementsClient = createRestAchievementClient({ baseUrl: '/api/achievements' });
+
+<AchievementProvider client={achievementsClient}>
+  <App />
+</AchievementProvider>
+```
 
 Your server should expose this contract:
 
@@ -194,12 +207,15 @@ const {
   unlockedIds,
   unlockedAchievements,
   allAchievements,
+  lockedAchievements,
+  nextAchievement,
   unlockedCount,
   totalCount,
+  completionPercent,
 } = useSimpleAchievements();
 ```
 
-Deprecated aliases from v3, including `unlocked` and `all`, remain available until 5.0.
+Deprecated aliases from v3, including `unlocked` and `all`, remain available for compatibility and are planned for removal in the next major release.
 
 ## Server Engine Example
 

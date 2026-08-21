@@ -17,6 +17,7 @@ export interface AchievementsListProps {
   achievements?: AchievementWithStatus[];
   showLocked?: boolean;
   showUnlockConditions?: boolean;
+  showProgress?: boolean;
   icons?: Record<string, string>;
   styles?: StylesProps['badgesModal'];
   emptyState?: React.ReactNode;
@@ -98,6 +99,7 @@ export const AchievementsList: React.FC<AchievementsListProps> = ({
   achievements,
   showLocked = true,
   showUnlockConditions = false,
+  showProgress = true,
   icons = {},
   styles = {},
   emptyState,
@@ -223,6 +225,43 @@ export const AchievementsList: React.FC<AchievementsListProps> = ({
                     </span>
                   )}
                 </p>
+              )}
+              {showProgress && isLocked && achievement.progress && (
+                <div style={{ marginTop: density === 'compact' ? '6px' : '10px' }}>
+                  <div
+                    role="progressbar"
+                    aria-label={`${achievement.achievementTitle} progress`}
+                    aria-valuemin={0}
+                    aria-valuemax={achievement.progress.target}
+                    aria-valuenow={achievement.progress.current}
+                    style={{
+                      height: density === 'compact' ? '4px' : '6px',
+                      overflow: 'hidden',
+                      borderRadius: '999px',
+                      background: 'rgba(127, 127, 127, 0.2)',
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: `${achievement.progress.percent}%`,
+                        height: '100%',
+                        borderRadius: 'inherit',
+                        background: 'currentColor',
+                        opacity: 0.65,
+                      }}
+                    />
+                  </div>
+                  <span
+                    style={{
+                      display: 'block',
+                      marginTop: '3px',
+                      fontSize: density === 'compact' ? '10px' : '12px',
+                      color: '#777',
+                    }}
+                  >
+                    {achievement.progress.current} / {achievement.progress.target}
+                  </span>
+                </div>
               )}
             </div>
             {isLocked && (
