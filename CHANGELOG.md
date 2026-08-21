@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Numeric Simple API achievements expose `progress` in local and server-backed snapshots.
+- `useSimpleAchievements` exposes `lockedAchievements`, `nextAchievement`, and `completionPercent`.
+- `AchievementsList` renders accessible progress bars for locked numeric goals by default.
+
+### Changed
+- Local-first setup is the primary onboarding path; server-backed persistence is documented as an upgrade.
+
+---
+
+## [5.0.0] - 2026-07-07
+
+### Added
+- Server-backed `AchievementClient` support and the shared REST snapshot contract.
+- Explicit `react-achievements/web` and `react-achievements/headless` entry points.
+
+### Changed
+- Package focus expanded from browser-only state to portable local and server-backed achievement UI.
+
+### Compatibility
+- Deprecated v3 aliases and wrappers remain available in 5.x and are planned for removal in the next major release.
+
 ---
 
 ## [5.0.1] - 2026-07-08

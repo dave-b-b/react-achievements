@@ -110,7 +110,7 @@ export interface WebAchievementProviderProps extends HeadlessAchievementProvider
   ui?: UIConfig;
   /**
    * @deprecated Built-in UI is the default in v4. This prop is a no-op and will
-   * be removed in 5.0.
+   * be removed in the next major release.
    */
   useBuiltInUI?: boolean;
 }
@@ -320,7 +320,7 @@ export const AchievementProvider: React.FC<WebAchievementProviderProps> = ({
 }) => {
   if (useBuiltInUI !== undefined) {
     warnDeprecation(
-      '`useBuiltInUI` is deprecated and is now a no-op because built-in UI is the default. It will be removed in 5.0.'
+      '`useBuiltInUI` is deprecated and is now a no-op because built-in UI is the default. It will be removed in the next major release.'
     );
   }
 

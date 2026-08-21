@@ -48,6 +48,7 @@ export interface SimpleAchievementDetails {
     description?: string;
     icon?: string;
     confetti?: AchievementConfetti;
+    metadata?: Record<string, unknown>;
 }
 
 export interface CustomAchievementDetails extends SimpleAchievementDetails {
@@ -100,7 +101,7 @@ export function isAsyncStorage(storage: AnyAchievementStorage): storage is Async
 }
 
 /**
- * @deprecated This type is outdated and will be removed in 5.0.
+ * @deprecated This type is outdated and will be removed in the next major release.
  * Use AchievementContextType from 'react-achievements' instead.
  *
  * This legacy interface does not include the 'engine' property.
@@ -178,4 +179,4 @@ export type {
     NotificationPosition,
     ThemeConfig,
     UIConfig,
-} from './ui/interfaces'; 
+} from './ui/interfaces';

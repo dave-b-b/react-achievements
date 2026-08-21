@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Quick Start
 
-Build your first achievement system with the v4 Simple API.
+Build your first achievement system with the v5 local-first Simple API. No backend is required.
 
 ## 1. Define Achievements
 
@@ -45,13 +45,16 @@ export default function App() {
 import { useSimpleAchievements } from 'react-achievements';
 
 export default function Game() {
-  const { track, increment } = useSimpleAchievements();
+  const { track, increment, nextAchievement } = useSimpleAchievements();
 
   return (
     <div>
       <button onClick={() => track('score', 100)}>Score 100</button>
       <button onClick={() => increment('score', 50)}>Add 50</button>
       <button onClick={() => track('completedTutorial', true)}>Complete Tutorial</button>
+      {nextAchievement?.progress && (
+        <p>{nextAchievement.achievementTitle}: {nextAchievement.progress.percent}%</p>
+      )}
     </div>
   );
 }
@@ -174,7 +177,7 @@ const {
 } = useSimpleAchievements();
 ```
 
-`unlocked` remains as a deprecated v3 alias for `unlockedIds` until 5.0.
+`unlocked` remains as a deprecated v3 alias for `unlockedIds` and is planned for removal in the next major release.
 
 ## Event-Based Alternative
 

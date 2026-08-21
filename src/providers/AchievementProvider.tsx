@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react';
-import { AchievementEngine, AchievementError } from 'achievements-engine';
+import { AchievementEngine, AchievementError, isSimpleConfig } from 'achievements-engine';
 import type {
   AchievementStorage,
   AsyncAchievementStorage,
@@ -64,7 +64,7 @@ export interface AchievementContextType {
   error: Error | null;
   /**
    * @deprecated Use provider props or the presence of an injected engine directly.
-   * This compatibility flag will be removed in 5.0.
+   * This compatibility flag will be removed in the next major release.
    */
   _isLegacyPattern: boolean;
 }
@@ -75,6 +75,7 @@ export interface AchievementProviderProps {
   client?: AchievementClient;
   achievements?: AchievementConfigurationType;
   storage?: AchievementStorage | AsyncAchievementStorage | StorageType;
+  /** @deprecated Uses the legacy split-state REST storage protocol. Prefer `client`. */
   restApiConfig?: RestApiStorageConfig;
   eventMapping?: EventMapping;
   engine?: AchievementEngine;
@@ -83,7 +84,7 @@ export interface AchievementProviderProps {
   onError?: (error: AchievementError) => void;
   /**
    * @deprecated Built-in UI is the default in the web provider. This prop is a
-   * no-op and will be removed in 5.0.
+   * no-op and will be removed in the next major release.
    */
   useBuiltInUI?: boolean;
 }
@@ -146,6 +147,57 @@ const normalizeClientSnapshot = (snapshot: AchievementClientSnapshot): Achieveme
   };
 };
 
+const enrichEngineSnapshot = (
+  snapshot: AchievementSnapshot,
+  config?: AchievementConfigurationType
+): AchievementSnapshot => {
+  if (!config || !isSimpleConfig(config as EngineAchievementConfigurationType)) {
+    return snapshot;
+  }
+
+  const progressById = new Map<string, AchievementWithStatus['progress']>();
+
+  Object.entries(config).forEach(([metric, configuredAchievements]) => {
+    Object.keys(configuredAchievements).forEach((thresholdKey) => {
+      const target = Number(thresholdKey);
+
+      if (!Number.isFinite(target)) {
+        return;
+      }
+
+      const rawCurrent = snapshot.metrics[metric];
+      const metricValue = Array.isArray(rawCurrent) ? rawCurrent[0] : rawCurrent;
+      const current = typeof metricValue === 'number' ? metricValue : 0;
+      const isUnlocked = snapshot.unlockedIds.includes(`${metric}_${thresholdKey}`);
+
+      progressById.set(`${metric}_${thresholdKey}`, {
+        current,
+        target,
+        percent: isUnlocked
+          ? 100
+          : Math.max(0, Math.min(100, target <= 0 ? 100 : (current / target) * 100)),
+      });
+    });
+  });
+
+  const allAchievements = snapshot.allAchievements.map((achievement) => ({
+    ...achievement,
+    progress: achievement.progress || progressById.get(achievement.achievementId),
+  }));
+  const allById = new Map(allAchievements.map((achievement) => [
+    achievement.achievementId,
+    achievement,
+  ]));
+
+  return {
+    ...snapshot,
+    allAchievements,
+    unlockedAchievements: snapshot.unlockedAchievements.map(
+      (achievement) => allById.get(achievement.achievementId) || achievement
+    ),
+  };
+};
+
 const toError = (unknownError: unknown, fallbackMessage: string): Error => (
   unknownError instanceof Error ? unknownError : new Error(fallbackMessage)
 );
@@ -164,7 +216,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 }) => {
   if (useBuiltInUI !== undefined) {
     warnDeprecation(
-      '`useBuiltInUI` is deprecated and is now a no-op because built-in UI is the default. It will be removed in 5.0.'
+      '`useBuiltInUI` is deprecated and is now a no-op because built-in UI is the default. It will be removed in the next major release.'
     );
   }
 
@@ -215,7 +267,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   });
 
   const [achievementSnapshot, setAchievementSnapshot] = useState<AchievementSnapshot>(() =>
-    engine ? engine.getSnapshot() : emptySnapshot()
+    engine ? enrichEngineSnapshot(engine.getSnapshot(), achievementsConfig) : emptySnapshot()
   );
   const [recentlyUnlocked, setRecentlyUnlocked] = useState<AchievementWithStatus[]>([]);
   const [isLoading, setIsLoading] = useState(Boolean(client));
@@ -228,9 +280,9 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     }
 
     if (engine) {
-      setAchievementSnapshot(engine.getSnapshot());
+      setAchievementSnapshot(enrichEngineSnapshot(engine.getSnapshot(), achievementsConfig));
     }
-  }, [engine]);
+  }, [engine, achievementsConfig]);
 
   const applyClientMutationResult = useCallback((result: AchievementClientMutationResult) => {
     setRecentlyUnlocked((result.newlyUnlocked || []).map(normalizeAchievementDto));
@@ -241,7 +293,9 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 
   const refresh = useCallback(async (): Promise<AchievementSnapshot> => {
     if (!client) {
-      const snapshot = engine ? engine.getSnapshot() : emptySnapshot();
+      const snapshot = engine
+        ? enrichEngineSnapshot(engine.getSnapshot(), achievementsConfig)
+        : emptySnapshot();
       setAchievementSnapshot(snapshot);
       return snapshot;
     }
@@ -260,7 +314,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     } finally {
       setIsLoading(false);
     }
-  }, [client, engine]);
+  }, [client, engine, achievementsConfig]);
 
   const handleClientMutationFailure = useCallback((unknownError: unknown): never => {
     const nextError = toError(unknownError, 'Failed to update achievements');
@@ -375,7 +429,9 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   };
 
   const getState = () => {
-    const snapshot = engine ? engine.getSnapshot() : achievementSnapshot;
+    const snapshot = engine
+      ? enrichEngineSnapshot(engine.getSnapshot(), achievementsConfig)
+      : achievementSnapshot;
 
     return {
       metrics: snapshot.metrics,
@@ -401,7 +457,9 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   };
 
   const getAllAchievements = (): AchievementWithStatus[] => {
-    return engine ? engine.getSnapshot().allAchievements : achievementSnapshot.allAchievements;
+    return engine
+      ? enrichEngineSnapshot(engine.getSnapshot(), achievementsConfig).allAchievements
+      : achievementSnapshot.allAchievements;
   };
 
   const achievements = {
