@@ -1,6 +1,6 @@
 {
   "name": "react-achievements",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "description": "React UI and client hooks for server-backed achievements",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
