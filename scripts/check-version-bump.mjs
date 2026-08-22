@@ -1,3 +1,5 @@
+/* global process, console */
+
 import { execFileSync } from 'node:child_process';
 
 const [base, head = 'HEAD'] = process.argv.slice(2);
