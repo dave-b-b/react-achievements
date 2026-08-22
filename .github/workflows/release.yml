@@ -1,11 +1,13 @@
 name: Release
 
 on:
-  workflow_dispatch:  # Manual trigger via GitHub UI or CLI
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
-  id-token: write  # Required for OIDC
   contents: read
+  id-token: write
 
 jobs:
   publish:
@@ -17,7 +19,19 @@ jobs:
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
+          cache: npm
+
       - run: npm ci
-      - run: npm run build --if-present
       - run: npm test
-      - run: npm publish
+      - run: npm run build
+      - name: Publish only a new version
+        shell: bash
+        run: |
+          set -euo pipefail
+          package_name=$(node -p "require('./package.json').name")
+          package_version=$(node -p "require('./package.json').version")
+          if npm view "${package_name}@${package_version}" version >/dev/null 2>&1; then
+            echo "${package_name}@${package_version} is already published; nothing to do."
+            exit 0
+          fi
+          npm publish --provenance --access public
