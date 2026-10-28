@@ -1,6 +1,6 @@
 # React Achievements - Agent Guide
 
-Use this when adding achievements with an AI coding agent. Prefer the v5 local-first Simple API and the context-aware widget; add a server client only when the application needs authoritative or cross-device state.
+Use this when adding achievements with an AI coding agent. Prefer the v6 local-first Simple API and the context-aware widget; add a server client only when the application needs authoritative or cross-device state.
 
 ## Golden Path
 
@@ -57,5 +57,5 @@ export default function App() {
 ## Prompt Template
 
 ```text
-Add React Achievements to this app. Use the v5 local-first Simple API. Create an achievements config in achievements.ts, wrap the app with AchievementProvider, add an AchievementsWidget, and use useSimpleAchievements for tracking and next-achievement progress.
+Add React Achievements to this app. Use the v6 local-first Simple API. Create an achievements config in achievements.ts, wrap the app with AchievementProvider, add an AchievementsWidget, and use useSimpleAchievements for tracking and next-achievement progress.
 ```

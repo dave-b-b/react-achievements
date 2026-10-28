@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Common Patterns
 
-Ready-to-use v4 examples for common achievement workflows.
+Ready-to-use React 6 examples for common achievement workflows.
 
 ## Floating Widget
 

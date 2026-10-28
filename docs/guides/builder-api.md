@@ -6,7 +6,7 @@ sidebar_position: 3
 
 The Builder API provides a three-tier system for configuring achievements, from smart defaults to full custom control.
 
-For most v4 React apps, the threshold-based object configuration is still the shortest path. Use the Builder API when you want reusable factory helpers, bulk score/level achievements, or a fluent way to express custom conditions.
+For most React apps, the threshold-based object configuration is still the shortest path. Use the Builder API when you want reusable factory helpers, bulk score/level achievements, or a fluent way to express custom conditions.
 
 ## Overview
 

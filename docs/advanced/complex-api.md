@@ -421,7 +421,7 @@ function Game() {
 ✅ **Maximum control** - Full control over condition logic
 ✅ **Type safety** - Can add complex type checking in conditions
 ✅ **Explicit** - Every field is clearly defined
-✅ **Backward compatible** - Supported by the current v4 provider for legacy configurations
+✅ **Backward compatible** - Supported by the current React provider for legacy configurations
 
 ### Disadvantages
 

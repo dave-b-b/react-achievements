@@ -228,7 +228,7 @@ React Native UI components are not included in `4.0`; use `achievements-engine` 
 
 ## Entry Points
 
-- `react-achievements` - v4 web API with provider, hooks, built-in effects, widget, modal, and list components
+- `react-achievements` - v6 web API with provider, hooks, built-in effects, widget, modal, and list components
 - `react-achievements/web` - explicit web entry point
 - `react-achievements/headless` - provider, hooks, engine, storage, and types without DOM UI
 
@@ -251,4 +251,4 @@ React Achievements is dual-licensed:
 
 ## AI Agents
 
-If you're using AI coding agents, see `AGENTS.md` for the recommended v4 integration prompt.
+If you're using AI coding agents, see `AGENTS.md` for the recommended v6 integration prompt.

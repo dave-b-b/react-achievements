@@ -4,7 +4,7 @@ sidebar_position: 0
 
 # API Reference
 
-The API reference is generated from the TypeScript source. For v4 application setup, start with the root web entry point and reach for `/headless` only when you do not want DOM UI.
+The API reference is generated from the TypeScript source. For React 6 application setup, start with the root web entry point and reach for `/headless` only when you do not want DOM UI.
 
 ## Entry Points
 
@@ -12,7 +12,9 @@ The API reference is generated from the TypeScript source. For v4 application se
 - `react-achievements/web` - explicit alias for the web API
 - `react-achievements/headless` - provider, hooks, engine, storage, and types without DOM UI components
 
-## Main v4 Exports
+The legacy `RestApiStorage` is deprecated; use the shared `createRestAchievementClient` from `achievements-engine` or its compatibility reexport from `react-achievements`.
+
+## Main React 6 Exports
 
 - `AchievementProvider`
 - `AchievementsWidget`, `AchievementsModal`, `AchievementsList`

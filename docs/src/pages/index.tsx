@@ -9,7 +9,7 @@ import Heading from '@theme/Heading';
 import styles from './index.module.css';
 
 function HomepageHeader() {
-  const heroImage = useBaseUrl('/img/demo-v4-4.gif');
+  const heroImage = useBaseUrl('/img/learnquest-overview.png');
 
   return (
     <header className={styles.heroBanner}>
@@ -31,13 +31,18 @@ function HomepageHeader() {
             </Link>
             <Link
               className={clsx('button button--secondary button--lg', styles.secondaryButton)}
+              to="https://achievements-starter.vercel.app/">
+              Try the live demo
+            </Link>
+            <Link
+              className={clsx('button button--secondary button--lg', styles.secondaryButton)}
               to="/docs/guides/styling">
               Customize UI
             </Link>
           </div>
           <dl className={styles.heroStats} aria-label="React Achievements highlights">
             <div>
-              <dt>v4</dt>
+              <dt>v6</dt>
               <dd>Simple API</dd>
             </div>
             <div>
@@ -54,7 +59,7 @@ function HomepageHeader() {
           <img
             className={styles.heroImage}
             src={heroImage}
-            alt="React Achievements 4.4 compact badge modal and configurable confetti in a LearnQuest demo app"
+            alt="Current LearnQuest demo overview with an interactive achievement preview and clear next steps"
           />
         </figure>
       </div>

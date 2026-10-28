@@ -2,9 +2,9 @@
 sidebar_position: 3
 ---
 
-# v4 Feature Setup
+# Full Feature Setup
 
-This checklist covers the full v4 setup surface: provider, tracking, UI placement, storage, customization, events, portability, and headless usage.
+This checklist covers the full React 6 setup surface: provider, tracking, UI placement, storage, customization, events, portability, and headless usage.
 
 ## 1. Provider
 
@@ -343,4 +343,4 @@ function CustomAchievementSurface() {
 </AchievementProvider>
 ```
 
-React Native UI components are not included in v4. Use headless state/hooks with your own native components, or use `achievements-engine` directly outside React.
+React Native UI components are not included in React Achievements 6. Use headless state/hooks with your own native components, or use `achievements-engine` directly outside React.

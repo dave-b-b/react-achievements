@@ -62,6 +62,8 @@ const config: Config = {
           routeBasePath: 'docs',
           sidebarPath: './sidebars.ts',
           exclude: [
+            // This deprecated engine type emits raw braces in TypeDoc output, which MDX cannot parse.
+            '**/api-reference/classes/RestApiStorage.md',
             '**/node_modules/**',
             '**/.docusaurus/**',
             '**/build/**',

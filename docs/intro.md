@@ -4,9 +4,11 @@ sidebar_position: 0
 
 # React Achievements
 
-React Achievements adds gamification to React apps with progress tracking, unlock notifications, confetti, and a ready-made achievement widget.
+React Achievements 6 adds progress tracking, unlock notifications, confetti, and an achievement widget to React apps. [Try these features in the live LearnQuest demo](https://achievements-starter.vercel.app/).
 
-## v4 Happy Path
+`achievements-engine` 2.1 owns rules, progress calculation, and REST contracts. `react-achievements` 6 connects those results to React hooks and built-in UI.
+
+## Version 6 Quick Start
 
 ```tsx
 import {
@@ -51,6 +53,6 @@ export default function App() {
 
 - [Installation](/docs/getting-started/installation)
 - [Quick Start](/docs/getting-started/quick-start)
-- [v4 Feature Setup](/docs/getting-started/v4-feature-setup)
+- [Full Feature Setup](/docs/getting-started/v4-feature-setup)
 - [Direct Updates](/docs/guides/direct-updates)
 - [Event-Based Tracking](/docs/guides/event-based-tracking)
