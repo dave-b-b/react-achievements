@@ -52,7 +52,7 @@ describe('Theme System', () => {
       expect(theme.notification).toBeDefined();
       expect(theme.modal).toBeDefined();
       expect(theme.confetti).toBeDefined();
-      
+
       // Check notification structure
       expect(theme.notification.background).toBeDefined();
       expect(theme.notification.textColor).toBeDefined();
@@ -60,14 +60,14 @@ describe('Theme System', () => {
       expect(theme.notification.borderRadius).toBeDefined();
       expect(theme.notification.boxShadow).toBeDefined();
       expect(theme.notification.fontSize).toBeDefined();
-      
+
       // Check modal structure
       expect(theme.modal.overlayColor).toBeDefined();
       expect(theme.modal.background).toBeDefined();
       expect(theme.modal.textColor).toBeDefined();
       expect(theme.modal.accentColor).toBeDefined();
       expect(theme.modal.borderRadius).toBeDefined();
-      
+
       // Check confetti structure
       expect(theme.confetti.colors).toBeDefined();
       expect(Array.isArray(theme.confetti.colors)).toBe(true);

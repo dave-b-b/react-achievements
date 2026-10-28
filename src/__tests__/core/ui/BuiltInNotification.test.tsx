@@ -37,14 +37,14 @@ describe('BuiltInNotification', () => {
     render(
       <BuiltInNotification achievement={mockAchievement} onClose={handleClose} duration={999999} />,
     );
-    
+
     // Fast-forward initial animation
     await act(async () => {
       jest.advanceTimersByTime(10);
     });
 
     fireEvent.click(screen.getByLabelText('Close notification'));
-    
+
     // Fast-forward exit animation
     await act(async () => {
       jest.advanceTimersByTime(300);
@@ -177,7 +177,7 @@ describe('BuiltInNotification', () => {
             position={position}
           />,
         );
-        
+
         await act(async () => {
           // Wait for the animation to make it visible
           jest.advanceTimersByTime(10);

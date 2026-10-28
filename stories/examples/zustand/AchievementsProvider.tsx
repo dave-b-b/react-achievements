@@ -47,4 +47,4 @@ export const ZustandAchievementsProvider: React.FC<{ children: React.ReactNode }
       {children}
     </AchievementProvider>
   );
-}; 
+};

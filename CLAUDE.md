@@ -31,7 +31,7 @@ The library follows a provider-based architecture with these key components:
 
 1. **AchievementProvider** (`src/providers/AchievementProvider.tsx`) - Main context provider that manages:
    - Achievement state and metrics tracking
-   - Storage persistence (LocalStorage or MemoryStorage)  
+   - Storage persistence (LocalStorage or MemoryStorage)
    - Automatic toast notifications and confetti animations
    - Achievement condition evaluation
 
@@ -69,12 +69,12 @@ const achievements = {
     100: { title: 'Century!', description: 'Score 100 points', icon: '🏆' },
     500: { title: 'High Scorer!', icon: '⭐' }
   },
-  
+
   // Boolean achievements
   completedTutorial: {
     true: { title: 'Tutorial Master', description: 'Complete the tutorial', icon: '📚' }
   },
-  
+
   // Custom condition functions for complex logic
   combo: {
     custom: {
@@ -120,7 +120,7 @@ const config = {
 
 The `stories/examples/` directory contains complete implementations for different state management solutions:
 - `redux/` - Redux Toolkit integration
-- `zustand/` - Zustand store integration  
+- `zustand/` - Zustand store integration
 - `context/` - Pure React Context implementation
 
 ## Key Implementation Notes

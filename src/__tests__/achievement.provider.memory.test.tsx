@@ -15,11 +15,11 @@ import '@testing-library/jest-dom';
 
 const TestComponent = () => {
   const context = React.useContext(AchievementContext);
-  
+
   if (!context) {
     throw new Error('TestComponent must be used within an AchievementProvider');
   }
-  
+
   const { update, achievements, reset, getState } = context;
 
   return (
@@ -151,7 +151,7 @@ describe('AchievementProvider with Memory Storage', () => {
     await act(async () => {
       fireEvent.click(screen.getByText('Update Score'));
     });
-    
+
     await waitFor(() => {
       expect(screen.getByTestId('unlocked-count')).toHaveTextContent('Unlocked: 1');
     });
@@ -160,7 +160,7 @@ describe('AchievementProvider with Memory Storage', () => {
     await act(async () => {
       fireEvent.click(screen.getByText('Reset'));
     });
-    
+
     await waitFor(() => {
       expect(screen.getByTestId('unlocked-count')).toHaveTextContent('Unlocked: 0');
     });
@@ -296,4 +296,4 @@ describe('AchievementProvider with Memory Storage', () => {
     expect(scoreAchievement?.isUnlocked).toBe(true);
     expect(multiAchievement?.isUnlocked).toBe(false);
   });
-}); 
+});

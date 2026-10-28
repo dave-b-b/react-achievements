@@ -42,7 +42,7 @@ function YourComponent() {
 
   // Update achievements
   const handleScore = () => update({ score: 100 });
-  
+
   // Reset achievements
   const handleReset = () => {
     reset();
@@ -52,14 +52,14 @@ function YourComponent() {
     <div>
       <button onClick={handleScore}>Score 100 points</button>
       <button onClick={handleReset}>Reset</button>
-      
+
       {/* Floating or inline widget */}
       <AchievementsWidget />
       <AchievementsWidget
         placement="inline"
         label="Drawer achievements"
       />
-      
+
       {/* Existing controls can open the v4 modal */}
       <button onClick={() => setIsModalOpen(true)}>Open achievements</button>
       <AchievementsModal
@@ -93,4 +93,4 @@ The implementation uses React's Context API with the reducer pattern to manage a
 4. Tracks achievement metrics and progress
 5. Integrates seamlessly with the achievements system's components
 
-The implementation is designed to be lightweight and efficient, perfect for applications that want to avoid external dependencies while maintaining robust achievement tracking functionality. All state updates are handled through the reducer pattern, ensuring predictable state changes and making it easy to debug and maintain. 
+The implementation is designed to be lightweight and efficient, perfect for applications that want to avoid external dependencies while maintaining robust achievement tracking functionality. All state updates are handled through the reducer pattern, ensuring predictable state changes and making it easy to debug and maintain.

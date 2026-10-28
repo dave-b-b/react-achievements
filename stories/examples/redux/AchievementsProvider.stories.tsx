@@ -34,9 +34,9 @@ const DemoComponent = () => {
   const { update, reset, getState } = useAchievements();
   const { unlockedIds, unlockedCount, totalCount } = useAchievementState();
   const dispatch = useDispatch();
-  
+
   // Get achievement details directly from Redux store
-  const unlockedAchievementDetails = useSelector((state: RootState) => 
+  const unlockedAchievementDetails = useSelector((state: RootState) =>
     state.achievements.unlockedAchievements
   );
 
@@ -163,4 +163,4 @@ export const Default: StoryObj<typeof ReduxAchievementsProvider> = {
       <DemoComponent />
     </ReduxAchievementsProvider>
   )
-}; 
+};

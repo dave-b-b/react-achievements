@@ -15,6 +15,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Local-first setup is the primary onboarding path; server-backed persistence is documented as an upgrade.
 
+## [6.0.0] - 2026-10-28
+
+### Changed
+- Requires `achievements-engine` 2.1 or newer within major 2. Upgrade both packages together: `npm install react-achievements@^6 achievements-engine@^2.1`.
+- Achievement data and client contracts now derive from the engine; the React SDK specializes celebration options for its UI.
+- REST client exports retain their existing names and now use the engine implementation.
+- Local progress comes directly from engine snapshots, including injected engines; the React fallback calculation is removed.
+
+### Compatibility
+- This is a major release because engine 1.x and 2.0 are no longer supported peers. Existing root, `/web`, and `/headless` import paths and deprecated React APIs remain available.
+
 ## [5.0.2] - 2026-08-21
 
 ### Added

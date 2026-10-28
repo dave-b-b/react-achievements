@@ -44,4 +44,4 @@ export const useAchievementsStore = create<AchievementsState>((set, _get) => ({
       unlockedAchievements: [],
       progress: {},
     }),
-})); 
+}));

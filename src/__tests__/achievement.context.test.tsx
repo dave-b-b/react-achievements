@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState } from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
-import { 
-  AchievementProvider, 
+import {
+  AchievementProvider,
   useAchievements,
-  AchievementConfiguration 
+  AchievementConfiguration
 } from '../index';
 import '@testing-library/jest-dom';
 
@@ -116,4 +116,4 @@ describe('Achievement System with Context', () => {
     expect(mockStorage.getUnlockedAchievements()).toHaveLength(1);
     expect(mockStorage.getMetrics()).toEqual({ score: [100] });
   });
-}); 
+});

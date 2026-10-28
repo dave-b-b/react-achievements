@@ -48,7 +48,7 @@ describe('AchievementProvider UI Integration', () => {
                 <TestApp />
             </AchievementProvider>
         );
-        
+
         await act(async () => {
             fireEvent.click(screen.getByText('Update'));
         });
@@ -509,7 +509,7 @@ describe('AchievementProvider UI Integration', () => {
     it('should apply all notification positions correctly', async () => {
         jest.useRealTimers();
         const positions = ['top-left', 'top-center', 'top-right', 'bottom-left', 'bottom-center', 'bottom-right'] as const;
-        
+
         for (const position of positions) {
             const { unmount } = render(
                 <AchievementProvider achievements={mockConfig.achievements} ui={{ notificationPosition: position }} useBuiltInUI={true}>
@@ -604,9 +604,9 @@ describe('AchievementProvider UI with Event-Based Engine', () => {
         const eventMapping = {
             'test': (value: number) => ({ test: value })
         };
-        const engine = new AchievementEngine({ 
+        const engine = new AchievementEngine({
             achievements: mockConfig.achievements,
-            eventMapping 
+            eventMapping
         });
         render(
             <AchievementProvider engine={engine} useBuiltInUI={true}>
@@ -623,7 +623,7 @@ describe('AchievementProvider UI with Event-Based Engine', () => {
         await act(async () => {
             engine.emit('test', 1);
         });
-        
+
         // Wait for the notification to appear
         await waitFor(() => {
             expect(screen.getByTestId('built-in-notification')).toBeInTheDocument();

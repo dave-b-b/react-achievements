@@ -45,7 +45,7 @@ function YourComponent() {
 
   // Update achievements
   const handleScore = () => update({ score: 100 });
-  
+
   // Reset achievements (both in context and Redux)
   const handleReset = () => {
     reset();
@@ -56,14 +56,14 @@ function YourComponent() {
     <div>
       <button onClick={handleScore}>Score 100 points</button>
       <button onClick={handleReset}>Reset</button>
-      
+
       {/* Context-aware v4 UI works with Redux-backed storage */}
       <AchievementsWidget />
       <AchievementsWidget
         placement="inline"
         label="Drawer achievements"
       />
-      
+
       {/* Existing Redux app controls can open the same modal */}
       <button onClick={() => setIsModalOpen(true)}>Open achievements</button>
       <AchievementsModal
@@ -90,4 +90,4 @@ npm install @reduxjs/toolkit react-redux
 
 ## How it Works
 
-The implementation uses Redux Toolkit to create a slice for managing achievements state. The `ReduxAchievementsProvider` component connects this Redux state to the achievements system's context provider, handling all state updates through Redux actions. This ensures that all achievement updates are tracked in Redux state and can be persisted, time-traveled, and debugged using Redux DevTools. 
+The implementation uses Redux Toolkit to create a slice for managing achievements state. The `ReduxAchievementsProvider` component connects this Redux state to the achievements system's context provider, handling all state updates through Redux actions. This ensures that all achievement updates are tracked in Redux state and can be persisted, time-traveled, and debugged using Redux DevTools.

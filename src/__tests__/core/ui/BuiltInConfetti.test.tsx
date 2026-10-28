@@ -65,7 +65,7 @@ describe('BuiltInConfetti', () => {
   it('disappears after the specified duration', () => {
     const duration = 2000;
     render(<BuiltInConfetti show={true} duration={duration} />);
-    
+
     expect(screen.getByTestId('built-in-confetti')).toBeInTheDocument();
 
     act(() => {

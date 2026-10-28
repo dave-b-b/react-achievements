@@ -70,7 +70,7 @@ describe('useSimpleAchievements', () => {
 
   it('should start with no unlocked achievements', () => {
     renderWithProvider();
-    
+
     expect(screen.getByTestId('unlocked-count')).toHaveTextContent('0');
     expect(screen.getByTestId('unlocked-list')).toHaveTextContent('');
     expect(screen.getByTestId('unlocked-ids')).toHaveTextContent('');
@@ -81,7 +81,7 @@ describe('useSimpleAchievements', () => {
 
   it('should unlock achievement when tracking a metric that meets threshold', async () => {
     renderWithProvider();
-    
+
     await act(async () => {
       screen.getByTestId('track-score').click();
     });
@@ -99,7 +99,7 @@ describe('useSimpleAchievements', () => {
 
   it('should unlock multiple achievements when tracking higher values', async () => {
     renderWithProvider();
-    
+
     await act(async () => {
       screen.getByTestId('track-multiple').click(); // Tracks score: 500, level: 10
     });
@@ -119,7 +119,7 @@ describe('useSimpleAchievements', () => {
 
   it('should handle boolean achievements', async () => {
     renderWithProvider();
-    
+
     await act(async () => {
       screen.getByTestId('track-tutorial').click();
     });
@@ -135,7 +135,7 @@ describe('useSimpleAchievements', () => {
 
   it('should reset all achievements', async () => {
     renderWithProvider();
-    
+
     // First unlock some achievements
     await act(async () => {
       screen.getByTestId('track-score').click();
@@ -205,14 +205,14 @@ describe('useSimpleAchievements', () => {
         <div>
           <div data-testid="unlocked-count">{unlockedCount}</div>
           <div data-testid="current-clicks">{getState().metrics.buttonClicks ? String(getState().metrics.buttonClicks[0]) : '0'}</div>
-          <button 
-            onClick={() => increment('buttonClicks')} 
+          <button
+            onClick={() => increment('buttonClicks')}
             data-testid="increment-clicks"
           >
             Click Me
           </button>
-          <button 
-            onClick={() => increment('score', 50)} 
+          <button
+            onClick={() => increment('score', 50)}
             data-testid="increment-score"
           >
             Add 50 Score
@@ -297,14 +297,14 @@ const TestComponentForCustom: React.FC = () => {
     <div>
       <div data-testid="unlocked-count">{unlockedCount}</div>
       <div data-testid="unlocked-list">{unlocked.join(',')}</div>
-      <button 
-        onClick={() => trackMultiple({ score: 999, accuracy: 100 })} 
+      <button
+        onClick={() => trackMultiple({ score: 999, accuracy: 100 })}
         data-testid="track-partial"
       >
         Track Partial
       </button>
-      <button 
-        onClick={() => trackMultiple({ score: 1000, accuracy: 100 })} 
+      <button
+        onClick={() => trackMultiple({ score: 1000, accuracy: 100 })}
         data-testid="track-perfect"
       >
         Track Perfect

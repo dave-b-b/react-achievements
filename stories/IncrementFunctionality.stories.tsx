@@ -88,12 +88,12 @@ const IncrementDemo = () => {
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '1200px', margin: '0 auto' }}>
       <h1>Increment Functionality Demo</h1>
       <p>Test the increment functionality by clicking buttons to increase metrics and unlock achievements.</p>
-      
+
       {/* Current Metrics Display */}
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-        gap: '15px', 
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+        gap: '15px',
         marginBottom: '30px',
         padding: '20px',
         backgroundColor: '#f8f9fa',
@@ -119,19 +119,19 @@ const IncrementDemo = () => {
 
       {/* Increment Controls */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginBottom: '30px' }}>
-        
+
         {/* Button Clicks */}
         <div style={{ padding: '20px', border: '2px solid #007bff', borderRadius: '8px', backgroundColor: '#fff' }}>
           <h3 style={{ margin: '0 0 15px 0', color: '#007bff' }}>Button Clicks</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button 
+            <button
               onClick={() => increment('buttonClicks')}
-              style={{ 
-                padding: '12px 16px', 
-                backgroundColor: '#007bff', 
-                color: 'white', 
-                border: 'none', 
-                borderRadius: '4px', 
+              style={{
+                padding: '12px 16px',
+                backgroundColor: '#007bff',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
                 cursor: 'pointer',
                 fontSize: '16px',
                 fontWeight: '500'
@@ -139,14 +139,14 @@ const IncrementDemo = () => {
             >
               Click Me! (+1)
             </button>
-            <button 
+            <button
               onClick={() => increment('buttonClicks', 5)}
-              style={{ 
-                padding: '12px 16px', 
-                backgroundColor: '#0056b3', 
-                color: 'white', 
-                border: 'none', 
-                borderRadius: '4px', 
+              style={{
+                padding: '12px 16px',
+                backgroundColor: '#0056b3',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
                 cursor: 'pointer',
                 fontSize: '14px'
               }}
@@ -163,14 +163,14 @@ const IncrementDemo = () => {
         <div style={{ padding: '20px', border: '2px solid #28a745', borderRadius: '8px', backgroundColor: '#fff' }}>
           <h3 style={{ margin: '0 0 15px 0', color: '#28a745' }}>Score Points</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button 
+            <button
               onClick={() => increment('score', 10)}
-              style={{ 
-                padding: '12px 16px', 
-                backgroundColor: '#28a745', 
-                color: 'white', 
-                border: 'none', 
-                borderRadius: '4px', 
+              style={{
+                padding: '12px 16px',
+                backgroundColor: '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
                 cursor: 'pointer',
                 fontSize: '16px',
                 fontWeight: '500'
@@ -178,28 +178,28 @@ const IncrementDemo = () => {
             >
               Score Points (+10)
             </button>
-            <button 
+            <button
               onClick={() => increment('score', 25)}
-              style={{ 
-                padding: '12px 16px', 
-                backgroundColor: '#1e7e34', 
-                color: 'white', 
-                border: 'none', 
-                borderRadius: '4px', 
+              style={{
+                padding: '12px 16px',
+                backgroundColor: '#1e7e34',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
                 cursor: 'pointer',
                 fontSize: '14px'
               }}
             >
               Big Score (+25)
             </button>
-            <button 
+            <button
               onClick={() => increment('score', 50)}
-              style={{ 
-                padding: '12px 16px', 
-                backgroundColor: '#155724', 
-                color: 'white', 
-                border: 'none', 
-                borderRadius: '4px', 
+              style={{
+                padding: '12px 16px',
+                backgroundColor: '#155724',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
                 cursor: 'pointer',
                 fontSize: '14px'
               }}
@@ -216,14 +216,14 @@ const IncrementDemo = () => {
         <div style={{ padding: '20px', border: '2px solid #ffc107', borderRadius: '8px', backgroundColor: '#fff' }}>
           <h3 style={{ margin: '0 0 15px 0', color: '#ffc107' }}>Collect Coins</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button 
+            <button
               onClick={() => increment('coins')}
-              style={{ 
-                padding: '12px 16px', 
-                backgroundColor: '#ffc107', 
-                color: 'black', 
-                border: 'none', 
-                borderRadius: '4px', 
+              style={{
+                padding: '12px 16px',
+                backgroundColor: '#ffc107',
+                color: 'black',
+                border: 'none',
+                borderRadius: '4px',
                 cursor: 'pointer',
                 fontSize: '16px',
                 fontWeight: '500'
@@ -231,28 +231,28 @@ const IncrementDemo = () => {
             >
               Find Coin (+1)
             </button>
-            <button 
+            <button
               onClick={() => increment('coins', 3)}
-              style={{ 
-                padding: '12px 16px', 
-                backgroundColor: '#e0a800', 
-                color: 'white', 
-                border: 'none', 
-                borderRadius: '4px', 
+              style={{
+                padding: '12px 16px',
+                backgroundColor: '#e0a800',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
                 cursor: 'pointer',
                 fontSize: '14px'
               }}
             >
               Coin Pouch (+3)
             </button>
-            <button 
+            <button
               onClick={() => increment('coins', 10)}
-              style={{ 
-                padding: '12px 16px', 
-                backgroundColor: '#c69500', 
-                color: 'white', 
-                border: 'none', 
-                borderRadius: '4px', 
+              style={{
+                padding: '12px 16px',
+                backgroundColor: '#c69500',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
                 cursor: 'pointer',
                 fontSize: '14px'
               }}
@@ -270,18 +270,18 @@ const IncrementDemo = () => {
       <div style={{ padding: '20px', backgroundColor: '#f8f9fa', borderRadius: '8px', marginBottom: '30px' }}>
         <h3 style={{ margin: '0 0 15px 0' }}>Combo Actions</h3>
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          <button 
+          <button
             onClick={() => {
               increment('buttonClicks');
               increment('score', 15);
               increment('coins');
             }}
-            style={{ 
-              padding: '12px 20px', 
-              backgroundColor: '#6f42c1', 
-              color: 'white', 
-              border: 'none', 
-              borderRadius: '4px', 
+            style={{
+              padding: '12px 20px',
+              backgroundColor: '#6f42c1',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
               cursor: 'pointer',
               fontSize: '16px',
               fontWeight: '500'
@@ -289,17 +289,17 @@ const IncrementDemo = () => {
           >
             Play Turn (Click +1, Score +15, Coin +1)
           </button>
-          <button 
+          <button
             onClick={() => {
               increment('score', 100);
               increment('coins', 20);
             }}
-            style={{ 
-              padding: '12px 20px', 
-              backgroundColor: '#fd7e14', 
-              color: 'white', 
-              border: 'none', 
-              borderRadius: '4px', 
+            style={{
+              padding: '12px 20px',
+              backgroundColor: '#fd7e14',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
               cursor: 'pointer',
               fontSize: '16px',
               fontWeight: '500'
@@ -307,14 +307,14 @@ const IncrementDemo = () => {
           >
             Bonus Round (Score +100, Coins +20)
           </button>
-          <button 
+          <button
             onClick={reset}
-            style={{ 
-              padding: '12px 20px', 
-              backgroundColor: '#6c757d', 
-              color: 'white', 
-              border: 'none', 
-              borderRadius: '4px', 
+            style={{
+              padding: '12px 20px',
+              backgroundColor: '#6c757d',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
               cursor: 'pointer',
               fontSize: '16px'
             }}
@@ -325,20 +325,20 @@ const IncrementDemo = () => {
       </div>
 
       {/* Achievement Status */}
-      <div style={{ 
-        display: 'flex', 
-        gap: '20px', 
-        marginBottom: '20px' 
+      <div style={{
+        display: 'flex',
+        gap: '20px',
+        marginBottom: '20px'
       }}>
-        <div style={{ 
-          flex: 1, 
-          padding: '20px', 
-          backgroundColor: '#e9ecef', 
-          borderRadius: '8px' 
+        <div style={{
+          flex: 1,
+          padding: '20px',
+          backgroundColor: '#e9ecef',
+          borderRadius: '8px'
         }}>
           <h3 style={{ margin: '0 0 15px 0' }}>Unlocked Achievements ({unlockedCount})</h3>
-          <div style={{ 
-            maxHeight: '200px', 
+          <div style={{
+            maxHeight: '200px',
             overflowY: 'auto',
             display: 'grid',
             gap: '8px'
@@ -349,13 +349,13 @@ const IncrementDemo = () => {
               </p>
             ) : (
               unlockedIds.map(id => (
-                <div 
-                  key={id} 
-                  style={{ 
+                <div
+                  key={id}
+                  style={{
                     padding: '8px 12px',
                     backgroundColor: 'white',
                     borderRadius: '4px',
-                    fontSize: '14px', 
+                    fontSize: '14px',
                     fontFamily: 'monospace',
                     border: '1px solid #dee2e6'
                   }}
@@ -420,16 +420,16 @@ const BasicIncrementExampleComponent = () => {
       <h2>Basic Increment Example</h2>
       <div style={{ fontSize: '48px', margin: '20px 0' }}>{clicks}</div>
       <p>Clicks: {clicks} | Achievements: {unlockedCount}</p>
-      
-      <button 
+
+      <button
         onClick={() => increment('clicks')}
-        style={{ 
-          padding: '15px 30px', 
-          fontSize: '18px', 
-          backgroundColor: '#007bff', 
-          color: 'white', 
-          border: 'none', 
-          borderRadius: '8px', 
+        style={{
+          padding: '15px 30px',
+          fontSize: '18px',
+          backgroundColor: '#007bff',
+          color: 'white',
+          border: 'none',
+          borderRadius: '8px',
           cursor: 'pointer',
           margin: '10px'
         }}
