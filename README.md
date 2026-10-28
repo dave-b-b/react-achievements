@@ -10,7 +10,7 @@
   <a href="https://achievements-starter.vercel.app/arcade">
     <img
       src="https://raw.githubusercontent.com/dave-b-b/react-achievements/main/docs/static/img/starfall-demo.gif"
-      alt="Starfall gameplay: score a hit, unlock First contact inside the game, and see the next achievement goal"
+      alt="A complete Starfall run: move the ship, earn all five in-game achievements, and finish three waves"
       width="500"
     />
   </a>
