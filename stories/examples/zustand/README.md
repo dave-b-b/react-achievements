@@ -43,7 +43,7 @@ function YourComponent() {
 
   // Update achievements
   const handleScore = () => update({ score: 100 });
-  
+
   // Reset achievements (both in context and Zustand)
   const handleReset = () => {
     reset();
@@ -54,14 +54,14 @@ function YourComponent() {
     <div>
       <button onClick={handleScore}>Score 100 points</button>
       <button onClick={handleReset}>Reset</button>
-      
+
       {/* Context-aware v4 UI works with Zustand-backed storage */}
       <AchievementsWidget />
       <AchievementsWidget
         placement="inline"
         label="Drawer achievements"
       />
-      
+
       {/* Existing app controls can open the same modal */}
       <button onClick={() => setIsModalOpen(true)}>Open achievements</button>
       <AchievementsModal
@@ -87,4 +87,4 @@ npm install zustand
 
 ## How it Works
 
-The implementation uses Zustand to create a simple and efficient store for managing achievements state. The `ZustandAchievementsProvider` component connects this store to the achievements system's context provider, making it easy to access and update achievements state throughout your application. Zustand's minimal API and zero-config approach makes it perfect for managing achievement state without the overhead of more complex state management solutions. 
+The implementation uses Zustand to create a simple and efficient store for managing achievements state. The `ZustandAchievementsProvider` component connects this store to the achievements system's context provider, making it easy to access and update achievements state throughout your application. Zustand's minimal API and zero-config approach makes it perfect for managing achievement state without the overhead of more complex state management solutions.

@@ -299,11 +299,11 @@ describe('BuiltInModal', () => {
       // Key-based should use mapped icon
       const trophyIcons = screen.getAllByText('🏆');
       expect(trophyIcons.length).toBeGreaterThan(0);
-      
+
       // Direct emoji should also display (this is the bug fix)
       // The emoji-based achievement should show 🏆 directly
       expect(screen.getByText('Emoji Direct')).toBeInTheDocument();
-      
+
       // No key should use default
       expect(screen.getByText('⭐')).toBeInTheDocument();
     });

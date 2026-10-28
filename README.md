@@ -14,6 +14,16 @@
   />
 </p>
 
+## Version 6 Compatibility
+
+Version 6 requires `achievements-engine` 2.1 or newer within major 2. Upgrade both packages together:
+
+```bash
+npm install react-achievements@^6 achievements-engine@^2.1
+```
+
+Existing React imports, provider props, hooks, and deprecated APIs remain available. `RestAchievementClient`, `createRestAchievementClient`, and their contract types are still exported from the root, `/web`, and `/headless` entries. The engine now owns these definitions and the REST implementation; local progress is read directly from engine snapshots. Framework-independent applications can import the client from `achievements-engine`.
+
 ## Installation
 
 ```bash
@@ -297,7 +307,7 @@ React Native UI components are not included in the web package; use `achievement
 - `AchievementsWidget` replaces the legacy manual `BadgesButtonWithModal` setup.
 - `useSimpleAchievements()` now returns `unlockedIds`, `unlockedAchievements`, and `allAchievements`.
 - External UI peer dependencies are no longer required.
-- Deprecated v3 component names remain as compatibility wrappers until 5.0.
+- Deprecated v3 component names remain available as compatibility wrappers.
 
 ## License
 

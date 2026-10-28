@@ -115,4 +115,4 @@ describe('Achievement System with Redux', () => {
     expect(mockStorage.getUnlockedAchievements()).toHaveLength(1);
     expect(mockStorage.getMetrics()).toEqual({ score: [100] });
   });
-}); 
+});

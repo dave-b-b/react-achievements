@@ -6,7 +6,7 @@ import type { AchievementDetails, AchievementWithStatus } from '../../src';
 /**
  * The BadgesModal component displays a list of achievements in a modal dialog.
  * It supports custom styling and icons, making it highly customizable for different themes and designs.
- * 
+ *
  * @component
  * @example
  * ```tsx
@@ -261,4 +261,4 @@ export const WithUnlockConditions: Story = {
     icons: legacyStoryIcons,
   },
   render: renderModalPreview,
-}; 
+};

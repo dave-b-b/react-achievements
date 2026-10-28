@@ -22,4 +22,4 @@ describe('defaultAchievementIcons', () => {
       expect(icon.length).toBeGreaterThan(0);
     });
   });
-}); 
+});

@@ -4,4 +4,4 @@ const ReactConfetti = () => {
   return <div data-testid="mock-confetti" />;
 };
 
-export default ReactConfetti; 
+export default ReactConfetti;

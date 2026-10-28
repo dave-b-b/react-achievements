@@ -1,10 +1,10 @@
 import React from 'react';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
-import { 
-  AchievementProvider, 
+import {
+  AchievementProvider,
   useAchievements,
   useAchievementState,
-  AchievementConfiguration 
+  AchievementConfiguration
 } from '../index';
 import '@testing-library/jest-dom';
 
@@ -13,23 +13,23 @@ class MockStorage {
   private metrics: Record<string, any> = {};
   private unlocked: string[] = [];
 
-  getMetrics() { 
-    return this.metrics; 
+  getMetrics() {
+    return this.metrics;
   }
-  
-  setMetrics(metrics: Record<string, any>) { 
-    this.metrics = { ...metrics }; 
+
+  setMetrics(metrics: Record<string, any>) {
+    this.metrics = { ...metrics };
   }
-  
-  getUnlockedAchievements() { 
-    return [...this.unlocked]; 
+
+  getUnlockedAchievements() {
+    return [...this.unlocked];
   }
-  
-  setUnlockedAchievements(achievements: string[]) { 
+
+  setUnlockedAchievements(achievements: string[]) {
     // Create a new array to avoid reference issues
     this.unlocked = [...achievements];
   }
-  
+
   clear() {
     this.metrics = {};
     this.unlocked = [];
@@ -168,7 +168,7 @@ describe('Achievement State Management', () => {
       score: [100],
       kills: [5]
     });
-    
+
     // Directly check the storage instead of the display attribute
     expect(checkUnlockedContains('score_100')).toBe(true);
     expect(checkUnlockedContains('kills_5')).toBe(true);
@@ -219,7 +219,7 @@ describe('Achievement State Management', () => {
     // Unmount and remount
     unmount();
     render(<StateDisplay />, { wrapper: TestWrapper });
-    
+
     // Add a short delay to ensure state is loaded
     await act(async () => {
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -231,7 +231,7 @@ describe('Achievement State Management', () => {
       score: [100],
       kills: [5]
     });
-    
+
     // Directly check the storage instead of the display attribute
     expect(checkUnlockedContains('score_100')).toBe(true);
     expect(checkUnlockedContains('kills_5')).toBe(true);

@@ -51,4 +51,4 @@ To use an example:
 
 ## Contributing
 
-Feel free to contribute additional state management implementations or improvements to existing ones! 
+Feel free to contribute additional state management implementations or improvements to existing ones!

@@ -144,4 +144,4 @@ export const Default: StoryObj<typeof ContextAchievementsProvider> = {
       <DemoComponent />
     </ContextAchievementsProvider>
   )
-}; 
+};

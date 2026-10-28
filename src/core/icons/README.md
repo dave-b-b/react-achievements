@@ -12,7 +12,7 @@ The library includes only essential fallback icons:
 
 - `default`: ⭐ - Fallback when no icon is provided
 - `loading`: ⏳ - For loading states
-- `error`: ⚠️ - For error states  
+- `error`: ⚠️ - For error states
 - `success`: ✅ - For success states
 - `trophy`: 🏆 - Common achievement icon (backward compatibility)
 - `star`: ⭐ - Common achievement icon (backward compatibility)
@@ -54,4 +54,4 @@ const achievements = {
 };
 ```
 
-The system automatically falls back to `defaultAchievementIcons.default` if an icon key is not found. 
+The system automatically falls back to `defaultAchievementIcons.default` if an icon key is not found.

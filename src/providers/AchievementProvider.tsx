@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react';
-import { AchievementEngine, AchievementError, isSimpleConfig } from 'achievements-engine';
+import { AchievementEngine, AchievementError } from 'achievements-engine';
 import type {
   AchievementStorage,
   AsyncAchievementStorage,
@@ -11,8 +11,9 @@ import type {
   RestApiStorageConfig,
   AchievementUpdateResult,
   AchievementConfigurationType as EngineAchievementConfigurationType,
+  AchievementSnapshot as EngineAchievementSnapshot,
 } from 'achievements-engine';
-import type { AchievementConfigurationType, AchievementWithStatus } from '../core/types';
+import type { AchievementConfigurationType, AchievementWithStatus, AchievementConfetti } from '../core/types';
 import type {
   AchievementClient,
   AchievementClientMutationResult,
@@ -21,14 +22,10 @@ import type {
 } from '../client/types';
 import { warnDeprecation } from '../core/utils/deprecation';
 
-export interface AchievementSnapshot {
-  metrics: Record<string, any>;
-  unlockedIds: string[];
-  unlockedAchievements: AchievementWithStatus[];
-  allAchievements: AchievementWithStatus[];
-  unlockedCount: number;
-  totalCount: number;
-}
+export type AchievementSnapshot = EngineAchievementSnapshot<
+  AchievementConfetti,
+  Record<string, any>
+>;
 
 export interface AchievementContextType {
   update: (
@@ -147,57 +144,6 @@ const normalizeClientSnapshot = (snapshot: AchievementClientSnapshot): Achieveme
   };
 };
 
-const enrichEngineSnapshot = (
-  snapshot: AchievementSnapshot,
-  config?: AchievementConfigurationType
-): AchievementSnapshot => {
-  if (!config || !isSimpleConfig(config as EngineAchievementConfigurationType)) {
-    return snapshot;
-  }
-
-  const progressById = new Map<string, AchievementWithStatus['progress']>();
-
-  Object.entries(config).forEach(([metric, configuredAchievements]) => {
-    Object.keys(configuredAchievements).forEach((thresholdKey) => {
-      const target = Number(thresholdKey);
-
-      if (!Number.isFinite(target)) {
-        return;
-      }
-
-      const rawCurrent = snapshot.metrics[metric];
-      const metricValue = Array.isArray(rawCurrent) ? rawCurrent[0] : rawCurrent;
-      const current = typeof metricValue === 'number' ? metricValue : 0;
-      const isUnlocked = snapshot.unlockedIds.includes(`${metric}_${thresholdKey}`);
-
-      progressById.set(`${metric}_${thresholdKey}`, {
-        current,
-        target,
-        percent: isUnlocked
-          ? 100
-          : Math.max(0, Math.min(100, target <= 0 ? 100 : (current / target) * 100)),
-      });
-    });
-  });
-
-  const allAchievements = snapshot.allAchievements.map((achievement) => ({
-    ...achievement,
-    progress: achievement.progress || progressById.get(achievement.achievementId),
-  }));
-  const allById = new Map(allAchievements.map((achievement) => [
-    achievement.achievementId,
-    achievement,
-  ]));
-
-  return {
-    ...snapshot,
-    allAchievements,
-    unlockedAchievements: snapshot.unlockedAchievements.map(
-      (achievement) => allById.get(achievement.achievementId) || achievement
-    ),
-  };
-};
-
 const toError = (unknownError: unknown, fallbackMessage: string): Error => (
   unknownError instanceof Error ? unknownError : new Error(fallbackMessage)
 );
@@ -267,7 +213,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   });
 
   const [achievementSnapshot, setAchievementSnapshot] = useState<AchievementSnapshot>(() =>
-    engine ? enrichEngineSnapshot(engine.getSnapshot(), achievementsConfig) : emptySnapshot()
+    engine ? engine.getSnapshot() : emptySnapshot()
   );
   const [recentlyUnlocked, setRecentlyUnlocked] = useState<AchievementWithStatus[]>([]);
   const [isLoading, setIsLoading] = useState(Boolean(client));
@@ -280,9 +226,9 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     }
 
     if (engine) {
-      setAchievementSnapshot(enrichEngineSnapshot(engine.getSnapshot(), achievementsConfig));
+      setAchievementSnapshot(engine.getSnapshot());
     }
-  }, [engine, achievementsConfig]);
+  }, [engine]);
 
   const applyClientMutationResult = useCallback((result: AchievementClientMutationResult) => {
     setRecentlyUnlocked((result.newlyUnlocked || []).map(normalizeAchievementDto));
@@ -294,7 +240,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
   const refresh = useCallback(async (): Promise<AchievementSnapshot> => {
     if (!client) {
       const snapshot = engine
-        ? enrichEngineSnapshot(engine.getSnapshot(), achievementsConfig)
+        ? engine.getSnapshot()
         : emptySnapshot();
       setAchievementSnapshot(snapshot);
       return snapshot;
@@ -314,7 +260,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
     } finally {
       setIsLoading(false);
     }
-  }, [client, engine, achievementsConfig]);
+  }, [client, engine]);
 
   const handleClientMutationFailure = useCallback((unknownError: unknown): never => {
     const nextError = toError(unknownError, 'Failed to update achievements');
@@ -430,7 +376,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 
   const getState = () => {
     const snapshot = engine
-      ? enrichEngineSnapshot(engine.getSnapshot(), achievementsConfig)
+      ? engine.getSnapshot()
       : achievementSnapshot;
 
     return {
@@ -458,7 +404,7 @@ export const AchievementProvider: React.FC<AchievementProviderProps> = ({
 
   const getAllAchievements = (): AchievementWithStatus[] => {
     return engine
-      ? enrichEngineSnapshot(engine.getSnapshot(), achievementsConfig).allAchievements
+      ? engine.getSnapshot().allAchievements
       : achievementSnapshot.allAchievements;
   };
 

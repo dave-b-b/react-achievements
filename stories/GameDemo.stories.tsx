@@ -17,7 +17,7 @@ import { createMockAchievementClient } from './mocks/achievementClient';
 
 /**
  * LearnQuest Game Demo
- * 
+ *
  * A comprehensive learning game that demonstrates react-achievements in a real-world scenario.
  * This story showcases:
  * - Event-based achievement tracking
@@ -25,7 +25,7 @@ import { createMockAchievementClient } from './mocks/achievementClient';
  * - Progress tracking and stats
  * - Achievement modal integration
  * - Complex achievement conditions
- * 
+ *
  * This is based on the game structure in the /game directory.
  */
 const meta: Meta<typeof AchievementProvider> = {
@@ -471,7 +471,7 @@ const LearnQuestApp = ({
 
   const finishLesson = () => {
     if (!lesson) return;
-    
+
     if (completedLessons.includes(lesson.id)) {
       setPage('course');
       return;

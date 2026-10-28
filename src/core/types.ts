@@ -1,104 +1,38 @@
-export type AchievementMetricValue = number | string | boolean | Date | null | undefined;
-export type AchievementMetricArrayValue = AchievementMetricValue | AchievementMetricValue[];
+import type * as Engine from 'achievements-engine';
+import type { ConfettiOptions } from './ui/interfaces';
 
-export const isDate = (value: any): value is Date => {
-    return value instanceof Date;
-};
+// The engine owns achievement data. React refines only celebration options.
+export type AchievementConfetti = false | ConfettiOptions;
+export type AchievementDetails = Engine.AchievementDetails<AchievementConfetti>;
+export type AchievementWithStatus = Engine.AchievementWithStatus<AchievementConfetti>;
+export type AchievementCondition = Engine.AchievementCondition<AchievementConfetti>;
+export type AchievementConfiguration = Engine.AchievementConfiguration<AchievementConfetti>;
+export type SimpleAchievementDetails = Engine.SimpleAchievementDetails<AchievementConfetti>;
+export type CustomAchievementDetails = Engine.CustomAchievementDetails<AchievementConfetti>;
+export type SimpleAchievementConfig = Engine.SimpleAchievementConfig<AchievementConfetti>;
+export type AchievementConfigurationType = Engine.AchievementConfigurationType<AchievementConfetti>;
 
-export interface AchievementMetrics {
-    [key: string]: AchievementMetricValue[];
-}
+export type {
+    AchievementMetricValue,
+    AchievementMetricArrayValue,
+    AchievementMetrics,
+    InitialAchievementMetrics,
+    AchievementState,
+    AchievementStorage,
+    AsyncAchievementStorage,
+    AnyAchievementStorage,
+} from 'achievements-engine';
+export { isDate, isAsyncStorage, StorageType } from 'achievements-engine';
 
-export interface AchievementDetails {
-    achievementId: string;
-    achievementTitle: string;
-    achievementDescription: string;
-    achievementIconKey?: string;
-    confetti?: AchievementConfetti;
-}
-
-export interface AchievementWithStatus extends AchievementDetails {
-    isUnlocked: boolean;
-    unlockedAt?: string | null;
-    progress?: {
-        current: number;
-        target: number;
-        percent: number;
-    };
-    metadata?: Record<string, unknown>;
-}
-
-export type AchievementConfetti = false | import('./ui/interfaces').ConfettiOptions;
+// Local bindings used by the legacy React context and provider interfaces below.
+import type {
+    AchievementMetrics,
+    InitialAchievementMetrics,
+    AchievementStorage,
+} from 'achievements-engine';
 
 export type AchievementUIDensity = 'comfortable' | 'compact';
 export type AchievementUIBackdropBlur = number | string;
-
-export interface AchievementCondition {
-    isConditionMet: (value: AchievementMetricArrayValue, state: AchievementState) => boolean;
-    achievementDetails: AchievementDetails | AchievementWithStatus
-}
-
-export interface AchievementConfiguration {
-    [key: string]: AchievementCondition[];
-}
-
-// Simple API types
-export interface SimpleAchievementDetails {
-    title: string;
-    description?: string;
-    icon?: string;
-    confetti?: AchievementConfetti;
-    metadata?: Record<string, unknown>;
-}
-
-export interface CustomAchievementDetails extends SimpleAchievementDetails {
-    condition: (metrics: Record<string, any>) => boolean;
-}
-
-export interface SimpleAchievementConfig {
-    [metric: string]: {
-        [threshold: string]: SimpleAchievementDetails | CustomAchievementDetails;
-    };
-}
-
-// Union type for backward compatibility
-export type AchievementConfigurationType = AchievementConfiguration | SimpleAchievementConfig;
-
-export interface InitialAchievementMetrics {
-    [key: string]: AchievementMetricValue;
-}
-
-export interface AchievementState {
-    metrics: AchievementMetrics;
-    unlockedAchievements: string[];
-}
-
-export interface AchievementStorage {
-    getMetrics(): AchievementMetrics;
-    setMetrics(metrics: AchievementMetrics): void;
-    getUnlockedAchievements(): string[];
-    setUnlockedAchievements(achievements: string[]): void;
-    clear(): void;
-}
-
-// Async storage interface - all operations return Promises
-export interface AsyncAchievementStorage {
-    getMetrics(): Promise<AchievementMetrics>;
-    setMetrics(metrics: AchievementMetrics): Promise<void>;
-    getUnlockedAchievements(): Promise<string[]>;
-    setUnlockedAchievements(achievements: string[]): Promise<void>;
-    clear(): Promise<void>;
-}
-
-// Union type for provider to accept both sync and async storage
-export type AnyAchievementStorage = AchievementStorage | AsyncAchievementStorage;
-
-// Type guard to detect async storage
-export function isAsyncStorage(storage: AnyAchievementStorage): storage is AsyncAchievementStorage {
-    // Check if methods return Promises
-    const testResult = (storage as any).getMetrics();
-    return testResult && typeof testResult.then === 'function';
-}
 
 /**
  * @deprecated This type is outdated and will be removed in the next major release.
@@ -157,13 +91,6 @@ export interface AchievementProviderProps {
     icons?: Record<string, string>;
     storage?: AchievementStorage;
     onAchievementUnlocked?: (achievement: AchievementDetails) => void;
-}
-
-export enum StorageType {
-    Local = 'local',           // Synchronous localStorage
-    Memory = 'memory',         // Synchronous in-memory storage
-    IndexedDB = 'indexeddb',   // Asynchronous IndexedDB storage
-    RestAPI = 'restapi'        // Asynchronous REST API storage
 }
 
 // Re-export UI types for convenience

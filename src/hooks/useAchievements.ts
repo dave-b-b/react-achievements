@@ -9,4 +9,4 @@ export const useAchievements = () => {
   }
 
   return context;
-}; 
+};

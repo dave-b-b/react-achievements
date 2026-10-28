@@ -31,13 +31,13 @@ const achievementConfig: AchievementConfiguration = {
 // Test component that uses the achievement context
 const TestComponent = () => {
   const context = React.useContext(AchievementContext);
-  
+
   if (!context) {
     throw new Error('TestComponent must be used within an AchievementProvider');
   }
-  
+
   const { update, achievements, reset } = context;
-  
+
   return (
     <div>
       <button data-testid="score-button" onClick={() => update({ score: 100 })}>
@@ -67,12 +67,12 @@ describe('Achievement Notifications', () => {
     jest.clearAllMocks();
     jest.useFakeTimers();
   });
-  
+
   afterEach(() => {
     jest.runOnlyPendingTimers();
     jest.useRealTimers();
   });
-  
+
   it('should not show duplicate notifications for the same achievement', async () => {
     render(
       <AchievementProvider
@@ -106,7 +106,7 @@ describe('Achievement Notifications', () => {
     // Achievement count should stay at 1 (no duplicate unlock)
     expect(screen.getByTestId('unlocked-count')).toHaveTextContent('1');
   });
-  
+
   it('should properly handle multiple achievements in sequence', async () => {
     render(
       <AchievementProvider
@@ -222,7 +222,7 @@ describe('Achievement Notifications', () => {
       expect(screen.getByTestId('custom-notification')).toHaveTextContent('High Score!:8000');
     });
   });
-  
+
   it('should properly reset achievements', async () => {
     render(
       <AchievementProvider
@@ -266,7 +266,7 @@ describe('Achievement Notifications', () => {
       expect(screen.getByText('High Score!')).toBeInTheDocument();
     });
   });
-  
+
   it('should handle achievements from initial state', async () => {
     const storage = {
       getUnlockedAchievements: jest.fn().mockReturnValue(['score_50']),
@@ -302,4 +302,4 @@ describe('Achievement Notifications', () => {
       expect(screen.getByText('High Score!')).toBeInTheDocument();
     });
   });
-}); 
+});

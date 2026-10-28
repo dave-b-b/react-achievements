@@ -1,6 +1,6 @@
 {
   "name": "react-achievements",
-  "version": "5.0.2",
+  "version": "6.0.0",
   "description": "React UI and client hooks for server-backed achievements",
   "main": "dist/index.cjs",
   "module": "dist/index.esm.js",
@@ -38,7 +38,7 @@
     "ship": "gh workflow run release.yml"
   },
   "peerDependencies": {
-    "achievements-engine": "^1.2.0 || ^2.0.0",
+    "achievements-engine": "^2.1.0",
     "react": ">=16.8.0"
   },
   "devDependencies": {
@@ -67,7 +67,7 @@
     "@types/react": "^18.2.12",
     "@typescript-eslint/eslint-plugin": "^8.50.0",
     "@typescript-eslint/parser": "^8.50.0",
-    "achievements-engine": "^1.2.0",
+    "achievements-engine": "^2.1.0",
     "eslint": "^9.39.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",

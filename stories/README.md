@@ -112,4 +112,4 @@ When adding new components to the library, follow this pattern to create new sto
 1. Create a new file in the appropriate directory (`stories/components/` or `stories/providers/`)
 2. Name the file with the pattern `[ComponentName].stories.tsx`
 3. Follow the Storybook Component Story Format (CSF)
-4. Include multiple story variants to showcase different states and configurations 
+4. Include multiple story variants to showcase different states and configurations

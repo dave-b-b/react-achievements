@@ -101,4 +101,4 @@ describe('Achievement System with Zustand', () => {
     expect(mockStorage.getUnlockedAchievements()).toHaveLength(1);
     expect(mockStorage.getMetrics()).toEqual({ score: [100] });
   });
-}); 
+});

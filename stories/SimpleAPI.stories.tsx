@@ -12,11 +12,11 @@ import { createMockAchievementClient } from './mocks/achievementClient';
 /**
  * The Simple API provides an easier way for a compatible backend to define
  * achievements using threshold-based conditions and custom functions.
- * 
+ *
  * ## Key Benefits
  * - **90% less configuration code** for common use cases
  * - **Threshold-based achievements** for numeric values
- * - **Boolean and string achievements** 
+ * - **Boolean and string achievements**
  * - **Custom condition functions** for complex logic
  * - **Automatic ID generation** from metric names and thresholds
  * - **Built-in defaults** for descriptions and icons
@@ -45,19 +45,19 @@ const simpleAchievements: SimpleAchievementConfig = {
     500: { title: 'High Scorer!', description: 'Score 500 points', icon: '⭐' },
     1000: { title: 'Master!', description: 'Score 1000 points', icon: '💎' }
   },
-  
-  // Level-based achievements  
+
+  // Level-based achievements
   level: {
     5: { title: 'Leveling Up', description: 'Reach level 5', icon: '📈' },
     10: { title: 'Double Digits', description: 'Reach level 10', icon: '🔟' },
     25: { title: 'Quarter Century', description: 'Reach level 25', icon: '🎯' }
   },
-  
+
   // Boolean achievements
   completedTutorial: {
     true: { title: 'Tutorial Master', description: 'Complete the tutorial', icon: '📚' }
   },
-  
+
   // String-based achievements
   characterClass: {
     wizard: { title: 'Arcane Scholar', description: 'Choose the wizard class', icon: '🧙‍♂️' },
@@ -96,23 +96,23 @@ const SimpleAPIDemo = () => {
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '1000px', margin: '0 auto' }}>
       <h1>Simple API Demo</h1>
       <p>This demo shows how easy it is to track achievements with the new simple API.</p>
-      
+
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '30px' }}>
         <div style={{ padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>
           <h3>Score Achievements</h3>
-          <button 
+          <button
             onClick={() => track('score', 100)}
             style={{ padding: '8px 12px', margin: '5px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
             Score 100
           </button>
-          <button 
+          <button
             onClick={() => track('score', 500)}
             style={{ padding: '8px 12px', margin: '5px', backgroundColor: '#2196F3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
             Score 500
           </button>
-          <button 
+          <button
             onClick={() => track('score', 1000)}
             style={{ padding: '8px 12px', margin: '5px', backgroundColor: '#9C27B0', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
@@ -122,19 +122,19 @@ const SimpleAPIDemo = () => {
 
         <div style={{ padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>
           <h3>Level Achievements</h3>
-          <button 
+          <button
             onClick={() => track('level', 5)}
             style={{ padding: '8px 12px', margin: '5px', backgroundColor: '#FF9800', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
             Level 5
           </button>
-          <button 
+          <button
             onClick={() => track('level', 10)}
             style={{ padding: '8px 12px', margin: '5px', backgroundColor: '#FF5722', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
             Level 10
           </button>
-          <button 
+          <button
             onClick={() => track('level', 25)}
             style={{ padding: '8px 12px', margin: '5px', backgroundColor: '#795548', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
@@ -144,19 +144,19 @@ const SimpleAPIDemo = () => {
 
         <div style={{ padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>
           <h3>Other Achievements</h3>
-          <button 
+          <button
             onClick={() => track('completedTutorial', true)}
             style={{ padding: '8px 12px', margin: '5px', backgroundColor: '#607D8B', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
             Complete Tutorial
           </button>
-          <button 
+          <button
             onClick={() => track('characterClass', 'wizard')}
             style={{ padding: '8px 12px', margin: '5px', backgroundColor: '#673AB7', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
             Choose Wizard
           </button>
-          <button 
+          <button
             onClick={() => track('characterClass', 'warrior')}
             style={{ padding: '8px 12px', margin: '5px', backgroundColor: '#F44336', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
@@ -166,13 +166,13 @@ const SimpleAPIDemo = () => {
 
         <div style={{ padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>
           <h3>Bulk Actions</h3>
-          <button 
+          <button
             onClick={() => trackMultiple({ score: 1000, level: 25, completedTutorial: true })}
             style={{ padding: '8px 12px', margin: '5px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
             Unlock Multiple
           </button>
-          <button 
+          <button
             onClick={reset}
             style={{ padding: '8px 12px', margin: '5px', backgroundColor: '#9E9E9E', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
@@ -245,11 +245,11 @@ const CustomConditionDemo = () => {
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif', maxWidth: '800px', margin: '0 auto' }}>
       <h1>Custom Condition Demo</h1>
       <p>This demo shows achievements with custom condition functions alongside simple threshold-based ones.</p>
-      
+
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '15px', marginBottom: '30px' }}>
         <div style={{ padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>
           <h3>Simple Achievement</h3>
-          <button 
+          <button
             onClick={() => track('score', 100)}
             style={{ padding: '8px 12px', margin: '5px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
@@ -260,13 +260,13 @@ const CustomConditionDemo = () => {
         <div style={{ padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>
           <h3>Perfect Combo (Custom)</h3>
           <p style={{ fontSize: '12px', color: '#666' }}>Requires: score ≥ 1000 AND accuracy = 100</p>
-          <button 
+          <button
             onClick={() => trackMultiple({ score: 999, accuracy: 100 })}
             style={{ padding: '8px 12px', margin: '5px', backgroundColor: '#FF9800', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
             Almost Perfect (999/100)
           </button>
-          <button 
+          <button
             onClick={() => trackMultiple({ score: 1000, accuracy: 100 })}
             style={{ padding: '8px 12px', margin: '5px', backgroundColor: '#9C27B0', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
@@ -277,13 +277,13 @@ const CustomConditionDemo = () => {
         <div style={{ padding: '15px', border: '1px solid #ddd', borderRadius: '8px' }}>
           <h3>Speed Runner (Custom)</h3>
           <p style={{ fontSize: '12px', color: '#666' }}>Requires: level ≥ 10 AND time &lt; 300s</p>
-          <button 
+          <button
             onClick={() => trackMultiple({ level: 10, completionTime: 350 })}
             style={{ padding: '8px 12px', margin: '5px', backgroundColor: '#FF5722', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
             Too Slow (10/350s)
           </button>
-          <button 
+          <button
             onClick={() => trackMultiple({ level: 10, completionTime: 250 })}
             style={{ padding: '8px 12px', margin: '5px', backgroundColor: '#2196F3', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
           >
@@ -300,7 +300,7 @@ const CustomConditionDemo = () => {
         </div>
       </div>
 
-      <button 
+      <button
         onClick={reset}
         style={{ padding: '10px 20px', backgroundColor: '#9E9E9E', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
       >

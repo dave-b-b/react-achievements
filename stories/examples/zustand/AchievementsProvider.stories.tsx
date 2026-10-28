@@ -148,4 +148,4 @@ export const Default: Story = {
       <DemoComponent />
     </ZustandAchievementsProvider>
   ),
-}; 
+};

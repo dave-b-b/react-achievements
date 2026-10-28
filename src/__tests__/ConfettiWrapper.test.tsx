@@ -28,4 +28,4 @@ describe('ConfettiWrapper Component', () => {
     rerender(<ConfettiWrapper show={false} />);
     expect(screen.queryByTestId('built-in-confetti')).not.toBeInTheDocument();
   });
-}); 
+});
