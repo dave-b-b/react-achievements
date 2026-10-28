@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Local-first setup is the primary onboarding path; server-backed persistence is documented as an upgrade.
 
+## [6.0.1] - 2026-10-28
+
+### Documentation
+- Put the playable Starfall demo and a real gameplay GIF at the top of the npm package README.
+
 ## [6.0.0] - 2026-10-28
 
 ### Changed

@@ -2,17 +2,21 @@
 
 **Add achievements to React in minutes** — define goals, track progress, show badges, and celebrate unlocks. Start entirely in the browser, then move persistence to your server without replacing the UI.
 
-[🎮 Live demo](https://achievements-starter.vercel.app/) | [📚 Documentation](https://dave-b-b.github.io/react-achievements/) | [📦 npm Package](https://www.npmjs.com/package/react-achievements)
+[🎮 Play the Starfall game](https://achievements-starter.vercel.app/arcade) | [🧪 Explore the full demo](https://achievements-starter.vercel.app/) | [📚 Documentation](https://dave-b-b.github.io/react-achievements/)
 
 [![npm version](https://img.shields.io/npm/v/react-achievements.svg)](https://www.npmjs.com/package/react-achievements) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE) [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 
 <p align="center">
-  <img
-    src="https://raw.githubusercontent.com/dave-b-b/achievements-starter/main/public/screenshots/overview-desktop.png"
-    alt="LearnQuest live demo overview with an interactive achievement preview and clear next steps"
-    width="900"
-  />
+  <a href="https://achievements-starter.vercel.app/arcade">
+    <img
+      src="https://raw.githubusercontent.com/dave-b-b/react-achievements/main/docs/static/img/starfall-demo.gif"
+      alt="A complete Starfall run: move the ship, earn all five in-game achievements, and finish three waves"
+      width="500"
+    />
+  </a>
 </p>
+
+**Play it yourself:** [Open Starfall](https://achievements-starter.vercel.app/arcade). No account or download needed. Its score, streak, and wave events unlock achievements through the published SDK.
 
 ## Version 6 Compatibility
 
