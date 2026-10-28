@@ -4,7 +4,7 @@ sidebar_position: 5
 
 # Theming
 
-React Achievements v4 uses built-in UI by default. Configure notifications, confetti, and widget styling through provider `ui` options and widget props.
+React Achievements 6 uses built-in UI by default. Configure notifications, confetti, and widget styling through provider `ui` options and widget props.
 
 ## Provider Theme
 

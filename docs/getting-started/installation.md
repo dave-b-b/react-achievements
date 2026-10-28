@@ -7,7 +7,7 @@ sidebar_position: 1
 Install React Achievements with your package manager:
 
 ```bash npm2yarn
-npm install react-achievements
+npm install react-achievements@^6 achievements-engine@^2.1
 ```
 
 ## Requirements
@@ -17,7 +17,7 @@ npm install react-achievements
 
 ## Peer Dependencies
 
-React Achievements v4 only requires `react` and `achievements-engine`. The previous optional UI peer dependencies are no longer needed because built-in UI is the default.
+React Achievements 6 requires React 16.8+ and `achievements-engine` 2.1.x. Install both packages together. No additional UI peer dependency is needed because built-in UI is the default.
 
 Built-in confetti is powered by `canvas-confetti`, which is installed as a package dependency of `react-achievements`; you do not need to install `react-confetti` or `react-canvas-confetti`.
 
@@ -87,6 +87,6 @@ React Native UI components are not included in the web package. Use the headless
 ## Next Steps
 
 - [Quick Start](/docs/getting-started/quick-start)
-- [v4 Feature Setup](/docs/getting-started/v4-feature-setup)
+- [Full Feature Setup](/docs/getting-started/v4-feature-setup)
 - [Event-Based Tracking](/docs/guides/event-based-tracking)
 - [Styling](/docs/guides/styling)

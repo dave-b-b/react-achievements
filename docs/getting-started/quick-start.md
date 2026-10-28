@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Quick Start
 
-Build your first achievement system with the v5 local-first Simple API. No backend is required.
+Build your first achievement system with the v6 local-first Simple API. No backend is required.
 
 ## 1. Define Achievements
 
@@ -225,4 +225,4 @@ export default function Game() {
 
 ## Full Setup Checklist
 
-See [v4 Feature Setup](/docs/getting-started/v4-feature-setup) for storage, custom UI components, import/export, event-based tracking, headless usage, and React Native guidance.
+See [Full Feature Setup](/docs/getting-started/v4-feature-setup) for storage, custom UI components, import/export, event-based tracking, headless usage, and React Native guidance.

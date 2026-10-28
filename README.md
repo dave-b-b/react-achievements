@@ -2,14 +2,14 @@
 
 **Add achievements to React in minutes** — define goals, track progress, show badges, and celebrate unlocks. Start entirely in the browser, then move persistence to your server without replacing the UI.
 
-[📚 Documentation](https://dave-b-b.github.io/react-achievements/) | [📦 npm Package](https://www.npmjs.com/package/react-achievements)
+[🎮 Live demo](https://achievements-starter.vercel.app/) | [📚 Documentation](https://dave-b-b.github.io/react-achievements/) | [📦 npm Package](https://www.npmjs.com/package/react-achievements)
 
 [![npm version](https://img.shields.io/npm/v/react-achievements.svg)](https://www.npmjs.com/package/react-achievements) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE) [![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue.svg)](https://www.typescriptlang.org/)
 
 <p align="center">
   <img
-    src="https://raw.githubusercontent.com/dave-b-b/react-achievements/main/assets/demo-v4-4.gif"
-    alt="React Achievements 4.4 demo showing achievement progress, unlock notifications, configurable confetti, and a compact LearnQuest achievements modal"
+    src="https://raw.githubusercontent.com/dave-b-b/achievements-starter/main/public/screenshots/overview-desktop.png"
+    alt="LearnQuest live demo overview with an interactive achievement preview and clear next steps"
     width="900"
   />
 </p>
@@ -22,7 +22,7 @@ Version 6 requires `achievements-engine` 2.1 or newer within major 2. Upgrade bo
 npm install react-achievements@^6 achievements-engine@^2.1
 ```
 
-Existing React imports, provider props, hooks, and deprecated APIs remain available. `RestAchievementClient`, `createRestAchievementClient`, and their contract types are still exported from the root, `/web`, and `/headless` entries. The engine now owns these definitions and the REST implementation; local progress is read directly from engine snapshots. Framework-independent applications can import the client from `achievements-engine`.
+Existing React imports, provider props, hooks, and deprecated APIs remain available. `RestAchievementClient`, `createRestAchievementClient`, and their contract types are still exported from the root, `/web`, and `/headless` entries. The engine now owns these definitions, the REST implementation, and progress calculation for local and server snapshots. React handles providers, hooks, and the achievement UI, reading progress directly from engine snapshots. Framework-independent applications can import the client from `achievements-engine`.
 
 ## Installation
 
@@ -297,7 +297,7 @@ React Native UI components are not included in the web package; use `achievement
 
 ## Entry Points
 
-- `react-achievements` - v4 web API with provider, hooks, built-in effects, widget, modal, and list components
+- `react-achievements` - v6 web API with provider, hooks, built-in effects, widget, modal, and list components
 - `react-achievements/web` - explicit web entry point
 - `react-achievements/headless` - provider, hooks, engine, storage, and types without DOM UI
 
@@ -317,4 +317,4 @@ See [LICENSE](./LICENSE) for details.
 
 ## AI Agents
 
-If you're using AI coding agents, see `AGENTS.md` for the recommended v4 integration prompt.
+If you're using AI coding agents, see `AGENTS.md` for the recommended v6 integration prompt.

@@ -15,7 +15,7 @@ type FeatureItem = {
 const FeatureList: FeatureItem[] = [
   {
     label: 'Track',
-    title: 'Use the v4 Simple API',
+    title: 'Use the v6 Simple API',
     description: (
       <>
         Define score, streak, onboarding, profile, and custom achievements in one config,

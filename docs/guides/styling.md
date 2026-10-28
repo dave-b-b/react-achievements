@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # Styling
 
-The default v4 UI is built in. Most apps can use `AchievementsWidget` as-is and pass small style overrides when needed.
+The default React 6 UI is built in. Most apps can use `AchievementsWidget` as-is and pass small style overrides when needed.
 
 ## Widget Styles
 
