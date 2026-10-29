@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Local-first setup is the primary onboarding path; server-backed persistence is documented as an upgrade.
 
+## [6.0.2] - 2026-10-28
+
+### Documentation
+- Show compact in-game award popups in the Starfall gameplay GIF, followed by a larger final award and the full collection.
+
 ## [6.0.1] - 2026-10-28
 
 ### Documentation

@@ -10,8 +10,8 @@
   <a href="https://achievements-starter.vercel.app/arcade">
     <img
       src="https://raw.githubusercontent.com/dave-b-b/react-achievements/main/docs/static/img/starfall-demo.gif"
-      alt="A complete Starfall run: move the ship, earn all five in-game achievements, and finish three waves"
-      width="500"
+      alt="Play Starfall with small corner achievement popups, then see the final award and all five achievements after victory"
+      width="700"
     />
   </a>
 </p>
