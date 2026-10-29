@@ -10,7 +10,7 @@
   <a href="https://achievements-starter.vercel.app/arcade">
     <img
       src="https://raw.githubusercontent.com/dave-b-b/react-achievements/main/docs/static/img/starfall-demo.gif"
-      alt="Play Starfall, earn five compact in-game achievements, and see the final award and collection after victory"
+      alt="Play Starfall with small corner achievement popups, then see the final award and all five achievements after victory"
       width="700"
     />
   </a>
