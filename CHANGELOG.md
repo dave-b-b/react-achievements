@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [6.0.2] - 2026-10-28
 
 ### Documentation
-- Show the Starfall gameplay GIF at a smaller size, with compact in-game awards and a larger final award above the full collection.
+- Show compact in-game award popups in the Starfall gameplay GIF, followed by a larger final award and the full collection.
 
 ## [6.0.1] - 2026-10-28
 

@@ -11,7 +11,7 @@
     <img
       src="https://raw.githubusercontent.com/dave-b-b/react-achievements/main/docs/static/img/starfall-demo.gif"
       alt="Play Starfall, earn five compact in-game achievements, and see the final award and collection after victory"
-      width="400"
+      width="500"
     />
   </a>
 </p>
