@@ -1,0 +1,41 @@
+{
+  "schema": 5,
+  "objective": "Use the lowest-cost eligible builder while applying only the review pipeline required by the owner-declared repository and work type.",
+  "inventory_contract": {
+    "schema": 1,
+    "source": "The active controller supplies a current inventory of models it can execute.",
+    "trust_boundary": "Discovery establishes availability only; the owner-controlled inventory assigns capabilities and roles."
+  },
+  "controller_preferences": {
+    "schema": 1,
+    "controller_labels": ["codex-collaboration", "local-codex"],
+    "purposes": ["planning", "code_reviewer"],
+    "provider": "openai",
+    "model": "gpt-6.1-sol"
+  },
+  "selection_policy": {
+    "roles": {
+      "code_builder": {"required_capabilities": ["code"], "read_only": false, "authority": false},
+      "content_builder": {"required_capabilities": ["writing"], "read_only": false, "authority": false},
+      "code_reviewer": {"required_capabilities": ["code-review", "high-reasoning"], "read_only": true, "authority": false},
+      "editorial_reviewer": {"required_capabilities": ["editorial-review", "high-reasoning"], "read_only": true, "authority": false},
+      "security_reviewer": {"required_capabilities": ["security", "high-reasoning"], "read_only": true, "authority": false},
+      "final_authority": {"required_capabilities": ["final-acceptance", "high-reasoning"], "read_only": true, "authority": true}
+    },
+    "rule": "Select builders by role and capability before cost; select every review stage from the strongest eligible high-reasoning model, distinct from the builder and preceding stages, preferring another provider."
+  },
+  "work_profiles": {
+    "code": {
+      "builder_role": "code_builder",
+      "builder_capabilities": ["tools"],
+      "pipelines": {"low": ["code_reviewer", "final_authority"], "standard": ["code_reviewer", "final_authority"], "high": ["code_reviewer", "final_authority"]}
+    },
+    "content": {
+      "builder_role": "content_builder",
+      "builder_capabilities": [],
+      "pipelines": {"low": ["final_authority"], "standard": ["editorial_reviewer", "final_authority"], "high": ["editorial_reviewer", "final_authority"]}
+    }
+  },
+  "authority_rules": {"block_when_unavailable": true, "reviews_are_read_only": true, "distinct_models": true, "cross_provider_review_preferred": true, "security_is_code_only": true},
+  "core_rule": "Code and content work use separate pipelines. Agent review selects the strongest eligible distinct model across providers at high reasoning; model final authority owns technical release readiness. Human review is not a release gate. Security is an additive code-only gate followed by final authority; no selected review pipeline may be skipped, self-reviewed, or silently downgraded. Publication remains an explicit owner-authorized action."
+}

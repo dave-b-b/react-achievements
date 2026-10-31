@@ -1,0 +1,596 @@
+{
+  "schema": 1,
+  "artifacts": [
+    {
+      "path": ".agent-harness/PROGRESS.md",
+      "role": "state",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".agent-harness/feature_list.json",
+      "role": "state",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".agent-harness/state-domain.json",
+      "role": "state",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".agents/skills/speckit-analyze/SKILL.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".agents/skills/speckit-checklist/SKILL.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".agents/skills/speckit-clarify/SKILL.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".agents/skills/speckit-constitution/SKILL.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".agents/skills/speckit-converge/SKILL.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".agents/skills/speckit-implement/SKILL.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".agents/skills/speckit-plan/SKILL.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".agents/skills/speckit-specify/SKILL.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".agents/skills/speckit-tasks/SKILL.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".agents/skills/speckit-taskstoissues/SKILL.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".gitignore",
+      "role": "contract",
+      "collision_policy": "merge_required",
+      "required": true
+    },
+    {
+      "path": ".specify/.gitignore",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/feature.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/init-options.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/integration.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/integrations/claude.manifest.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/integrations/codex.manifest.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/integrations/hermes.manifest.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/integrations/speckit.manifest.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/memory/.constitution-template.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/memory/constitution.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/scripts/bash/check-prerequisites.sh",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/scripts/bash/common.sh",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/scripts/bash/create-new-feature.sh",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/scripts/bash/resolve-template.sh",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/scripts/bash/setup-plan.sh",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/scripts/bash/setup-tasks.sh",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/templates/checklist-template.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/templates/constitution-template.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/templates/plan-template.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/templates/spec-template.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/templates/tasks-template.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/workflows/speckit/workflow.yml",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": ".specify/workflows/workflow-registry.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "AGENTS.md",
+      "role": "documentation",
+      "collision_policy": "side_by_side",
+      "required": true,
+      "side_by_side_name": "AGENTS.harness.md"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "role": "documentation",
+      "collision_policy": "side_by_side",
+      "required": true,
+      "side_by_side_name": "ARCHITECTURE.harness.md"
+    },
+    {
+      "path": "PROGRESS.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "README.md",
+      "role": "documentation",
+      "collision_policy": "side_by_side",
+      "required": true,
+      "side_by_side_name": "README.harness.md"
+    },
+    {
+      "path": "bin/agent-adopt",
+      "role": "executable",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "bin/agent-local-init",
+      "role": "executable",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "bin/agent-session",
+      "role": "executable",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "bin/python",
+      "role": "executable",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "bin/verify",
+      "role": "executable",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/README.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/agent/README.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/agent/adoption.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/agent/clean-state-checklist.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/agent/evaluator-rubric.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/agent/feedback-promotion.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/agent/fresh-session-checklist.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/agent/harness-quality.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/agent/measurement.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/agent/model-selection.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/agent/session-handoff.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/artifacts.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/decisions/README.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/exec-plans/active/2026-07-30-react-achievements-initialization.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/generated/documentation-index.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/product/README.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/product/oversight/change-log.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/product/product-contract.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "docs/walkinglabs/compliance-matrix.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "feature_list.json",
+      "role": "state",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/__init__.py",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/adoption-manifest.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/controller-preparation.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/distribution.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/execution-policy.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/installation_packaging.py",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/local-state-seed.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/measurements.json",
+      "role": "state",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/model-routing.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/outcomes.json",
+      "role": "state",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/process_runner.py",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/project.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/recovery-questions.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/request_primitives.py",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/review-dispatch.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/review-policy.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/review_dispatch.py",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/state-domain.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/state_domains.py",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/version.json",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "harness/work_lifecycle.py",
+      "role": "contract",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "init.sh",
+      "role": "executable",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "script/adopt.py",
+      "role": "executable",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "script/batch_schema.py",
+      "role": "executable",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "script/codex_review_adapter.py",
+      "role": "executable",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "script/harness.py",
+      "role": "executable",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "script/instantiate.py",
+      "role": "executable",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "script/local_bootstrap.py",
+      "role": "executable",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "specs/001-repository-initialization/checklists/requirements.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "specs/001-repository-initialization/plan.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "specs/001-repository-initialization/spec.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    },
+    {
+      "path": "specs/001-repository-initialization/tasks.md",
+      "role": "documentation",
+      "collision_policy": "never_overwrite",
+      "required": true
+    }
+  ]
+}

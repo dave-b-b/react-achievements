@@ -1,0 +1,50 @@
+{
+  "schema": 2,
+  "default_mode": "request",
+  "modes": {
+    "task": {
+      "stop_at": "task",
+      "max_features": 1,
+      "requires_limit": false,
+      "description": "Complete and checkpoint one task, then stop for an explicit continuation."
+    },
+    "feature": {
+      "stop_at": "feature",
+      "max_features": 1,
+      "requires_limit": false,
+      "description": "Complete the active feature, then stop at its evidence handoff."
+    },
+    "request": {
+      "stop_at": "request",
+      "max_features": null,
+      "requires_limit": false,
+      "description": "Continue through every explicitly requested task and follow-on feature until the request is complete or blocked."
+    },
+    "features": {
+      "stop_at": "features",
+      "max_features": null,
+      "requires_limit": true,
+      "description": "Continue across eligible features up to the owner-supplied finite limit."
+    }
+  },
+  "continuation": {
+    "local_commit": "continue",
+    "review": "agent",
+    "publication": "explicit"
+  },
+  "rules": {
+    "checkpoint_is_read_only": true,
+    "require_finite_feature_limit": true,
+    "preserve_commit_bound_evidence": true,
+    "never_create_duplicate_active_feature": true,
+    "explicit_single_scope_overrides_default": true,
+    "explicit_continuation_requires_no_confirmation": true,
+    "parallel_features_require_isolated_worktrees": true,
+    "integration_requires_fresh_verification": true,
+    "main_merge_requires_explicit_authority": true,
+    "local_commit_requires_current_evidence": true,
+    "local_commit_requires_distinct_agent_review": true,
+    "human_review_is_an_explicit_stop": true,
+    "local_commit_never_publishes": true
+  }
+}

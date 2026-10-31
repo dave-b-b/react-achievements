@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd -P)
+"$root/bin/python" "$root/script/local_bootstrap.py" --check-shared
+if git -C "$root" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+for state_domain in application harness; do
+  AGENT_HARNESS_STATE_DOMAIN="$state_domain" "$root/bin/agent-session" recover-cleanup --if-pending
+  AGENT_HARNESS_STATE_DOMAIN="$state_domain" "$root/bin/agent-session" queue recover
+done
+fi
+exec "$root/bin/python" "$root/script/local_bootstrap.py" "$@"

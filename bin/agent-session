@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+RUNTIME_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+PROJECT_ROOT="$RUNTIME_ROOT"
+if [[ "$(basename "$RUNTIME_ROOT")" == ".agent-harness" ]]; then
+  PROJECT_ROOT="$(cd "$RUNTIME_ROOT/.." && pwd -P)"
+  export AGENT_HARNESS_PROJECT_ROOT="$PROJECT_ROOT"
+fi
+cd "$PROJECT_ROOT"
+exec "$RUNTIME_ROOT/bin/python" "$RUNTIME_ROOT/script/harness.py" "$@"

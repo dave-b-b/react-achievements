@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "version": "2.0.0",
+  "domains": {
+    "application": {
+      "root": ".",
+      "owned_paths": [
+        "feature_list.json",
+        "PROGRESS.md",
+        ".specify/feature.json",
+        "specs",
+        "docs/artifacts.json",
+        "harness/outcomes.json",
+        "harness/recovery-questions.json",
+        "docs/exec-plans",
+        "docs/generated/documentation-index.md",
+        "docs/agent/fresh-session-checklist.md",
+        "harness/reviews",
+        "harness/attestations",
+        "harness/requests"
+      ]
+    },
+    "harness": {
+      "root": ".agent-harness",
+      "owned_paths": [
+        "feature_list.json",
+        "PROGRESS.md",
+        ".specify/feature.json",
+        "specs",
+        "docs/artifacts.json",
+        "harness/outcomes.json",
+        "harness/recovery-questions.json",
+        "docs/exec-plans",
+        "docs/generated/documentation-index.md",
+        "docs/agent/fresh-session-checklist.md",
+        "harness/reviews",
+        "harness/attestations",
+        "harness/requests"
+      ]
+    }
+  },
+  "separation": {
+    "private_state_root": ".git/repository-agent-session",
+    "harness_state_root": ".agent-harness",
+    "private_git_paths": [
+      ".agent-harness",
+      "feature_list.json",
+      "PROGRESS.md",
+      ".specify/feature.json",
+      "specs",
+      "docs/artifacts.json",
+      "harness/outcomes.json",
+      "harness/recovery-questions.json",
+      "docs/exec-plans",
+      "docs/generated/documentation-index.md",
+      "docs/agent/fresh-session-checklist.md",
+      "harness/reviews",
+      "harness/attestations",
+      "harness/requests",
+      "harness/measurements.json"
+    ],
+    "application_state_remains_at_repository_root": true,
+    "cross_domain_references": "forbidden"
+  },
+  "compatibility": {
+    "from": [
+      "1.6.0"
+    ],
+    "upgrade": "explicit-only",
+    "downgrade": "refused"
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "name": "React Achievements",
+  "slug": "react-achievements",
+  "source": {
+    "name": "WalkingLabs Learn Harness Engineering",
+    "url": "https://walkinglabs.github.io/learn-harness-engineering/en/",
+    "commit": "e587e4cce9cfe9b0523fd79d6e0152d4a1f1dfc3"
+  },
+  "commands": {
+    "install": [],
+    "start": []
+  },
+  "classification": {
+    "repository_kind": "unclassified",
+    "allowed_work_kinds": []
+  },
+  "profiles": {
+    "static": {
+      "layer": "static",
+      "commands": [
+        [
+          "git",
+          "diff",
+          "--check"
+        ],
+        [
+          "bin/python",
+          "script/harness.py",
+          "check"
+        ],
+        [
+          "bin/python",
+          "script/harness.py",
+          "check-whitespace"
+        ],
+        [
+          "bin/python",
+          "script/harness.py",
+          "check-artifacts"
+        ]
+      ]
+    },
+    "harness": {
+      "layer": "behavioral",
+      "commands": [],
+      "unavailable": "Template harness self-tests are not installed in application repositories."
+    },
+    "docs": {
+      "layer": "behavioral",
+      "commands": [
+        [
+          "bin/python",
+          "script/harness.py",
+          "check-docs"
+        ]
+      ]
+    },
+    "app-unit": {
+      "layer": "system",
+      "commands": [],
+      "unavailable": "Configure the repository unit-test argv in harness/project.json."
+    },
+    "app-e2e": {
+      "layer": "system",
+      "commands": [],
+      "unavailable": "Configure a real user-journey or end-to-end argv in harness/project.json."
+    }
+  },
+  "external_gates": [
+    "independent-review",
+    "credentials",
+    "physical-device",
+    "production-service"
+  ],
+  "release_authority": {
+    "mode": "model",
+    "role": "final_authority",
+    "required_for_release_readiness": true,
+    "publication": "explicit"
+  },
+  "timeout_seconds": 3600,
+  "identity_terms": [
+    "React Achievements",
+    "react-achievements",
+    "React"
+  ],
+  "run_meta_tests": false,
+  "installation": {
+    "schema": 1,
+    "distribution": "shared"
+  }
+}

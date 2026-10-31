@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "default_mode": "agent",
+  "modes": {
+    "agent": {
+      "reviewer_kind": "controller-agent",
+      "required_capability": "high-reasoning",
+      "read_only": true,
+      "distinct_reviewer": true,
+      "description": "Use a distinct controller-selected high-reasoning reviewer by default."
+    },
+    "human": {
+      "reviewer_kind": "human",
+      "required_capability": null,
+      "read_only": true,
+      "distinct_reviewer": false,
+      "description": "Stop for an explicit human review; never silently substitute an agent or self-approve."
+    }
+  },
+  "selection": {
+    "preferred_capability": "high-reasoning",
+    "required_reasoning_effort": "high",
+    "fallback_allowed": false,
+    "fallback_assurance": null,
+    "fallback_requires_distinct_reviewer": true,
+    "strongest_model_wins": true
+  },
+  "quality_review": {
+    "required_for_code": true,
+    "principles": ["DRY", "SOLID", "YAGNI"],
+    "finding_severities": ["material", "advisory"],
+    "outcomes": ["pass", "pass_with_advisories", "blocked"],
+    "material_finding_blocks": true,
+    "non_applicability_requires_reason": true,
+    "exception_requires_reason": true,
+    "finding_evidence_required": true
+  },
+  "release_authority": {
+    "mode": "model",
+    "role": "final_authority",
+    "requires_exact_commit": true,
+    "requires_current_evidence": true,
+    "requires_current_inventory": true,
+    "publication_remains_explicit": true
+  },
+  "rules": {
+    "agent_is_default": true,
+    "agent_requires_high_reasoning": true,
+    "agent_must_be_distinct": true,
+    "human_selection_is_explicit_stop": true,
+    "review_is_read_only": true,
+    "policy_changes_invalidate_review": true
+  }
+}
