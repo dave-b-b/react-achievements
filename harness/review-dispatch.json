@@ -1,0 +1,8 @@
+{
+  "schema": 1,
+  "adapter": [
+    "{python}",
+    "{runtime}/script/codex_review_adapter.py"
+  ],
+  "timeout_seconds": 3600
+}

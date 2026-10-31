@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+for candidate in \
+  python3.13 python3.12 python3.11 python3.10 \
+  /opt/homebrew/bin/python3.13 /opt/homebrew/bin/python3.12 /opt/homebrew/bin/python3.11 /opt/homebrew/bin/python3.10 \
+  /usr/local/bin/python3.13 /usr/local/bin/python3.12 /usr/local/bin/python3.11 /usr/local/bin/python3.10; do
+  if [[ "$candidate" == /* ]]; then
+    [[ -x "$candidate" ]] || continue
+  elif ! command -v "$candidate" >/dev/null 2>&1; then
+    continue
+  fi
+  # Harness commands must not leave ignored bytecode artifacts in the repository:
+  # the static lane intentionally treats those as an incomplete handoff.
+  export PYTHONDONTWRITEBYTECODE=1
+  exec "$candidate" -B "$@"
+done
+
+echo "React Achievements requires Python 3.10 or later; install python3.10+ or add it to PATH." >&2
+exit 69
